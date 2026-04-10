@@ -1,6 +1,6 @@
-import { ServerContext } from '@/state/server';
 import { useEffect, useRef } from 'react';
-import { SocketEvent } from '@/components/server/events';
+import type { SocketEvent } from '@/components/server/events';
+import { ServerContext } from '@/state/server';
 
 const useWebsocketEvent = (event: SocketEvent, callback: (data: string) => void) => {
     const { connected, instance } = ServerContext.useStoreState((state) => state.socket);
@@ -17,7 +17,7 @@ const useWebsocketEvent = (event: SocketEvent, callback: (data: string) => void)
         }
 
         return () => {
-            instance && instance.removeListener(event, eventListener);
+            instance?.removeListener(event, eventListener);
         };
     }, [event, connected, instance]);
 };

@@ -5,14 +5,14 @@ import { BaseClientTransformer } from './baseClientTransformer.js';
  * Mirrors app/Transformers/Api/Client/EggTransformer.php
  */
 export class ClientEggTransformer extends BaseClientTransformer {
-  getResourceName(): string {
-    return 'egg';
-  }
+    getResourceName(): string {
+        return 'egg';
+    }
 
-  transform(model: any): Record<string, unknown> {
-    return {
-      uuid: model.uuid,
-      name: model.name,
-    };
-  }
+    transform(model: any): Record<string, unknown> {
+        return {
+            uuid: model.uuid,
+            name: model.name,
+        };
+    }
 }

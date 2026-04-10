@@ -1,14 +1,13 @@
-import React from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import { join } from 'pathe';
-import renameFiles from '@/api/server/files/renameFiles';
-import { ServerContext } from '@/state/server';
 import tw from 'twin.macro';
+import renameFiles from '@/api/server/files/renameFiles';
 import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
+import Modal, { type RequiredModalProps } from '@/components/elements/Modal';
 import useFileManagerSwr from '@/plugins/useFileManagerSwr';
 import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface FormikValues {
     name: string;
@@ -37,12 +36,10 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
             }
         }
 
-        let data;
-        if (useMoveTerminology && files.length > 1) {
-            data = files.map((f) => ({ from: f, to: join(name, f) }));
-        } else {
-            data = files.map((f) => ({ from: f, to: name }));
-        }
+        const data: Array<{ from: string; to: string }> =
+            useMoveTerminology && files.length > 1
+                ? files.map((f) => ({ from: f, to: join(name, f) }))
+                : files.map((f) => ({ from: f, to: name }));
 
         renameFiles(uuid, directory, data)
             .then((): Promise<any> => (files.length > 0 ? mutate() : Promise.resolve()))

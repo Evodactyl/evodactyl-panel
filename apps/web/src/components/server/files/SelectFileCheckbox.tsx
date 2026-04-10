@@ -1,8 +1,8 @@
-import React from 'react';
-import tw from 'twin.macro';
-import { ServerContext } from '@/state/server';
+import type React from 'react';
 import styled from 'styled-components';
+import tw from 'twin.macro';
 import Input from '@/components/elements/Input';
+import { ServerContext } from '@/state/server';
 
 export const FileActionCheckbox = styled(Input)`
     && {

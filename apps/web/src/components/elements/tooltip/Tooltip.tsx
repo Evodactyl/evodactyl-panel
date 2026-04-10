@@ -1,12 +1,11 @@
-import React, { cloneElement, useRef, useState } from 'react';
 import {
     arrow,
     autoUpdate,
     flip,
     offset,
-    Placement,
+    type Placement,
+    type Side,
     shift,
-    Side,
     useClick,
     useDismiss,
     useFloating,
@@ -15,8 +14,10 @@ import {
     useInteractions,
     useRole,
 } from '@floating-ui/react-dom-interactions';
-import { AnimatePresence, motion } from 'framer-motion';
 import classNames from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import type React from 'react';
+import { cloneElement, useRef, useState } from 'react';
 
 type Interaction = 'hover' | 'click' | 'focus';
 
@@ -104,7 +105,7 @@ export default ({ children, ...props }: Props) => {
                                 ref={arrowEl}
                                 style={{
                                     transform: `translate(${Math.round(ax || 0)}px, ${Math.round(
-                                        ay || 0
+                                        ay || 0,
                                     )}px) rotate(45deg)`,
                                 }}
                                 className={classNames('absolute bg-gray-900 w-3 h-3', side)}

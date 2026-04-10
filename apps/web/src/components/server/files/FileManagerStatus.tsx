@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
 import { CloudUploadIcon, XIcon } from '@heroicons/react/solid';
-import asDialog from '@/hoc/asDialog';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from '@/components/elements/button/index';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Code from '@/components/elements/Code';
+import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
+import Tooltip from '@/components/elements/tooltip/Tooltip';
+import asDialog from '@/hoc/asDialog';
+import { ServerContext } from '@/state/server';
 
 const svgProps = {
     cx: 16,
@@ -34,7 +34,7 @@ const FileUploadList = () => {
     const cancelFileUpload = ServerContext.useStoreActions((actions) => actions.files.cancelFileUpload);
     const clearFileUploads = ServerContext.useStoreActions((actions) => actions.files.clearFileUploads);
     const uploads = ServerContext.useStoreState((state) =>
-        Object.entries(state.files.uploads).sort(([a], [b]) => a.localeCompare(b))
+        Object.entries(state.files.uploads).sort(([a], [b]) => a.localeCompare(b)),
     );
 
     return (
@@ -89,10 +89,7 @@ export default () => {
         <>
             {count > 0 && (
                 <Tooltip content={`${count} files are uploading, click to view`}>
-                    <button
-                        className={'flex items-center justify-center w-10 h-10'}
-                        onClick={() => setOpen(true)}
-                    >
+                    <button className={'flex items-center justify-center w-10 h-10'} onClick={() => setOpen(true)}>
                         <Spinner progress={(progress.uploaded / progress.total) * 100} className={'w-8 h-8'} />
                         <CloudUploadIcon className={'h-3 absolute mx-auto animate-pulse'} />
                     </button>

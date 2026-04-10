@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Websocket } from '@/plugins/Websocket';
-import { ServerContext } from '@/state/server';
+import { useEffect, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import tw from 'twin.macro';
 import getWebsocketToken from '@/api/server/getWebsocketToken';
 import ContentContainer from '@/components/elements/ContentContainer';
-import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
-import tw from 'twin.macro';
+import { Websocket } from '@/plugins/Websocket';
+import { ServerContext } from '@/state/server';
 
 const reconnectErrors = ['jwt: exp claim is invalid', 'jwt: created too far in past (denylist)'];
 
@@ -57,7 +57,7 @@ export default () => {
                 updateToken(uuid, socket);
             } else {
                 setError(
-                    'There was an error validating the credentials provided for the websocket. Please refresh the page.'
+                    'There was an error validating the credentials provided for the websocket. Please refresh the page.',
                 );
             }
         });
@@ -93,7 +93,7 @@ export default () => {
 
     useEffect(() => {
         return () => {
-            instance && instance.close();
+            instance?.close();
         };
     }, [instance]);
 
@@ -105,7 +105,7 @@ export default () => {
         }
 
         connect(uuid);
-    }, [uuid]);
+    }, [uuid, instance, connect]);
 
     return error ? (
         <CSSTransition timeout={150} in appear classNames={'fade'}>

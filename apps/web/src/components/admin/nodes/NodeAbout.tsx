@@ -1,23 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { faSpinner, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type React from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import tw from 'twin.macro';
 import useSWR from 'swr';
-import { Node, deleteNode, getNodeSystemInfo, DaemonInfo } from '@/api/admin/nodes';
-import FlashMessageRender from '@/components/FlashMessageRender';
+import tw from 'twin.macro';
+import { type DaemonInfo, deleteNode, getNodeSystemInfo, type Node } from '@/api/admin/nodes';
 import AdminBox from '@/components/admin/AdminBox';
 import Button from '@/components/elements/Button';
 import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faWrench } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
     node: Node;
 }
 
-const ProgressBar = ({ label, current, max, overallocate }: { label: string; current: number; max: number; overallocate: number }) => {
+const ProgressBar = ({
+    label,
+    current,
+    max,
+    overallocate,
+}: {
+    label: string;
+    current: number;
+    max: number;
+    overallocate: number;
+}) => {
     const effectiveMax = overallocate === -1 ? Infinity : overallocate > 0 ? max * (1 + overallocate / 100) : max;
-    const percentage = effectiveMax === Infinity ? 0 : effectiveMax > 0 ? Math.min((current / effectiveMax) * 100, 100) : 0;
+    const percentage =
+        effectiveMax === Infinity ? 0 : effectiveMax > 0 ? Math.min((current / effectiveMax) * 100, 100) : 0;
     const color = percentage > 90 ? 'bg-red-500' : percentage > 75 ? 'bg-yellow-500' : 'bg-green-500';
 
     return (
@@ -25,7 +37,8 @@ const ProgressBar = ({ label, current, max, overallocate }: { label: string; cur
             <div css={tw`flex justify-between text-sm mb-1`}>
                 <span>{label}</span>
                 <span css={tw`text-neutral-400`}>
-                    {current.toLocaleString()} / {effectiveMax === Infinity ? '\u221E' : effectiveMax.toLocaleString()} MiB
+                    {current.toLocaleString()} / {effectiveMax === Infinity ? '\u221E' : effectiveMax.toLocaleString()}{' '}
+                    MiB
                     {effectiveMax !== Infinity && ` (${percentage.toFixed(1)}%)`}
                 </span>
             </div>
@@ -56,7 +69,7 @@ const NodeAbout = ({ node }: Props) => {
     const { data: daemonInfo, error: daemonError } = useSWR<DaemonInfo>(
         `/api/application/nodes/${node.id}/system-information`,
         () => getNodeSystemInfo(node.id),
-        { refreshInterval: 10000, revalidateOnFocus: false, shouldRetryOnError: false }
+        { refreshInterval: 10000, revalidateOnFocus: false, shouldRetryOnError: false },
     );
 
     const handleDelete = () => {
@@ -88,8 +101,8 @@ const NodeAbout = ({ node }: Props) => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowDeleteModal(false)}
             >
-                Are you sure you want to delete this node? This action cannot be undone and any servers on this node must
-                be removed first.
+                Are you sure you want to delete this node? This action cannot be undone and any servers on this node
+                must be removed first.
             </ConfirmationModal>
 
             <div css={tw`grid grid-cols-1 lg:grid-cols-3 gap-6`}>
@@ -105,7 +118,9 @@ const NodeAbout = ({ node }: Props) => {
                                     ) : !daemonInfo ? (
                                         <FontAwesomeIcon icon={faSpinner} spin css={tw`text-neutral-400`} />
                                     ) : (
-                                        <code css={tw`bg-neutral-800 px-2 py-0.5 rounded text-sm`}>{daemonInfo.version}</code>
+                                        <code css={tw`bg-neutral-800 px-2 py-0.5 rounded text-sm`}>
+                                            {daemonInfo.version}
+                                        </code>
                                     )}
                                 </InfoRow>
                                 <InfoRow label={'System Information'}>
@@ -116,7 +131,9 @@ const NodeAbout = ({ node }: Props) => {
                                     ) : (
                                         <>
                                             {daemonInfo.system.type} ({daemonInfo.system.arch}){' '}
-                                            <code css={tw`bg-neutral-800 px-2 py-0.5 rounded text-sm`}>{daemonInfo.system.release}</code>
+                                            <code css={tw`bg-neutral-800 px-2 py-0.5 rounded text-sm`}>
+                                                {daemonInfo.system.release}
+                                            </code>
                                         </>
                                     )}
                                 </InfoRow>
@@ -147,8 +164,8 @@ const NodeAbout = ({ node }: Props) => {
                         </div>
                         <div css={tw`px-6 py-4`}>
                             <p css={tw`text-sm text-neutral-300`}>
-                                Deleting a node is an irreversible action and will immediately remove this node from the panel.
-                                There must be no servers associated with this node in order to continue.
+                                Deleting a node is an irreversible action and will immediately remove this node from the
+                                panel. There must be no servers associated with this node in order to continue.
                             </p>
                         </div>
                         <div css={tw`px-6 py-3 bg-neutral-700 flex justify-end`}>

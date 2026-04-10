@@ -1,22 +1,22 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { Subuser } from '@/state/server/subusers';
+import { type Actions, useStoreActions, useStoreState } from 'easy-peasy';
 import { Form, Formik } from 'formik';
-import { array, object, string } from 'yup';
-import Field from '@/components/elements/Field';
-import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import createOrUpdateSubuser from '@/api/server/users/createOrUpdateSubuser';
-import { ServerContext } from '@/state/server';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Can from '@/components/elements/Can';
-import { usePermissions } from '@/plugins/usePermissions';
-import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
+import { useContext, useEffect, useRef } from 'react';
 import tw from 'twin.macro';
+import { array, object, string } from 'yup';
+import createOrUpdateSubuser from '@/api/server/users/createOrUpdateSubuser';
 import Button from '@/components/elements/Button';
-import PermissionTitleBox from '@/components/server/users/PermissionTitleBox';
-import asModal from '@/hoc/asModal';
+import Can from '@/components/elements/Can';
+import Field from '@/components/elements/Field';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import PermissionRow from '@/components/server/users/PermissionRow';
+import PermissionTitleBox from '@/components/server/users/PermissionTitleBox';
 import ModalContext from '@/context/ModalContext';
+import asModal from '@/hoc/asModal';
+import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
+import { usePermissions } from '@/plugins/usePermissions';
+import type { ApplicationStore } from '@/state';
+import { ServerContext } from '@/state/server';
+import type { Subuser } from '@/state/server/subusers';
 
 type Props = {
     subuser?: Subuser;
@@ -32,7 +32,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSubuser = ServerContext.useStoreActions((actions) => actions.subusers.appendSubuser);
     const { clearFlashes, clearAndAddHttpError } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes
+        (actions: Actions<ApplicationStore>) => actions.flashes,
     );
     const { dismiss, setPropOverrides } = useContext(ModalContext);
 
@@ -46,7 +46,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
     // The permissions that can be modified by this user.
     const editablePermissions = useDeepCompareMemo(() => {
         const cleaned = Object.keys(permissions).map((key) =>
-            Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`)
+            Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`),
         );
 
         const list: string[] = ([] as string[]).concat.apply([], Object.values(cleaned));
@@ -82,7 +82,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
         () => () => {
             clearFlashes('user:edit');
         },
-        []
+        [clearFlashes],
     );
 
     return (

@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import { ServerContext } from '@/state/server';
-import { SocketEvent } from '@/components/server/events';
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import { Line } from 'react-chartjs-2';
-import { useChart, useChartTickLabel } from '@/components/server/console/chart';
-import { hexToRgba } from '@/lib/helpers';
-import { bytesToString } from '@/lib/formatters';
 import { CloudDownloadIcon, CloudUploadIcon } from '@heroicons/react/solid';
+import { useEffect, useRef } from 'react';
+import { Line } from 'react-chartjs-2';
 import { theme } from 'twin.macro';
-import ChartBlock from '@/components/server/console/ChartBlock';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
+import ChartBlock from '@/components/server/console/ChartBlock';
+import { useChart, useChartTickLabel } from '@/components/server/console/chart';
+import { SocketEvent } from '@/components/server/events';
+import { bytesToString } from '@/lib/formatters';
+import { hexToRgba } from '@/lib/helpers';
+import useWebsocketEvent from '@/plugins/useWebsocketEvent';
+import { ServerContext } from '@/state/server';
 
 export default () => {
     const status = ServerContext.useStoreState((state) => state.status.value);
@@ -47,13 +47,13 @@ export default () => {
             memory.clear();
             network.clear();
         }
-    }, [status]);
+    }, [status, network.clear, memory.clear, cpu.clear]);
 
     useWebsocketEvent(SocketEvent.STATS, (data: string) => {
         let values: any = {};
         try {
             values = JSON.parse(data);
-        } catch (e) {
+        } catch (_e) {
             return;
         }
         cpu.push(values.cpu_absolute);

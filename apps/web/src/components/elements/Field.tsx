@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react';
-import { Field as FormikField, FieldProps } from 'formik';
+import { type FieldProps, Field as FormikField } from 'formik';
+import type React from 'react';
+import { forwardRef } from 'react';
 import Input from '@/components/elements/Input';
 import Label from '@/components/elements/Label';
 
@@ -41,7 +42,7 @@ const Field = forwardRef<HTMLInputElement, Props>(
                 </div>
             )}
         </FormikField>
-    )
+    ),
 );
 Field.displayName = 'Field';
 

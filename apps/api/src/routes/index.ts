@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import applicationRoutes from './application.js';
-import clientRoutes from './client.js';
-import remoteRoutes from './remote.js';
 import authRoutes from './auth.js';
 import baseRoutes from './base.js';
+import clientRoutes from './client.js';
+import remoteRoutes from './remote.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { NodeJWTService } from '../../../../services/nodes/nodeJwtService.js';
+import type { Request, Response } from 'express';
 import { getConnectionAddress } from '../../../../lib/node.js';
+import { NodeJWTService } from '../../../../services/nodes/nodeJwtService.js';
 
 /**
  * File upload controller for the client API.
@@ -8,35 +8,35 @@ import { getConnectionAddress } from '../../../../lib/node.js';
  * Mirrors app/Http/Controllers/Api/Client/Servers/FileUploadController.php
  */
 export class FileUploadController {
-  /**
-   * Returns a URL where files can be uploaded to.
-   */
-  async handle(req: Request, res: Response): Promise<void> {
-    const server = (req as any).server;
-    const user = (req as any).user;
+    /**
+     * Returns a URL where files can be uploaded to.
+     */
+    async handle(req: Request, res: Response): Promise<void> {
+        const server = (req as any).server;
+        const user = (req as any).user;
 
-    const url = this.getUploadUrl(server, user);
+        const url = this.getUploadUrl(server, user);
 
-    res.json({
-      object: 'signed_url',
-      attributes: { url },
-    });
-  }
+        res.json({
+            object: 'signed_url',
+            attributes: { url },
+        });
+    }
 
-  /**
-   * Generates a signed upload URL for the Wings daemon.
-   */
-  private getUploadUrl(server: any, user: any): string {
-    const node = server.nodes;
+    /**
+     * Generates a signed upload URL for the Wings daemon.
+     */
+    private getUploadUrl(server: any, user: any): string {
+        const node = server.nodes;
 
-    const token = new NodeJWTService()
-      .setExpiresAt(new Date(Date.now() + 15 * 60 * 1000))
-      .setUser(user)
-      .setClaims({ server_uuid: server.uuid })
-      .handle(node, `${user.id}${server.uuid}`);
+        const token = new NodeJWTService()
+            .setExpiresAt(new Date(Date.now() + 15 * 60 * 1000))
+            .setUser(user)
+            .setClaims({ server_uuid: server.uuid })
+            .handle(node, `${user.id}${server.uuid}`);
 
-    return `${getConnectionAddress(node)}/upload/file?token=${token}`;
-  }
+        return `${getConnectionAddress(node)}/upload/file?token=${token}`;
+    }
 }
 
 export const fileUploadController = new FileUploadController();

@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
 import { Dialog as HDialog } from '@headlessui/react';
-import { Button } from '@/components/elements/button/index';
 import { XIcon } from '@heroicons/react/solid';
 import { AnimatePresence, motion } from 'framer-motion';
-import { DialogContext, IconPosition, RenderDialogProps, styles } from './';
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { Button } from '@/components/elements/button/index';
+import { DialogContext, type IconPosition, type RenderDialogProps, styles } from './';
 
 const variants = {
     open: {

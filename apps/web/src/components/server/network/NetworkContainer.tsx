@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Spinner from '@/components/elements/Spinner';
-import { useFlashKey } from '@/plugins/useFlash';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { ServerContext } from '@/state/server';
-import AllocationRow from '@/components/server/network/AllocationRow';
-import Button from '@/components/elements/Button';
-import createServerAllocation from '@/api/server/network/createServerAllocation';
-import tw from 'twin.macro';
-import Can from '@/components/elements/Can';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import getServerAllocations from '@/api/swr/getServerAllocations';
+import { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
+import tw from 'twin.macro';
+import createServerAllocation from '@/api/server/network/createServerAllocation';
+import getServerAllocations from '@/api/swr/getServerAllocations';
+import Button from '@/components/elements/Button';
+import Can from '@/components/elements/Can';
+import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import AllocationRow from '@/components/server/network/AllocationRow';
 import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
+import { useFlashKey } from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const NetworkContainer = () => {
     const [loading, setLoading] = useState(false);
@@ -25,11 +25,11 @@ const NetworkContainer = () => {
 
     useEffect(() => {
         mutate(allocations);
-    }, []);
+    }, [allocations, mutate]);
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     useDeepCompareEffect(() => {
         if (!data) return;

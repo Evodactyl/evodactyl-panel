@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
 import { useStoreState } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { Button } from '@/components/elements/button/index';
-import SetupTOTPDialog from '@/components/dashboard/forms/SetupTOTPDialog';
-import RecoveryTokensDialog from '@/components/dashboard/forms/RecoveryTokensDialog';
 import DisableTOTPDialog from '@/components/dashboard/forms/DisableTOTPDialog';
+import RecoveryTokensDialog from '@/components/dashboard/forms/RecoveryTokensDialog';
+import SetupTOTPDialog from '@/components/dashboard/forms/SetupTOTPDialog';
+import { Button } from '@/components/elements/button/index';
 import { useFlashKey } from '@/plugins/useFlash';
+import type { ApplicationStore } from '@/state';
 
 export default () => {
     const [tokens, setTokens] = useState<string[]>([]);
@@ -18,7 +18,7 @@ export default () => {
         return () => {
             clearAndAddHttpError();
         };
-    }, [visible]);
+    }, [clearAndAddHttpError]);
 
     const onTokens = (tokens: string[]) => {
         setTokens(tokens);

@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Spinner from '@/components/elements/Spinner';
-import tw from 'twin.macro';
-import styled, { css } from 'styled-components';
-import { breakpoint } from '@/theme';
-import Fade from '@/components/elements/Fade';
+import type React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import styled, { css } from 'styled-components';
+import tw from 'twin.macro';
+import Fade from '@/components/elements/Fade';
+import Spinner from '@/components/elements/Spinner';
+import { breakpoint } from '@/theme';
 
 export interface RequiredModalProps {
     visible: boolean;
@@ -83,7 +84,7 @@ const Modal: React.FC<ModalProps> = ({
         return () => {
             window.removeEventListener('keydown', handler);
         };
-    }, [isDismissable, closeOnEscape, render]);
+    }, [isDismissable, closeOnEscape]);
 
     useEffect(() => setRender(visible), [visible]);
 

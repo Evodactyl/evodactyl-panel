@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import deleteSchedule from '@/api/server/schedules/deleteSchedule';
-import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
+import { type Actions, useStoreActions } from 'easy-peasy';
+import { useState } from 'react';
 import { httpErrorToHuman } from '@/api/http';
+import deleteSchedule from '@/api/server/schedules/deleteSchedule';
 import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import type { ApplicationStore } from '@/state';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     scheduleId: number;

@@ -1,31 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import { Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Form, Formik, FormikHelpers, Field as FormikField } from 'formik';
-import { object, string, number } from 'yup';
 import tw from 'twin.macro';
-import AdminLayout from '@/components/admin/AdminLayout';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import Field from '@/components/elements/Field';
-import Label from '@/components/elements/Label';
-import Select from '@/components/elements/Select';
-import Switch from '@/components/elements/Switch';
-import Button from '@/components/elements/Button';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import Spinner from '@/components/elements/Spinner';
-import useFlash from '@/plugins/useFlash';
-import { httpErrorToHuman } from '@/api/http';
+import { number, object, string } from 'yup';
 import {
+    type AdminAllocation,
+    type AdminEgg,
+    type AdminNest,
+    type AdminNode,
     createServer,
-    getNodes,
-    getNodeAllocations,
     getNests,
-    AdminNode,
-    AdminNest,
-    AdminAllocation,
-    AdminEgg,
+    getNodeAllocations,
+    getNodes,
 } from '@/api/admin/servers';
+import AdminLayout from '@/components/admin/AdminLayout';
+import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import { Textarea } from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
+import Select from '@/components/elements/Select';
+import Spinner from '@/components/elements/Spinner';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import Switch from '@/components/elements/Switch';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import useFlash from '@/plugins/useFlash';
 
 interface Values {
     name: string;
@@ -90,7 +89,7 @@ const NewServerContainer = () => {
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:servers:new', error }))
             .finally(() => setLoading(false));
-    }, []);
+    }, [clearAndAddHttpError]);
 
     const handleNodeChange = (nodeId: number) => {
         if (!nodeId) {
@@ -105,11 +104,7 @@ const NewServerContainer = () => {
             });
     };
 
-    const handleEggChange = (
-        nestId: number,
-        eggId: number,
-        setFieldValue: (field: string, value: any) => void
-    ) => {
+    const handleEggChange = (nestId: number, eggId: number, setFieldValue: (field: string, value: any) => void) => {
         const nest = nests.find((n) => n.id === nestId);
         const egg = nest?.eggs.find((e) => e.id === eggId) || null;
         setSelectedEgg(egg);
@@ -172,14 +167,32 @@ const NewServerContainer = () => {
 
     if (loading) {
         return (
-            <AdminLayout title={'New Server'} subtitle={'Add a new server to the panel.'} showFlashKey={'admin:servers:new'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Servers', to: '/admin/servers' }, { label: 'New Server' }]}>
+            <AdminLayout
+                title={'New Server'}
+                subtitle={'Add a new server to the panel.'}
+                showFlashKey={'admin:servers:new'}
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Servers', to: '/admin/servers' },
+                    { label: 'New Server' },
+                ]}
+            >
                 <Spinner centered size={'large'} />
             </AdminLayout>
         );
     }
 
     return (
-        <AdminLayout title={'New Server'} subtitle={'Add a new server to the panel.'} showFlashKey={'admin:servers:new'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Servers', to: '/admin/servers' }, { label: 'New Server' }]}>
+        <AdminLayout
+            title={'New Server'}
+            subtitle={'Add a new server to the panel.'}
+            showFlashKey={'admin:servers:new'}
+            breadcrumbs={[
+                { label: 'Admin', to: '/admin' },
+                { label: 'Servers', to: '/admin/servers' },
+                { label: 'New Server' },
+            ]}
+        >
             <h1 css={tw`text-2xl text-neutral-50 mb-4`}>Create Server</h1>
             <Formik
                 onSubmit={submit}
@@ -224,13 +237,7 @@ const NewServerContainer = () => {
                                     </FormikFieldWrapper>
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <Field
-                                        id={'user'}
-                                        name={'user'}
-                                        label={'Owner User ID'}
-                                        type={'number'}
-                                        min={1}
-                                    />
+                                    <Field id={'user'} name={'user'} label={'Owner User ID'} type={'number'} min={1} />
                                 </div>
                                 <div>
                                     <Field
@@ -246,12 +253,31 @@ const NewServerContainer = () => {
                             {/* Resource Limits */}
                             <TitledGreyBox title={'Resource Limits'}>
                                 <div css={tw`grid grid-cols-2 gap-4`}>
-                                    <Field id={'memory'} name={'memory'} label={'Memory (MB)'} type={'number'} min={0} />
+                                    <Field
+                                        id={'memory'}
+                                        name={'memory'}
+                                        label={'Memory (MB)'}
+                                        type={'number'}
+                                        min={0}
+                                    />
                                     <Field id={'swap'} name={'swap'} label={'Swap (MB)'} type={'number'} min={-1} />
                                     <Field id={'disk'} name={'disk'} label={'Disk (MB)'} type={'number'} min={0} />
                                     <Field id={'cpu'} name={'cpu'} label={'CPU (%)'} type={'number'} min={0} />
-                                    <Field id={'io'} name={'io'} label={'Block IO Weight'} type={'number'} min={10} max={1000} />
-                                    <Field id={'threads'} name={'threads'} label={'CPU Threads'} type={'text'} description={'Comma-separated list of CPU threads.'} />
+                                    <Field
+                                        id={'io'}
+                                        name={'io'}
+                                        label={'Block IO Weight'}
+                                        type={'number'}
+                                        min={10}
+                                        max={1000}
+                                    />
+                                    <Field
+                                        id={'threads'}
+                                        name={'threads'}
+                                        label={'CPU Threads'}
+                                        type={'text'}
+                                        description={'Comma-separated list of CPU threads.'}
+                                    />
                                 </div>
                                 <div css={tw`mt-4`}>
                                     <Switch
@@ -267,9 +293,27 @@ const NewServerContainer = () => {
                             {/* Feature Limits */}
                             <TitledGreyBox title={'Feature Limits'}>
                                 <div css={tw`grid grid-cols-3 gap-4`}>
-                                    <Field id={'databaseLimit'} name={'databaseLimit'} label={'Databases'} type={'number'} min={0} />
-                                    <Field id={'allocationLimit'} name={'allocationLimit'} label={'Allocations'} type={'number'} min={0} />
-                                    <Field id={'backupLimit'} name={'backupLimit'} label={'Backups'} type={'number'} min={0} />
+                                    <Field
+                                        id={'databaseLimit'}
+                                        name={'databaseLimit'}
+                                        label={'Databases'}
+                                        type={'number'}
+                                        min={0}
+                                    />
+                                    <Field
+                                        id={'allocationLimit'}
+                                        name={'allocationLimit'}
+                                        label={'Allocations'}
+                                        type={'number'}
+                                        min={0}
+                                    />
+                                    <Field
+                                        id={'backupLimit'}
+                                        name={'backupLimit'}
+                                        label={'Backups'}
+                                        type={'number'}
+                                        min={0}
+                                    />
                                 </div>
                             </TitledGreyBox>
 
@@ -384,11 +428,7 @@ const NewServerContainer = () => {
                                             ))}
                                         </Select>
                                     ) : (
-                                        <Field
-                                            id={'dockerImage'}
-                                            name={'dockerImage'}
-                                            type={'text'}
-                                        />
+                                        <Field id={'dockerImage'} name={'dockerImage'} type={'text'} />
                                     )}
                                 </div>
                             </TitledGreyBox>
@@ -409,7 +449,9 @@ const NewServerContainer = () => {
                                                     placeholder={variable.defaultValue}
                                                 />
                                                 {variable.description && (
-                                                    <p css={tw`text-xs text-neutral-400 mt-1`}>{variable.description}</p>
+                                                    <p css={tw`text-xs text-neutral-400 mt-1`}>
+                                                        {variable.description}
+                                                    </p>
                                                 )}
                                             </div>
                                         ))}

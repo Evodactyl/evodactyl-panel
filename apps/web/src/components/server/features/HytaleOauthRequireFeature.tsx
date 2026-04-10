@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
+import Modal from '@/components/elements/Modal';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const HytaleOauthRequireFeature = () => {
     const [visible, setVisible] = useState(false);
@@ -34,7 +34,7 @@ const HytaleOauthRequireFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:hytaleOauth');
-    }, []);
+    }, [clearFlashes]);
 
     const handleLogin = () => {
         if (link) {

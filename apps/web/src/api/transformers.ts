@@ -1,7 +1,7 @@
-import { Allocation } from '@/api/server/getServer';
-import { FractalResponseData } from '@/api/http';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import { ServerBackup, ServerEggVariable } from '@/api/server/types';
+import type { FractalResponseData } from '@/api/http';
+import type { FileObject } from '@/api/server/files/loadDirectory';
+import type { Allocation } from '@/api/server/getServer';
+import type { ServerBackup, ServerEggVariable } from '@/api/server/types';
 
 export const rawDataToServerAllocation = (data: FractalResponseData): Allocation => ({
     id: data.attributes.id,

@@ -1,5 +1,5 @@
+import type { LoginResponse } from '@/api/auth/login';
 import http from '@/api/http';
-import { LoginResponse } from '@/api/auth/login';
 
 export default (token: string, code: string, recoveryToken?: string): Promise<LoginResponse> => {
     return new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ export default (token: string, code: string, recoveryToken?: string): Promise<Lo
                 resolve({
                     complete: response.data.data.complete,
                     intended: response.data.data.intended || undefined,
-                })
+                }),
             )
             .catch(reject);
     });

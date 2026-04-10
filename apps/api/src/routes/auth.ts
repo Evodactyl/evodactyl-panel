@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { authRateLimit, passwordResetRateLimit } from '../middleware/index.js';
-import { login, logout } from '../controllers/auth/loginController.js';
-import { loginCheckpoint } from '../controllers/auth/loginCheckpointController.js';
 import { sendResetLinkEmail } from '../controllers/auth/forgotPasswordController.js';
+import { loginCheckpoint } from '../controllers/auth/loginCheckpointController.js';
+import { login, logout } from '../controllers/auth/loginController.js';
 import { resetPassword } from '../controllers/auth/resetPasswordController.js';
+import { authRateLimit, passwordResetRateLimit } from '../middleware/index.js';
 
 const router = Router();
 

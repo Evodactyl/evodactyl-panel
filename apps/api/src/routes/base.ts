@@ -11,7 +11,7 @@ router.get('/locales/locale.json', serveLocale);
 // Our csrfProtection middleware sets the cookie on every request, so this
 // endpoint just acknowledges it so the frontend's bootstrap sequence works.
 router.get('/sanctum/csrf-cookie', (_req, res) => {
-  res.status(204).end();
+    res.status(204).end();
 });
 
 export default router;

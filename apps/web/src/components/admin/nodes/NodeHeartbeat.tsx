@@ -1,10 +1,9 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import tw from 'twin.macro';
-import useSWR from 'swr';
-import { getNodeSystemInfo } from '@/api/admin/nodes';
+import { faHeartBroken, faHeartbeat, faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeartbeat, faHeartBroken, faSync } from '@fortawesome/free-solid-svg-icons';
+import styled, { keyframes } from 'styled-components';
+import useSWR from 'swr';
+import tw from 'twin.macro';
+import { getNodeSystemInfo } from '@/api/admin/nodes';
 
 interface Props {
     nodeId: number;
@@ -26,7 +25,7 @@ const NodeHeartbeat = ({ nodeId }: Props) => {
     const { data, error } = useSWR(
         `/api/application/nodes/${nodeId}/system-information`,
         () => getNodeSystemInfo(nodeId),
-        { refreshInterval: 10000, revalidateOnFocus: false, shouldRetryOnError: false }
+        { refreshInterval: 10000, revalidateOnFocus: false, shouldRetryOnError: false },
     );
 
     // Loading state — spinning refresh icon (matches Blade's fa-refresh fa-spin)

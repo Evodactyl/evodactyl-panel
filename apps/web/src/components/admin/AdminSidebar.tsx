@@ -1,14 +1,22 @@
+import {
+    faArrowLeft,
+    faDatabase,
+    faGamepad,
+    faGlobe,
+    faHome,
+    faMagic,
+    faServer,
+    faSignOutAlt,
+    faSitemap,
+    faThLarge,
+    faUsers,
+    faWrench,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faHome, faWrench, faGamepad,
-    faDatabase, faGlobe, faSitemap, faServer, faUsers,
-    faMagic, faThLarge,
-    faSignOutAlt, faArrowLeft,
-} from '@fortawesome/free-solid-svg-icons';
-import tw from 'twin.macro';
 import styled from 'styled-components';
+import tw from 'twin.macro';
 import http from '@/api/http';
 
 interface MenuItem {

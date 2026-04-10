@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
 

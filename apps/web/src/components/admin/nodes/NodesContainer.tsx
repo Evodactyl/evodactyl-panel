@@ -1,35 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faLock, faUnlock, faWrench } from '@fortawesome/free-solid-svg-icons';
-import tw from 'twin.macro';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useSWR from 'swr';
-import { getNodes, Node } from '@/api/admin/nodes';
-import { PaginatedResult } from '@/api/http';
-import Spinner from '@/components/elements/Spinner';
-import Pagination from '@/components/elements/Pagination';
-import useFlash from '@/plugins/useFlash';
-import Button from '@/components/elements/Button';
-import AdminLayout from '@/components/admin/AdminLayout';
+import tw from 'twin.macro';
+import { getNodes, type Node } from '@/api/admin/nodes';
+import type { PaginatedResult } from '@/api/http';
 import AdminBox from '@/components/admin/AdminBox';
+import AdminLayout from '@/components/admin/AdminLayout';
 import AdminStatusBadge from '@/components/admin/AdminStatusBadge';
-import { AdminTable, AdminTableHead, AdminTableBody, AdminTableHeader, AdminTableRow, AdminTableCell } from '@/components/admin/AdminTable';
+import {
+    AdminTable,
+    AdminTableBody,
+    AdminTableCell,
+    AdminTableHead,
+    AdminTableHeader,
+    AdminTableRow,
+} from '@/components/admin/AdminTable';
 import NodeHeartbeat from '@/components/admin/nodes/NodeHeartbeat';
+import Button from '@/components/elements/Button';
+import Pagination from '@/components/elements/Pagination';
+import Spinner from '@/components/elements/Spinner';
+import useFlash from '@/plugins/useFlash';
 
 const NodesContainer = () => {
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('');
     const { clearFlashes, clearAndAddHttpError } = useFlash();
 
-    const { data: nodes, error } = useSWR<PaginatedResult<Node>>(
-        ['/api/application/nodes', page, filter],
-        () => getNodes(page, filter || undefined)
+    const { data: nodes, error } = useSWR<PaginatedResult<Node>>(['/api/application/nodes', page, filter], () =>
+        getNodes(page, filter || undefined),
     );
 
     useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'admin:nodes', error });
         if (!error) clearFlashes('admin:nodes');
-    }, [error]);
+    }, [error, clearFlashes, clearAndAddHttpError]);
 
     const tools = (
         <div css={tw`flex items-center gap-2`}>
@@ -37,11 +43,16 @@ const NodesContainer = () => {
                 type={'text'}
                 placeholder={'Filter nodes...'}
                 value={filter}
-                onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1);
+                }}
                 css={tw`bg-neutral-600 border border-neutral-500 rounded px-3 py-1.5 text-sm text-neutral-200 outline-none focus:border-primary-400`}
             />
             <Link to={'/admin/nodes/new'}>
-                <Button color={'primary'} size={'xsmall'}>Create New</Button>
+                <Button color={'primary'} size={'xsmall'}>
+                    Create New
+                </Button>
             </Link>
         </div>
     );
@@ -51,10 +62,7 @@ const NodesContainer = () => {
             title={'Nodes'}
             subtitle={'All nodes available on the system.'}
             showFlashKey={'admin:nodes'}
-            breadcrumbs={[
-                { label: 'Admin', to: '/admin' },
-                { label: 'Nodes' },
-            ]}
+            breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Nodes' }]}
         >
             {!nodes ? (
                 <Spinner centered size={'large'} />
@@ -66,7 +74,10 @@ const NodesContainer = () => {
                                 <AdminTable>
                                     <AdminTableHead>
                                         <tr>
-                                            <AdminTableHeader className={'text-center'} css={tw`w-12`}></AdminTableHeader>
+                                            <AdminTableHeader
+                                                className={'text-center'}
+                                                css={tw`w-12`}
+                                            ></AdminTableHeader>
                                             <AdminTableHeader>Name</AdminTableHeader>
                                             <AdminTableHeader>Location</AdminTableHeader>
                                             <AdminTableHeader className={'text-center'}>Memory</AdminTableHeader>
@@ -105,7 +116,11 @@ const NodesContainer = () => {
                                                 <AdminTableCell className={'text-center'}>
                                                     <FontAwesomeIcon
                                                         icon={node.scheme === 'https' ? faLock : faUnlock}
-                                                        css={node.scheme === 'https' ? tw`text-green-500` : tw`text-red-500`}
+                                                        css={
+                                                            node.scheme === 'https'
+                                                                ? tw`text-green-500`
+                                                                : tw`text-red-500`
+                                                        }
                                                     />
                                                 </AdminTableCell>
                                                 <AdminTableCell className={'text-center'}>
@@ -119,7 +134,9 @@ const NodesContainer = () => {
                                     </AdminTableBody>
                                 </AdminTable>
                             ) : (
-                                <p css={tw`text-center text-sm text-neutral-400 py-6`}>No nodes have been configured.</p>
+                                <p css={tw`text-center text-sm text-neutral-400 py-6`}>
+                                    No nodes have been configured.
+                                </p>
                             )}
                         </AdminBox>
                     )}

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useStoreState } from 'easy-peasy';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
+import Modal from '@/components/elements/Modal';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
-import { useStoreState } from 'easy-peasy';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const PIDLimitModalFeature = () => {
     const [visible, setVisible] = useState(false);
@@ -46,7 +46,7 @@ const PIDLimitModalFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:pidLimit');
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <Modal

@@ -1,13 +1,13 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import tw from 'twin.macro';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Button from '@/components/elements/Button';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
-import useFlash from '@/plugins/useFlash';
 import { deleteServer } from '@/api/admin/servers';
 import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
+import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import useFlash from '@/plugins/useFlash';
 
 const ServerDelete = () => {
     const history = useHistory();
@@ -47,7 +47,8 @@ const ServerDelete = () => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowSafeModal(false)}
             >
-                Are you sure that you want to delete this server? There is no going back, all data will immediately be removed.
+                Are you sure that you want to delete this server? There is no going back, all data will immediately be
+                removed.
             </ConfirmationModal>
 
             <ConfirmationModal
@@ -58,8 +59,8 @@ const ServerDelete = () => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowForceModal(false)}
             >
-                Are you sure that you want to force delete this server? If the daemon reports an error, the deletion will continue anyway.
-                This may leave orphaned files on the node.
+                Are you sure that you want to force delete this server? If the daemon reports an error, the deletion
+                will continue anyway. This may leave orphaned files on the node.
             </ConfirmationModal>
 
             <div css={tw`grid grid-cols-1 md:grid-cols-2 gap-6`}>
@@ -71,12 +72,12 @@ const ServerDelete = () => {
                     </div>
                     <div css={tw`px-6 py-4`}>
                         <p css={tw`text-sm text-neutral-300 mb-3`}>
-                            This action will attempt to delete the server from both the panel and daemon.
-                            If either one reports an error the action will be cancelled.
+                            This action will attempt to delete the server from both the panel and daemon. If either one
+                            reports an error the action will be cancelled.
                         </p>
                         <p css={tw`text-sm text-red-400`}>
-                            Deleting a server is an irreversible action. <strong>All server data</strong> (including files and users)
-                            will be removed from the system.
+                            Deleting a server is an irreversible action. <strong>All server data</strong> (including
+                            files and users) will be removed from the system.
                         </p>
                     </div>
                     <div css={tw`px-6 py-3 flex justify-end`}>
@@ -94,12 +95,13 @@ const ServerDelete = () => {
                     </div>
                     <div css={tw`px-6 py-4`}>
                         <p css={tw`text-sm text-neutral-300 mb-3`}>
-                            This action will attempt to delete the server from both the panel and daemon.
-                            If the daemon does not respond, or reports an error the deletion will continue.
+                            This action will attempt to delete the server from both the panel and daemon. If the daemon
+                            does not respond, or reports an error the deletion will continue.
                         </p>
                         <p css={tw`text-sm text-red-400`}>
-                            Deleting a server is an irreversible action. <strong>All server data</strong> (including files and users)
-                            will be removed from the system. This method may leave dangling files on your daemon if it reports an error.
+                            Deleting a server is an irreversible action. <strong>All server data</strong> (including
+                            files and users) will be removed from the system. This method may leave dangling files on
+                            your daemon if it reports an error.
                         </p>
                     </div>
                     <div css={tw`px-6 py-3 flex justify-end`}>

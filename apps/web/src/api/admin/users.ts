@@ -1,4 +1,4 @@
-import http, { FractalResponseData, getPaginationSet, PaginatedResult } from '@/api/http';
+import http, { type FractalResponseData, getPaginationSet, type PaginatedResult } from '@/api/http';
 
 export interface AdminUser {
     id: number;
@@ -47,7 +47,7 @@ export const getUsers = ({ page, filterEmail }: GetUsersParams = {}): Promise<Pa
                 resolve({
                     items: (data.data || []).map((datum: any) => rawDataToAdminUser(datum)),
                     pagination: getPaginationSet(data.meta.pagination),
-                })
+                }),
             )
             .catch(reject);
     });

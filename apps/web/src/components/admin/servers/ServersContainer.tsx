@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import tw from 'twin.macro';
-import { AdminServer, getServers } from '@/api/admin/servers';
-import { PaginatedResult } from '@/api/http';
-import Spinner from '@/components/elements/Spinner';
-import Pagination from '@/components/elements/Pagination';
-import useFlash from '@/plugins/useFlash';
-import Button from '@/components/elements/Button';
-import AdminLayout from '@/components/admin/AdminLayout';
+import { type AdminServer, getServers } from '@/api/admin/servers';
+import type { PaginatedResult } from '@/api/http';
 import AdminBox from '@/components/admin/AdminBox';
+import AdminLayout from '@/components/admin/AdminLayout';
 import AdminStatusBadge from '@/components/admin/AdminStatusBadge';
-import { AdminTable, AdminTableHead, AdminTableBody, AdminTableHeader, AdminTableRow, AdminTableCell } from '@/components/admin/AdminTable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+    AdminTable,
+    AdminTableBody,
+    AdminTableCell,
+    AdminTableHead,
+    AdminTableHeader,
+    AdminTableRow,
+} from '@/components/admin/AdminTable';
+import Button from '@/components/elements/Button';
+import Pagination from '@/components/elements/Pagination';
+import Spinner from '@/components/elements/Spinner';
+import useFlash from '@/plugins/useFlash';
 
 function getStatusBadge(server: AdminServer) {
     if (server.suspended) {
@@ -28,22 +35,24 @@ function getStatusBadge(server: AdminServer) {
 const ServersContainer = () => {
     const { search } = useLocation();
     const defaultPage = Number(new URLSearchParams(search).get('page') || '1');
-    const [page, setPage] = useState(!isNaN(defaultPage) && defaultPage > 0 ? defaultPage : 1);
+    const [page, setPage] = useState(!Number.isNaN(defaultPage) && defaultPage > 0 ? defaultPage : 1);
     const [searchFilter, setSearchFilter] = useState('');
     const { clearFlashes, clearAndAddHttpError } = useFlash();
 
     const { data: servers, error } = useSWR<PaginatedResult<AdminServer>>(
         ['/api/application/servers', page, searchFilter],
-        () => getServers(
-            { page, filters: searchFilter ? { name: searchFilter } : undefined },
-            ['user', 'node', 'allocations']
-        )
+        () =>
+            getServers({ page, filters: searchFilter ? { name: searchFilter } : undefined }, [
+                'user',
+                'node',
+                'allocations',
+            ]),
     );
 
     useEffect(() => {
         if (!servers) return;
         if (servers.pagination.currentPage > 1 && !servers.items.length) setPage(1);
-    }, [servers?.pagination.currentPage]);
+    }, [servers?.pagination.currentPage, servers]);
 
     useEffect(() => {
         window.history.replaceState(null, document.title, `/admin/servers${page <= 1 ? '' : `?page=${page}`}`);
@@ -52,7 +61,7 @@ const ServersContainer = () => {
     useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'admin:servers', error });
         if (!error) clearFlashes('admin:servers');
-    }, [error]);
+    }, [error, clearFlashes, clearAndAddHttpError]);
 
     const searchTools = (
         <div css={tw`flex items-center gap-2`}>
@@ -60,11 +69,16 @@ const ServersContainer = () => {
                 type={'text'}
                 placeholder={'Search Servers'}
                 value={searchFilter}
-                onChange={(e) => { setSearchFilter(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                    setSearchFilter(e.target.value);
+                    setPage(1);
+                }}
                 css={tw`bg-neutral-600 border border-neutral-500 rounded px-3 py-1.5 text-sm text-neutral-200 outline-none focus:border-primary-400`}
             />
             <Link to={'/admin/servers/new'}>
-                <Button color={'primary'} size={'xsmall'}>Create New</Button>
+                <Button color={'primary'} size={'xsmall'}>
+                    Create New
+                </Button>
             </Link>
         </div>
     );
@@ -74,10 +88,7 @@ const ServersContainer = () => {
             title={'Servers'}
             subtitle={'All servers available on the system.'}
             showFlashKey={'admin:servers'}
-            breadcrumbs={[
-                { label: 'Admin', to: '/admin' },
-                { label: 'Servers' },
-            ]}
+            breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Servers' }]}
         >
             {!servers ? (
                 <Spinner centered size={'large'} />
@@ -104,16 +115,26 @@ const ServersContainer = () => {
                                                 <AdminTableCell>
                                                     <Link to={`/admin/servers/${server.id}`}>{server.name}</Link>
                                                 </AdminTableCell>
-                                                <AdminTableCell><code>{server.identifier}</code></AdminTableCell>
+                                                <AdminTableCell>
+                                                    <code>{server.identifier}</code>
+                                                </AdminTableCell>
                                                 <AdminTableCell>
                                                     {server.user ? (
-                                                        <Link to={`/admin/users/${server.userId}`}>{server.user.username}</Link>
-                                                    ) : `User #${server.userId}`}
+                                                        <Link to={`/admin/users/${server.userId}`}>
+                                                            {server.user.username}
+                                                        </Link>
+                                                    ) : (
+                                                        `User #${server.userId}`
+                                                    )}
                                                 </AdminTableCell>
                                                 <AdminTableCell>
                                                     {server.node ? (
-                                                        <Link to={`/admin/nodes/${server.nodeId}`}>{server.node.name}</Link>
-                                                    ) : `Node #${server.nodeId}`}
+                                                        <Link to={`/admin/nodes/${server.nodeId}`}>
+                                                            {server.node.name}
+                                                        </Link>
+                                                    ) : (
+                                                        `Node #${server.nodeId}`
+                                                    )}
                                                 </AdminTableCell>
                                                 <AdminTableCell>
                                                     <code>

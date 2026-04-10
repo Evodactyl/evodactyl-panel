@@ -1,9 +1,15 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import tw from 'twin.macro';
-import { Node } from '@/api/admin/nodes';
+import type { Node } from '@/api/admin/nodes';
 import AdminBox from '@/components/admin/AdminBox';
-import { AdminTable, AdminTableHead, AdminTableBody, AdminTableHeader, AdminTableRow, AdminTableCell } from '@/components/admin/AdminTable';
+import {
+    AdminTable,
+    AdminTableBody,
+    AdminTableCell,
+    AdminTableHead,
+    AdminTableHeader,
+    AdminTableRow,
+} from '@/components/admin/AdminTable';
 
 interface Props {
     node: Node;
@@ -33,13 +39,19 @@ const NodeServers = ({ node }: Props) => {
                                     </code>
                                 </AdminTableCell>
                                 <AdminTableCell>
-                                    <Link to={`/admin/servers/${server.id}`} css={tw`text-primary-400 hover:text-primary-300`}>
+                                    <Link
+                                        to={`/admin/servers/${server.id}`}
+                                        css={tw`text-primary-400 hover:text-primary-300`}
+                                    >
                                         {server.name}
                                     </Link>
                                 </AdminTableCell>
                                 <AdminTableCell>
                                     {server.owner ? (
-                                        <Link to={`/admin/users/${server.owner.id}`} css={tw`text-primary-400 hover:text-primary-300`}>
+                                        <Link
+                                            to={`/admin/users/${server.owner.id}`}
+                                            css={tw`text-primary-400 hover:text-primary-300`}
+                                        >
                                             {server.owner.username}
                                         </Link>
                                     ) : (
@@ -47,19 +59,18 @@ const NodeServers = ({ node }: Props) => {
                                     )}
                                 </AdminTableCell>
                                 <AdminTableCell>
-                                    {server.nest && server.egg
-                                        ? `${server.nest.name} (${server.egg.name})`
-                                        : <span css={tw`text-neutral-500`}>&mdash;</span>
-                                    }
+                                    {server.nest && server.egg ? (
+                                        `${server.nest.name} (${server.egg.name})`
+                                    ) : (
+                                        <span css={tw`text-neutral-500`}>&mdash;</span>
+                                    )}
                                 </AdminTableCell>
                             </AdminTableRow>
                         ))}
                     </AdminTableBody>
                 </AdminTable>
             ) : (
-                <p css={tw`text-center text-sm text-neutral-400 py-6`}>
-                    There are no servers on this node.
-                </p>
+                <p css={tw`text-center text-sm text-neutral-400 py-6`}>There are no servers on this node.</p>
             )}
         </AdminBox>
     );

@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import getServerSchedules from '@/api/server/schedules/getServerSchedules';
-import { ServerContext } from '@/state/server';
-import Spinner from '@/components/elements/Spinner';
+import { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import ScheduleRow from '@/components/server/schedules/ScheduleRow';
-import { httpErrorToHuman } from '@/api/http';
-import EditScheduleModal from '@/components/server/schedules/EditScheduleModal';
-import Can from '@/components/elements/Can';
-import useFlash from '@/plugins/useFlash';
 import tw from 'twin.macro';
-import GreyRowBox from '@/components/elements/GreyRowBox';
+import { httpErrorToHuman } from '@/api/http';
+import getServerSchedules from '@/api/server/schedules/getServerSchedules';
 import { Button } from '@/components/elements/button/index';
+import Can from '@/components/elements/Can';
+import GreyRowBox from '@/components/elements/GreyRowBox';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import EditScheduleModal from '@/components/server/schedules/EditScheduleModal';
+import ScheduleRow from '@/components/server/schedules/ScheduleRow';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 export default () => {
     const match = useRouteMatch();
@@ -35,7 +35,7 @@ export default () => {
                 console.error(error);
             })
             .then(() => setLoading(false));
-    }, []);
+    }, [uuid, setSchedules, clearFlashes, addError]);
 
     return (
         <ServerContentBlock title={'Schedules'}>

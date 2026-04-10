@@ -1,9 +1,10 @@
-import React, { memo, useCallback } from 'react';
 import { useField } from 'formik';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import type React from 'react';
+import { memo, useCallback } from 'react';
+import isEqual from 'react-fast-compare';
 import tw from 'twin.macro';
 import Input from '@/components/elements/Input';
-import isEqual from 'react-fast-compare';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
 
 interface Props {
     isEditable: boolean;
@@ -23,7 +24,7 @@ const PermissionTitleBox: React.FC<Props> = memo(({ isEditable, title, permissio
                 setValue(value.filter((p) => !permissions.includes(p)));
             }
         },
-        [permissions, value]
+        [permissions, value, setValue],
     );
 
     return (

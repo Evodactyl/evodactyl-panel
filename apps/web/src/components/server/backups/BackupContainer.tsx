@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Spinner from '@/components/elements/Spinner';
-import useFlash from '@/plugins/useFlash';
-import Can from '@/components/elements/Can';
-import CreateBackupButton from '@/components/server/backups/CreateBackupButton';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import BackupRow from '@/components/server/backups/BackupRow';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import getServerBackups, { Context as ServerBackupContext } from '@/api/swr/getServerBackups';
-import { ServerContext } from '@/state/server';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Can from '@/components/elements/Can';
 import Pagination from '@/components/elements/Pagination';
+import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import BackupRow from '@/components/server/backups/BackupRow';
+import CreateBackupButton from '@/components/server/backups/CreateBackupButton';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const BackupContainer = () => {
     const { page, setPage } = useContext(ServerBackupContext);
@@ -26,7 +26,7 @@ const BackupContainer = () => {
         }
 
         clearAndAddHttpError({ error, key: 'backups' });
-    }, [error]);
+    }, [error, clearFlashes, clearAndAddHttpError]);
 
     if (!backups || (error && isValidating)) {
         return <Spinner size={'large'} centered />;

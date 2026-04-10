@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import { store } from '@/state';
 
 const http: AxiosInstance = axios.create({
@@ -31,7 +31,7 @@ http.interceptors.response.use(
         store.getActions().progress.setComplete();
 
         throw error;
-    }
+    },
 );
 
 export default http;
@@ -41,7 +41,7 @@ export default http;
  * make sure we display the message from the server back to the user if we can.
  */
 export function httpErrorToHuman(error: any): string {
-    if (error.response && error.response.data) {
+    if (error.response?.data) {
         let { data } = error.response;
 
         // Some non-JSON requests can still return the error as a JSON block. In those cases, attempt
@@ -49,12 +49,12 @@ export function httpErrorToHuman(error: any): string {
         if (typeof data === 'string') {
             try {
                 data = JSON.parse(data);
-            } catch (e) {
+            } catch (_e) {
                 // do nothing, bad json
             }
         }
 
-        if (data.errors && data.errors[0] && data.errors[0].detail) {
+        if (data.errors?.[0]?.detail) {
             return data.errors[0].detail;
         }
 
@@ -137,11 +137,14 @@ export interface QueryBuilderParams<FilterKeys extends string = string, SortKeys
 export const withQueryBuilderParams = (data?: QueryBuilderParams): Record<string, unknown> => {
     if (!data) return {};
 
-    const filters = Object.keys(data.filters || {}).reduce((obj, key) => {
-        const value = data.filters?.[key];
+    const filters = Object.keys(data.filters || {}).reduce(
+        (obj, key) => {
+            const value = data.filters?.[key];
 
-        return !value || value === '' ? obj : { ...obj, [`filter[${key}]`]: value };
-    }, {} as NonNullable<QueryBuilderParams['filters']>);
+            return !value || value === '' ? obj : { ...obj, [`filter[${key}]`]: value };
+        },
+        {} as NonNullable<QueryBuilderParams['filters']>,
+    );
 
     const sorts = Object.keys(data.sorts || {}).reduce((arr, key) => {
         const value = data.sorts?.[key];

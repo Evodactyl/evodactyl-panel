@@ -1,8 +1,8 @@
-import classNames from 'classnames';
-import styles from '@/components/elements/dropdown/style.module.css';
-import { ChevronDownIcon } from '@heroicons/react/solid';
 import { Menu } from '@headlessui/react';
-import React from 'react';
+import { ChevronDownIcon } from '@heroicons/react/solid';
+import classNames from 'classnames';
+import type React from 'react';
+import styles from '@/components/elements/dropdown/style.module.css';
 
 interface Props {
     className?: string;

@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
+import type { NextFunction, Request, Response } from 'express';
+import { ValidationException } from '../../../errors/index.js';
 import { prisma } from '../../../prisma/client.js';
 import { fractal } from '../../../serializers/fractal.js';
-import { UserSSHKeyTransformer } from '../../../transformers/client/userSSHKeyTransformer.js';
 import { activityFromRequest } from '../../../services/activity/activityLogService.js';
-import { ValidationException } from '../../../errors/index.js';
+import { UserSSHKeyTransformer } from '../../../transformers/client/userSSHKeyTransformer.js';
 
 /**
  * Client SSH Key Controller.
@@ -16,10 +16,10 @@ import { ValidationException } from '../../../errors/index.js';
  * Uses SHA256 hash of the base64-decoded key data.
  */
 function computeFingerprint(publicKey: string): string {
-  const parts = publicKey.trim().split(/\s+/);
-  const keyData = parts.length >= 2 ? parts[1] : parts[0];
-  const hash = crypto.createHash('sha256').update(Buffer.from(keyData, 'base64')).digest('base64');
-  return `SHA256:${hash.replace(/=+$/, '')}`;
+    const parts = publicKey.trim().split(/\s+/);
+    const keyData = parts.length >= 2 ? parts[1] : parts[0];
+    const hash = crypto.createHash('sha256').update(Buffer.from(keyData, 'base64')).digest('base64');
+    return `SHA256:${hash.replace(/=+$/, '')}`;
 }
 
 /**
@@ -27,25 +27,22 @@ function computeFingerprint(publicKey: string): string {
  * Return all SSH keys for the authenticated user.
  */
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
+    try {
+        const user = (req as any).user;
 
-    const keys = await prisma.user_ssh_keys.findMany({
-      where: { user_id: user.id, deleted_at: null },
-    });
+        const keys = await prisma.user_ssh_keys.findMany({
+            where: { user_id: user.id, deleted_at: null },
+        });
 
-    const transformer = new UserSSHKeyTransformer();
-    transformer.setRequest(req);
+        const transformer = new UserSSHKeyTransformer();
+        transformer.setRequest(req);
 
-    const response = await fractal(req)
-      .collection(keys)
-      .transformWith(transformer)
-      .toArray();
+        const response = await fractal(req).collection(keys).transformWith(transformer).toArray();
 
-    res.json(response);
-  } catch (err) {
-    next(err);
-  }
+        res.json(response);
+    } catch (err) {
+        next(err);
+    }
 }
 
 /**
@@ -53,52 +50,46 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * Store a new SSH key for the authenticated user.
  */
 export async function store(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
-    const { name, public_key } = req.body;
+    try {
+        const user = (req as any).user;
+        const { name, public_key } = req.body;
 
-    if (!name || typeof name !== 'string') {
-      throw new ValidationException([
-        { sourceField: 'name', rule: 'required', detail: 'The name field is required.' },
-      ]);
+        if (!name || typeof name !== 'string') {
+            throw new ValidationException([
+                { sourceField: 'name', rule: 'required', detail: 'The name field is required.' },
+            ]);
+        }
+
+        if (!public_key || typeof public_key !== 'string') {
+            throw new ValidationException([
+                { sourceField: 'public_key', rule: 'required', detail: 'The public key field is required.' },
+            ]);
+        }
+
+        const fingerprint = computeFingerprint(public_key);
+
+        const model = await prisma.user_ssh_keys.create({
+            data: {
+                user_id: user.id,
+                name,
+                public_key: public_key.trim(),
+                fingerprint,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+
+        await activityFromRequest(req).event('user:ssh-key.create').property('fingerprint', fingerprint).log();
+
+        const transformer = new UserSSHKeyTransformer();
+        transformer.setRequest(req);
+
+        const response = await fractal(req).item(model).transformWith(transformer).toArray();
+
+        res.json(response);
+    } catch (err) {
+        next(err);
     }
-
-    if (!public_key || typeof public_key !== 'string') {
-      throw new ValidationException([
-        { sourceField: 'public_key', rule: 'required', detail: 'The public key field is required.' },
-      ]);
-    }
-
-    const fingerprint = computeFingerprint(public_key);
-
-    const model = await prisma.user_ssh_keys.create({
-      data: {
-        user_id: user.id,
-        name,
-        public_key: public_key.trim(),
-        fingerprint,
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    });
-
-    await activityFromRequest(req)
-      .event('user:ssh-key.create')
-      .property('fingerprint', fingerprint)
-      .log();
-
-    const transformer = new UserSSHKeyTransformer();
-    transformer.setRequest(req);
-
-    const response = await fractal(req)
-      .item(model)
-      .transformWith(transformer)
-      .toArray();
-
-    res.json(response);
-  } catch (err) {
-    next(err);
-  }
 }
 
 /**
@@ -106,37 +97,34 @@ export async function store(req: Request, res: Response, next: NextFunction): Pr
  * Delete an SSH key from the authenticated user's account.
  */
 export async function destroy(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
-    const { fingerprint } = req.body;
+    try {
+        const user = (req as any).user;
+        const { fingerprint } = req.body;
 
-    if (!fingerprint || typeof fingerprint !== 'string') {
-      throw new ValidationException([
-        { sourceField: 'fingerprint', rule: 'required', detail: 'The fingerprint field is required.' },
-      ]);
+        if (!fingerprint || typeof fingerprint !== 'string') {
+            throw new ValidationException([
+                { sourceField: 'fingerprint', rule: 'required', detail: 'The fingerprint field is required.' },
+            ]);
+        }
+
+        const key = await prisma.user_ssh_keys.findFirst({
+            where: {
+                user_id: user.id,
+                fingerprint,
+            },
+        });
+
+        if (key) {
+            await prisma.user_ssh_keys.update({
+                where: { id: key.id },
+                data: { deleted_at: new Date() },
+            });
+
+            await activityFromRequest(req).event('user:ssh-key.delete').property('fingerprint', key.fingerprint).log();
+        }
+
+        res.status(204).send();
+    } catch (err) {
+        next(err);
     }
-
-    const key = await prisma.user_ssh_keys.findFirst({
-      where: {
-        user_id: user.id,
-        fingerprint,
-      },
-    });
-
-    if (key) {
-      await prisma.user_ssh_keys.update({
-        where: { id: key.id },
-        data: { deleted_at: new Date() },
-      });
-
-      await activityFromRequest(req)
-        .event('user:ssh-key.delete')
-        .property('fingerprint', key.fingerprint)
-        .log();
-    }
-
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
 }

@@ -1,130 +1,124 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { prisma } from '../../../prisma/client.js';
 import { fractal } from '../../../serializers/fractal.js';
-import { ServerDatabaseTransformer } from '../../../transformers/application/serverDatabaseTransformer.js';
-import { createDatabase, generateUniqueDatabaseName, deleteDatabase } from '../../../services/databases/databaseManagementService.js';
+import {
+    createDatabase,
+    deleteDatabase,
+    generateUniqueDatabaseName,
+} from '../../../services/databases/databaseManagementService.js';
 import { rotatePassword } from '../../../services/databases/databasePasswordService.js';
+import { ServerDatabaseTransformer } from '../../../transformers/application/serverDatabaseTransformer.js';
 import { createServerDatabaseSchema } from '../../../validation/schemas/database.js';
-import { DisplayException } from '../../../errors/index.js';
 
 /**
  * Application API Database Controller (server databases).
  * Mirrors app/Http/Controllers/Api/Application/Servers/DatabaseController.php
  */
 export const databaseController = {
-  /**
-   * Return all databases for a server.
-   * GET /api/application/servers/:serverId/databases
-   */
-  async index(req: Request, res: Response): Promise<void> {
-    const serverId = parseInt(req.params.serverId);
+    /**
+     * Return all databases for a server.
+     * GET /api/application/servers/:serverId/databases
+     */
+    async index(req: Request, res: Response): Promise<void> {
+        const serverId = parseInt(req.params.serverId, 10);
 
-    const server = await prisma.servers.findUniqueOrThrow({
-      where: { id: serverId },
-    });
+        const server = await prisma.servers.findUniqueOrThrow({
+            where: { id: serverId },
+        });
 
-    const databases = await prisma.databases.findMany({
-      where: { server_id: server.id },
-      orderBy: { id: 'asc' },
-    });
+        const databases = await prisma.databases.findMany({
+            where: { server_id: server.id },
+            orderBy: { id: 'asc' },
+        });
 
-    const transformer = ServerDatabaseTransformer.fromRequest(req);
-    const response = await fractal(req)
-      .collection(databases)
-      .transformWith(transformer)
-      .toArray();
+        const transformer = ServerDatabaseTransformer.fromRequest(req);
+        const response = await fractal(req).collection(databases).transformWith(transformer).toArray();
 
-    res.json(response);
-  },
+        res.json(response);
+    },
 
-  /**
-   * Return a single server database.
-   * GET /api/application/servers/:serverId/databases/:databaseId
-   */
-  async view(req: Request, res: Response): Promise<void> {
-    const serverId = parseInt(req.params.serverId);
-    const databaseId = parseInt(req.params.databaseId);
+    /**
+     * Return a single server database.
+     * GET /api/application/servers/:serverId/databases/:databaseId
+     */
+    async view(req: Request, res: Response): Promise<void> {
+        const serverId = parseInt(req.params.serverId, 10);
+        const databaseId = parseInt(req.params.databaseId, 10);
 
-    await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
+        await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
 
-    const database = await prisma.databases.findFirstOrThrow({
-      where: { id: databaseId, server_id: serverId },
-    });
+        const database = await prisma.databases.findFirstOrThrow({
+            where: { id: databaseId, server_id: serverId },
+        });
 
-    const transformer = ServerDatabaseTransformer.fromRequest(req);
-    const response = await fractal(req)
-      .item(database)
-      .transformWith(transformer)
-      .toArray();
+        const transformer = ServerDatabaseTransformer.fromRequest(req);
+        const response = await fractal(req).item(database).transformWith(transformer).toArray();
 
-    res.json(response);
-  },
+        res.json(response);
+    },
 
-  /**
-   * Create a new database for a server.
-   * POST /api/application/servers/:serverId/databases
-   */
-  async store(req: Request, res: Response): Promise<void> {
-    const serverId = parseInt(req.params.serverId);
-    const server = await prisma.servers.findUniqueOrThrow({
-      where: { id: serverId },
-    });
+    /**
+     * Create a new database for a server.
+     * POST /api/application/servers/:serverId/databases
+     */
+    async store(req: Request, res: Response): Promise<void> {
+        const serverId = parseInt(req.params.serverId, 10);
+        const server = await prisma.servers.findUniqueOrThrow({
+            where: { id: serverId },
+        });
 
-    const validated = createServerDatabaseSchema.parse(req.body);
+        const validated = createServerDatabaseSchema.parse(req.body);
 
-    const database = await createDatabase(
-      server,
-      {
-        ...validated,
-        database: generateUniqueDatabaseName(validated.database, server.id),
-      },
-      { validateDatabaseLimit: false }
-    );
+        const database = await createDatabase(
+            server,
+            {
+                ...validated,
+                database: generateUniqueDatabaseName(validated.database, server.id),
+            },
+            { validateDatabaseLimit: false },
+        );
 
-    const transformer = ServerDatabaseTransformer.fromRequest(req);
-    const response = await fractal(req)
-      .item(database)
-      .transformWith(transformer)
-      .toArray();
+        const transformer = ServerDatabaseTransformer.fromRequest(req);
+        const response = await fractal(req).item(database).transformWith(transformer).toArray();
 
-    res.status(201).json(response);
-  },
+        res.status(201).json(response);
+    },
 
-  /**
-   * Reset the password for a server database.
-   * POST /api/application/servers/:serverId/databases/:databaseId/reset-password
-   */
-  async resetPassword(req: Request, res: Response): Promise<void> {
-    const serverId = parseInt(req.params.serverId);
-    const databaseId = parseInt(req.params.databaseId);
+    /**
+     * Reset the password for a server database.
+     * POST /api/application/servers/:serverId/databases/:databaseId/reset-password
+     */
+    async resetPassword(req: Request, res: Response): Promise<void> {
+        const serverId = parseInt(req.params.serverId, 10);
+        const databaseId = parseInt(req.params.databaseId, 10);
 
-    await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
+        await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
 
-    const database = await prisma.databases.findFirstOrThrow({
-      where: { id: databaseId, server_id: serverId },
-    });
+        const database = await prisma.databases.findFirstOrThrow({
+            where: { id: databaseId, server_id: serverId },
+        });
 
-    await rotatePassword(database);
+        await rotatePassword(database);
 
-    res.status(204).send();
-  },
+        res.status(204).send();
+    },
 
-  /**
-   * Delete a server database.
-   * DELETE /api/application/servers/:serverId/databases/:databaseId
-   */
-  async delete(req: Request, res: Response): Promise<void> {
-    const serverId = parseInt(req.params.serverId);
-    const databaseId = parseInt(req.params.databaseId);
+    /**
+     * Delete a server database.
+     * DELETE /api/application/servers/:serverId/databases/:databaseId
+     */
+    async delete(req: Request, res: Response): Promise<void> {
+        const serverId = parseInt(req.params.serverId, 10);
+        const databaseId = parseInt(req.params.databaseId, 10);
 
-    await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
+        await prisma.servers.findUniqueOrThrow({ where: { id: serverId } });
 
-    const database = await prisma.databases.findFirstOrThrow({
-      where: { id: databaseId, server_id: serverId },
-    });
+        const database = await prisma.databases.findFirstOrThrow({
+            where: { id: databaseId, server_id: serverId },
+        });
 
-    await deleteDatabase(database);
+        await deleteDatabase(database);
 
-    res.status(204).send();
-  },
+        res.status(204).send();
+    },
 };

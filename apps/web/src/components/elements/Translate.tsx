@@ -1,5 +1,4 @@
-import React from 'react';
-import { Trans, TransSelectorProps, useTranslation } from 'react-i18next';
+import { Trans, type TransSelectorProps, useTranslation } from 'react-i18next';
 
 type Props = Omit<TransSelectorProps<any, any>, 't'>;
 

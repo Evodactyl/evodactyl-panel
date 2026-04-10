@@ -1,13 +1,13 @@
+import { type Actions, type State, useStoreActions, useStoreState } from 'easy-peasy';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import React from 'react';
-import { Actions, State, useStoreActions, useStoreState } from 'easy-peasy';
-import { Form, Formik, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import Field from '@/components/elements/Field';
-import { httpErrorToHuman } from '@/api/http';
-import { ApplicationStore } from '@/state';
 import tw from 'twin.macro';
+import * as Yup from 'yup';
+import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/elements/button/index';
+import Field from '@/components/elements/Field';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import type { ApplicationStore } from '@/state';
 
 interface Values {
     email: string;
@@ -34,7 +34,7 @@ export default () => {
                     type: 'success',
                     key: 'account:email',
                     message: 'Your primary email has been updated.',
-                })
+                }),
             )
             .catch((error) =>
                 addFlash({
@@ -42,7 +42,7 @@ export default () => {
                     key: 'account:email',
                     title: 'Error',
                     message: httpErrorToHuman(error),
-                })
+                }),
             )
             .then(() => {
                 resetForm();

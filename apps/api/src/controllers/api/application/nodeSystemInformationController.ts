@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+import { DaemonConnectionException } from '../../../errors/index.js';
 import { prisma } from '../../../prisma/client.js';
 import { DaemonConfigurationRepository } from '../../../repositories/wings/daemonConfigurationRepository.js';
-import { DaemonConnectionException } from '../../../errors/index.js';
 
 /**
  * Returns system information from the Wings daemon for a given node.
@@ -10,36 +10,36 @@ import { DaemonConnectionException } from '../../../errors/index.js';
  * Mirrors app/Http/Controllers/Admin/Nodes/SystemInformationController.php
  */
 export const getSystemInformation = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const nodeId = parseInt(req.params.id as string, 10);
-    const node = await prisma.nodes.findUnique({ where: { id: nodeId } });
+    try {
+        const nodeId = parseInt(req.params.id as string, 10);
+        const node = await prisma.nodes.findUnique({ where: { id: nodeId } });
 
-    if (!node) {
-      return res.status(404).json({ error: 'Node not found.' });
+        if (!node) {
+            return res.status(404).json({ error: 'Node not found.' });
+        }
+
+        const repository = new DaemonConfigurationRepository();
+        repository.setNode(node);
+
+        const data = await repository.getSystemInformation();
+
+        res.json({
+            version: data.version ?? '',
+            system: {
+                type: capitalize(data.os ?? 'Unknown'),
+                arch: data.architecture ?? '--',
+                release: data.kernel_version ?? '--',
+                cpus: data.cpu_count ?? 0,
+            },
+        });
+    } catch (err) {
+        if (err instanceof DaemonConnectionException) {
+            return res.status(502).json({ error: 'Unable to connect to the daemon.' });
+        }
+        next(err);
     }
-
-    const repository = new DaemonConfigurationRepository();
-    repository.setNode(node);
-
-    const data = await repository.getSystemInformation();
-
-    res.json({
-      version: data.version ?? '',
-      system: {
-        type: capitalize(data.os ?? 'Unknown'),
-        arch: data.architecture ?? '--',
-        release: data.kernel_version ?? '--',
-        cpus: data.cpu_count ?? 0,
-      },
-    });
-  } catch (err) {
-    if (err instanceof DaemonConnectionException) {
-      return res.status(502).json({ error: 'Unable to connect to the daemon.' });
-    }
-    next(err);
-  }
 };
 
 function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }

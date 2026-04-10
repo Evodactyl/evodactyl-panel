@@ -1,19 +1,18 @@
-import React from 'react';
-import { ServerContext } from '@/state/server';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions } from 'easy-peasy';
-import renameServer from '@/api/server/renameServer';
-import Field from '@/components/elements/Field';
-import { object, string } from 'yup';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ApplicationStore } from '@/state';
-import { httpErrorToHuman } from '@/api/http';
-import { Button } from '@/components/elements/button/index';
+import { type Actions, useStoreActions } from 'easy-peasy';
+import { Form, Formik, Field as FormikField, type FormikHelpers, useFormikContext } from 'formik';
 import tw from 'twin.macro';
-import Label from '@/components/elements/Label';
+import { object, string } from 'yup';
+import { httpErrorToHuman } from '@/api/http';
+import renameServer from '@/api/server/renameServer';
+import { Button } from '@/components/elements/button/index';
+import Field from '@/components/elements/Field';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import { Textarea } from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import type { ApplicationStore } from '@/state';
+import { ServerContext } from '@/state/server';
 
 interface Values {
     name: string;

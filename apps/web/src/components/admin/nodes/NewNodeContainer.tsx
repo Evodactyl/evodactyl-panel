@@ -1,20 +1,18 @@
-import React from 'react';
+import { type FieldProps, Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
 import { useHistory } from 'react-router-dom';
-import { Form, Formik, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import tw from 'twin.macro';
 import useSWR from 'swr';
+import tw from 'twin.macro';
+import * as Yup from 'yup';
+import { type AdminLocation, getLocations } from '@/api/admin/locations';
 import { createNode } from '@/api/admin/nodes';
-import { getLocations, AdminLocation } from '@/api/admin/locations';
 import AdminLayout from '@/components/admin/AdminLayout';
-import Field from '@/components/elements/Field';
 import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import useFlash from '@/plugins/useFlash';
-import { Field as FormikField, FieldProps } from 'formik';
 
 interface Values {
     name: string;
@@ -86,7 +84,16 @@ const NewNodeContainer = () => {
     };
 
     return (
-        <AdminLayout title={'Create Node'} subtitle={'Add a new node to the panel.'} showFlashKey={'admin:nodes:new'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Nodes', to: '/admin/nodes' }, { label: 'New Node' }]}>
+        <AdminLayout
+            title={'Create Node'}
+            subtitle={'Add a new node to the panel.'}
+            showFlashKey={'admin:nodes:new'}
+            breadcrumbs={[
+                { label: 'Admin', to: '/admin' },
+                { label: 'Nodes', to: '/admin/nodes' },
+                { label: 'New Node' },
+            ]}
+        >
             <Formik<Values>
                 initialValues={{
                     name: '',
@@ -127,7 +134,9 @@ const NewNodeContainer = () => {
                                                 <Label>Location</Label>
                                                 <Select
                                                     {...field}
-                                                    onChange={(e) => form.setFieldValue('locationId', Number(e.target.value))}
+                                                    onChange={(e) =>
+                                                        form.setFieldValue('locationId', Number(e.target.value))
+                                                    }
                                                 >
                                                     <option value={0}>Select a location...</option>
                                                     {locations?.map((loc) => (
@@ -141,10 +150,22 @@ const NewNodeContainer = () => {
                                     </FormikField>
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <Field name={'fqdn'} label={'FQDN'} description={'The fully qualified domain name or IP used to connect to this node.'} />
+                                    <Field
+                                        name={'fqdn'}
+                                        label={'FQDN'}
+                                        description={
+                                            'The fully qualified domain name or IP used to connect to this node.'
+                                        }
+                                    />
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <FormikSwitch name={'behindProxy'} label={'Behind Proxy'} description={'If running behind a proxy such as Cloudflare, select this to skip SSL certificate verification.'} />
+                                    <FormikSwitch
+                                        name={'behindProxy'}
+                                        label={'Behind Proxy'}
+                                        description={
+                                            'If running behind a proxy such as Cloudflare, select this to skip SSL certificate verification.'
+                                        }
+                                    />
                                 </div>
                             </div>
 
@@ -168,21 +189,40 @@ const NewNodeContainer = () => {
                                 </div>
                                 <div css={tw`grid grid-cols-2 gap-4 mb-4`}>
                                     <Field name={'memory'} label={'Memory (MB)'} type={'number'} />
-                                    <Field name={'memoryOverallocate'} label={'Memory Over-Allocate (%)'} type={'number'} description={'-1 to disable checking.'} />
+                                    <Field
+                                        name={'memoryOverallocate'}
+                                        label={'Memory Over-Allocate (%)'}
+                                        type={'number'}
+                                        description={'-1 to disable checking.'}
+                                    />
                                 </div>
                                 <div css={tw`grid grid-cols-2 gap-4 mb-4`}>
                                     <Field name={'disk'} label={'Disk (MB)'} type={'number'} />
-                                    <Field name={'diskOverallocate'} label={'Disk Over-Allocate (%)'} type={'number'} description={'-1 to disable checking.'} />
+                                    <Field
+                                        name={'diskOverallocate'}
+                                        label={'Disk Over-Allocate (%)'}
+                                        type={'number'}
+                                        description={'-1 to disable checking.'}
+                                    />
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <Field name={'uploadSize'} label={'Upload Size (MB)'} type={'number'} description={'Max upload file size via web file manager.'} />
+                                    <Field
+                                        name={'uploadSize'}
+                                        label={'Upload Size (MB)'}
+                                        type={'number'}
+                                        description={'Max upload file size via web file manager.'}
+                                    />
                                 </div>
                                 <div css={tw`grid grid-cols-2 gap-4 mb-4`}>
                                     <Field name={'daemonListen'} label={'Daemon Port'} type={'number'} />
                                     <Field name={'daemonSftp'} label={'SFTP Port'} type={'number'} />
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <Field name={'daemonBase'} label={'Data Directory'} description={'The directory where server files will be stored.'} />
+                                    <Field
+                                        name={'daemonBase'}
+                                        label={'Data Directory'}
+                                        description={'The directory where server files will be stored.'}
+                                    />
                                 </div>
                             </div>
                         </div>

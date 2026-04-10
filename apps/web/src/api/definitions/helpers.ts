@@ -1,11 +1,11 @@
+import type { Model } from '@definitions/index';
 import {
-    FractalPaginatedResponse,
-    FractalResponseData,
-    FractalResponseList,
+    type FractalPaginatedResponse,
+    type FractalResponseData,
+    type FractalResponseList,
     getPaginationSet,
-    PaginatedResult,
+    type PaginatedResult,
 } from '@/api/http';
-import { Model } from '@definitions/index';
 
 type TransformerFunc<T> = (callback: FractalResponseData) => T;
 
@@ -15,17 +15,17 @@ function transform<T, M>(data: null | undefined, transformer: TransformerFunc<T>
 function transform<T, M>(
     data: FractalResponseData | null | undefined,
     transformer: TransformerFunc<T>,
-    missing?: M
+    missing?: M,
 ): T | M;
 function transform<T, M>(
     data: FractalResponseList | FractalPaginatedResponse | null | undefined,
     transformer: TransformerFunc<T>,
-    missing?: M
+    missing?: M,
 ): T[] | M;
 function transform<T>(
     data: FractalResponseData | FractalResponseList | FractalPaginatedResponse | null | undefined,
     transformer: TransformerFunc<T>,
-    missing = undefined
+    missing = undefined,
 ) {
     if (data === undefined || data === null) {
         return missing;
@@ -35,7 +35,7 @@ function transform<T>(
         return data.data.map(transformer);
     }
 
-    if (!data || !data.attributes || data.object === 'null_resource') {
+    if (!data?.attributes || data.object === 'null_resource') {
         return missing;
     }
 
@@ -44,7 +44,7 @@ function transform<T>(
 
 function toPaginatedSet<T extends TransformerFunc<Model>>(
     response: FractalPaginatedResponse,
-    transformer: T
+    transformer: T,
 ): PaginatedResult<ReturnType<T>> {
     return {
         items: transform(response, transformer) as ReturnType<T>[],
@@ -52,4 +52,4 @@ function toPaginatedSet<T extends TransformerFunc<Model>>(
     };
 }
 
-export { transform, toPaginatedSet };
+export { toPaginatedSet, transform };

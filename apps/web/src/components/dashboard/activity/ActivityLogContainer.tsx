@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityLogFilters, useActivityLogs } from '@/api/account/activity';
-import { useFlashKey } from '@/plugins/useFlash';
-import PageContentBlock from '@/components/elements/PageContentBlock';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { Link } from 'react-router-dom';
-import PaginationFooter from '@/components/elements/table/PaginationFooter';
 import { DesktopComputerIcon, XCircleIcon } from '@heroicons/react/solid';
-import Spinner from '@/components/elements/Spinner';
-import { styles as btnStyles } from '@/components/elements/button/index';
 import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { type ActivityLogFilters, useActivityLogs } from '@/api/account/activity';
 import ActivityLogEntry from '@/components/elements/activity/ActivityLogEntry';
+import { styles as btnStyles } from '@/components/elements/button/index';
+import PageContentBlock from '@/components/elements/PageContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import PaginationFooter from '@/components/elements/table/PaginationFooter';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { useFlashKey } from '@/plugins/useFlash';
 import useLocationHash from '@/plugins/useLocationHash';
 
 export default () => {
@@ -28,7 +28,7 @@ export default () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     return (
         <PageContentBlock title={'Account Activity Log'}>

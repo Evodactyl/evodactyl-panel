@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Formik, FormikHelpers, Field as FormikField } from 'formik';
-import { object, string, number } from 'yup';
+import { Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import { number, object, string } from 'yup';
+import { type AdminEgg, type AdminNest, getNests, updateServerStartup } from '@/api/admin/servers';
+import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
+import Button from '@/components/elements/Button';
 import Field from '@/components/elements/Field';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
-import Button from '@/components/elements/Button';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Spinner from '@/components/elements/Spinner';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import { updateServerStartup, getNests, AdminNest, AdminEgg } from '@/api/admin/servers';
-import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 
 interface Values {
     startupCommand: string;
@@ -51,13 +51,9 @@ const ServerStartupEdit = () => {
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:startup', error }))
             .finally(() => setLoading(false));
-    }, []);
+    }, [server.eggId, clearAndAddHttpError]);
 
-    const handleEggChange = (
-        nestId: number,
-        eggId: number,
-        setFieldValue: (field: string, value: any) => void
-    ) => {
+    const handleEggChange = (nestId: number, eggId: number, setFieldValue: (field: string, value: any) => void) => {
         const nest = nests.find((n) => n.id === nestId);
         const egg = nest?.eggs.find((e) => e.id === eggId) || null;
         setSelectedEgg(egg);
@@ -87,7 +83,11 @@ const ServerStartupEdit = () => {
         })
             .then((updatedServer) => {
                 setServer({ ...server, ...updatedServer });
-                addFlash({ key: 'admin:server:startup', type: 'success', message: 'Server startup configuration has been updated.' });
+                addFlash({
+                    key: 'admin:server:startup',
+                    type: 'success',
+                    message: 'Server startup configuration has been updated.',
+                });
             })
             .catch((error) => {
                 console.error(error);
@@ -97,9 +97,7 @@ const ServerStartupEdit = () => {
     };
 
     if (loading) {
-        return (
-            <Spinner centered size={'large'} />
-        );
+        return <Spinner centered size={'large'} />;
     }
 
     return (
@@ -215,7 +213,9 @@ const ServerStartupEdit = () => {
                                                     placeholder={variable.defaultValue}
                                                 />
                                                 {variable.description && (
-                                                    <p css={tw`text-xs text-neutral-400 mt-1`}>{variable.description}</p>
+                                                    <p css={tw`text-xs text-neutral-400 mt-1`}>
+                                                        {variable.description}
+                                                    </p>
                                                 )}
                                             </div>
                                         ))}

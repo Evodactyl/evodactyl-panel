@@ -1,12 +1,11 @@
-import React from 'react';
-import AdminLayout from '@/components/admin/AdminLayout';
-import AdminBox from '@/components/admin/AdminBox';
-import tw from 'twin.macro';
-import styled from 'styled-components';
+import { faMapMarkerAlt, faNetworkWired, faServer, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faServer, faUsers, faMapMarkerAlt, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 import useSWR from 'swr';
+import tw from 'twin.macro';
 import http from '@/api/http';
+import AdminBox from '@/components/admin/AdminBox';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 const StatBox = styled.div<{ $bg: string }>`
     ${tw`rounded shadow-md p-5 flex items-center justify-between`};
@@ -26,7 +25,8 @@ const StatLabel = styled.div`
 `;
 
 const fetchCount = (url: string): Promise<number> =>
-    http.get(url, { params: { per_page: 1 } })
+    http
+        .get(url, { params: { per_page: 1 } })
         .then(({ data }) => data.meta?.pagination?.total ?? data.data?.length ?? 0)
         .catch(() => 0);
 
@@ -44,10 +44,7 @@ export default () => {
         <AdminLayout
             title={'Administration'}
             subtitle={'Quick overview of your system.'}
-            breadcrumbs={[
-                { label: 'Admin', to: '/admin' },
-                { label: 'Overview' },
-            ]}
+            breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Overview' }]}
         >
             <div css={tw`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6`}>
                 <StatBox $bg={'#00a65a'}>
@@ -55,28 +52,36 @@ export default () => {
                         <StatValue>{serverCount ?? 0}</StatValue>
                         <StatLabel>Servers</StatLabel>
                     </div>
-                    <StatIcon><FontAwesomeIcon icon={faServer} /></StatIcon>
+                    <StatIcon>
+                        <FontAwesomeIcon icon={faServer} />
+                    </StatIcon>
                 </StatBox>
                 <StatBox $bg={'#0073b7'}>
                     <div>
                         <StatValue>{userCount ?? 0}</StatValue>
                         <StatLabel>Users</StatLabel>
                     </div>
-                    <StatIcon><FontAwesomeIcon icon={faUsers} /></StatIcon>
+                    <StatIcon>
+                        <FontAwesomeIcon icon={faUsers} />
+                    </StatIcon>
                 </StatBox>
                 <StatBox $bg={'#f39c12'}>
                     <div>
                         <StatValue>{locationCount ?? 0}</StatValue>
                         <StatLabel>Locations</StatLabel>
                     </div>
-                    <StatIcon><FontAwesomeIcon icon={faMapMarkerAlt} /></StatIcon>
+                    <StatIcon>
+                        <FontAwesomeIcon icon={faMapMarkerAlt} />
+                    </StatIcon>
                 </StatBox>
                 <StatBox $bg={'#dd4b39'}>
                     <div>
                         <StatValue>{nodeCount ?? 0}</StatValue>
                         <StatLabel>Nodes</StatLabel>
                     </div>
-                    <StatIcon><FontAwesomeIcon icon={faNetworkWired} /></StatIcon>
+                    <StatIcon>
+                        <FontAwesomeIcon icon={faNetworkWired} />
+                    </StatIcon>
                 </StatBox>
             </div>
 

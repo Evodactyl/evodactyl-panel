@@ -1,4 +1,4 @@
-import { action, Action } from 'easy-peasy';
+import { type Action, action } from 'easy-peasy';
 import { cleanDirectoryPath } from '@/helpers';
 
 export interface FileUploadData {
@@ -46,7 +46,9 @@ const files: ServerFileStore = {
     }),
 
     clearFileUploads: action((state) => {
-        Object.values(state.uploads).forEach((upload) => upload.abort.abort());
+        for (const upload of Object.values(state.uploads)) {
+            upload.abort.abort();
+        }
 
         state.uploads = {};
     }),

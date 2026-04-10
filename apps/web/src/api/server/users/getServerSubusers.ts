@@ -1,5 +1,5 @@
-import http, { FractalResponseData } from '@/api/http';
-import { Subuser } from '@/state/server/subusers';
+import http, { type FractalResponseData } from '@/api/http';
+import type { Subuser } from '@/state/server/subusers';
 
 export const rawDataToServerSubuser = (data: FractalResponseData): Subuser => ({
     uuid: data.attributes.uuid,

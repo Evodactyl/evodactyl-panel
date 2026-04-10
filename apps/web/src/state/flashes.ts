@@ -1,13 +1,13 @@
-import { Action, action } from 'easy-peasy';
-import { FlashMessageType } from '@/components/MessageBox';
+import { type Action, action } from 'easy-peasy';
 import { httpErrorToHuman } from '@/api/http';
+import type { FlashMessageType } from '@/components/MessageBox';
 
 export interface FlashStore {
     items: FlashMessage[];
     addFlash: Action<FlashStore, FlashMessage>;
     addError: Action<FlashStore, { message: string; key?: string }>;
     clearAndAddHttpError: Action<FlashStore, { error?: Error | any | null; key?: string }>;
-    clearFlashes: Action<FlashStore, string | void>;
+    clearFlashes: Action<FlashStore, string | undefined>;
 }
 
 export interface FlashMessage {

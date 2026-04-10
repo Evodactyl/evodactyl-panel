@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
-import asDialog from '@/hoc/asDialog';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
+import type React from 'react';
+import { useContext, useEffect, useState } from 'react';
+import disableAccountTwoFactor from '@/api/account/disableAccountTwoFactor';
 import { Button } from '@/components/elements/button/index';
+import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
 import { Input } from '@/components/elements/inputs';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
-import disableAccountTwoFactor from '@/api/account/disableAccountTwoFactor';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import asDialog from '@/hoc/asDialog';
 import { useFlashKey } from '@/plugins/useFlash';
 import { useStoreActions } from '@/state/hooks';
-import FlashMessageRender from '@/components/FlashMessageRender';
 
 const DisableTOTPDialog = () => {
     const [submitting, setSubmitting] = useState(false);
@@ -18,7 +19,7 @@ const DisableTOTPDialog = () => {
 
     useEffect(() => {
         setProps((state) => ({ ...state, preventExternalClose: submitting }));
-    }, [submitting]);
+    }, [submitting, setProps]);
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

@@ -1,4 +1,4 @@
-import http, { FractalResponseData } from '@/api/http';
+import http, { type FractalResponseData } from '@/api/http';
 
 export interface ApplicationApiKey {
     identifier: string;
@@ -32,7 +32,7 @@ export const getApplicationApiKeys = (): Promise<ApplicationApiKey[]> => {
     return new Promise((resolve, reject) => {
         http.get('/api/application/api-keys')
             .then(({ data }) =>
-                resolve((data.data || []).map((d: FractalResponseData) => rawDataToApplicationApiKey(d.attributes)))
+                resolve((data.data || []).map((d: FractalResponseData) => rawDataToApplicationApiKey(d.attributes))),
             )
             .catch(reject);
     });
@@ -41,7 +41,7 @@ export const getApplicationApiKeys = (): Promise<ApplicationApiKey[]> => {
 export const createApplicationApiKey = (
     description: string,
     allowedIps: string[],
-    permissions: Record<string, number>
+    permissions: Record<string, number>,
 ): Promise<ApplicationApiKey & { secretToken: string }> => {
     return new Promise((resolve, reject) => {
         http.post('/api/application/api-keys', {
@@ -53,7 +53,7 @@ export const createApplicationApiKey = (
                 resolve({
                     ...rawDataToApplicationApiKey(data.attributes),
                     secretToken: data.meta?.secret_token ?? '',
-                })
+                }),
             )
             .catch(reject);
     });

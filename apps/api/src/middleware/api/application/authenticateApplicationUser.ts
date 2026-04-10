@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { AccessDeniedHttpException } from '../../../errors/index.js';
 
 /**
@@ -10,32 +10,32 @@ import { AccessDeniedHttpException } from '../../../errors/index.js';
  * - 2 (TYPE_APPLICATION): Application key — always admin access
  */
 export function authenticateApplicationUser(req: Request, _res: Response, next: NextFunction): void {
-  const user = (req as any).user;
-  const apiKey = (req as any).apiKey;
+    const user = (req as any).user;
+    const apiKey = (req as any).apiKey;
 
-  if (!user) {
-    return next(new AccessDeniedHttpException());
-  }
-
-  // Session-based auth (SPA) — user must be root_admin
-  if (!apiKey) {
-    if (user.root_admin) {
-      return next();
+    if (!user) {
+        return next(new AccessDeniedHttpException());
     }
-    return next(new AccessDeniedHttpException('This account does not have permission to access this resource.'));
-  }
 
-  const keyType = apiKey.key_type;
+    // Session-based auth (SPA) — user must be root_admin
+    if (!apiKey) {
+        if (user.root_admin) {
+            return next();
+        }
+        return next(new AccessDeniedHttpException('This account does not have permission to access this resource.'));
+    }
 
-  // Application keys (type 2) are always admin
-  if (keyType === 2) {
-    return next();
-  }
+    const keyType = apiKey.key_type;
 
-  // Account keys (type 1) require root_admin
-  if (keyType === 1 && user.root_admin) {
-    return next();
-  }
+    // Application keys (type 2) are always admin
+    if (keyType === 2) {
+        return next();
+    }
 
-  next(new AccessDeniedHttpException('This account does not have permission to access this resource.'));
+    // Account keys (type 1) require root_admin
+    if (keyType === 1 && user.root_admin) {
+        return next();
+    }
+
+    next(new AccessDeniedHttpException('This account does not have permission to access this resource.'));
 }

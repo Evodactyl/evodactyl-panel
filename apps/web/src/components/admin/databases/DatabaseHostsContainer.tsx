@@ -1,25 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Formik, FormikHelpers, Field as FormikField, FieldProps } from 'formik';
-import * as Yup from 'yup';
-import tw from 'twin.macro';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { type FieldProps, Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { getDatabaseHosts, createDatabaseHost, updateDatabaseHost, deleteDatabaseHost, DatabaseHost } from '@/api/admin/databases';
-import { getNodes, Node } from '@/api/admin/nodes';
-import { PaginatedResult } from '@/api/http';
-import Spinner from '@/components/elements/Spinner';
+import tw from 'twin.macro';
+import * as Yup from 'yup';
+import {
+    createDatabaseHost,
+    type DatabaseHost,
+    deleteDatabaseHost,
+    getDatabaseHosts,
+    updateDatabaseHost,
+} from '@/api/admin/databases';
+import { getNodes, type Node } from '@/api/admin/nodes';
+import type { PaginatedResult } from '@/api/http';
+import AdminBox from '@/components/admin/AdminBox';
+import AdminLayout from '@/components/admin/AdminLayout';
+import AdminStatusBadge from '@/components/admin/AdminStatusBadge';
+import {
+    AdminTable,
+    AdminTableBody,
+    AdminTableCell,
+    AdminTableHead,
+    AdminTableHeader,
+    AdminTableRow,
+} from '@/components/admin/AdminTable';
 import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
 import Field from '@/components/elements/Field';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
+import Spinner from '@/components/elements/Spinner';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
 import useFlash from '@/plugins/useFlash';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
-import AdminLayout from '@/components/admin/AdminLayout';
-import AdminBox from '@/components/admin/AdminBox';
-import AdminStatusBadge from '@/components/admin/AdminStatusBadge';
-import { AdminTable, AdminTableHead, AdminTableBody, AdminTableHeader, AdminTableRow, AdminTableCell } from '@/components/admin/AdminTable';
 
 interface FormValues {
     name: string;
@@ -54,21 +67,31 @@ const DatabaseHostsContainer = () => {
     useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'admin:databases', error });
         if (!error) clearFlashes('admin:databases');
-    }, [error]);
+    }, [error, clearFlashes, clearAndAddHttpError]);
 
     const submit = (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
         clearFlashes('admin:databases');
         const payload: Record<string, any> = {
-            name: values.name, host: values.host, port: values.port,
-            username: values.username, node_id: values.nodeId || null,
+            name: values.name,
+            host: values.host,
+            port: values.port,
+            username: values.username,
+            node_id: values.nodeId || null,
         };
         if (values.password) payload.password = values.password;
 
         const request = editingHost ? updateDatabaseHost(editingHost.id, payload) : createDatabaseHost(payload);
         request
             .then(() => {
-                addFlash({ key: 'admin:databases', type: 'success', message: editingHost ? 'Database host updated.' : 'Database host created.' });
-                resetForm(); setShowForm(false); setEditingHost(null); mutate();
+                addFlash({
+                    key: 'admin:databases',
+                    type: 'success',
+                    message: editingHost ? 'Database host updated.' : 'Database host created.',
+                });
+                resetForm();
+                setShowForm(false);
+                setEditingHost(null);
+                mutate();
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:databases', error }))
             .finally(() => setSubmitting(false));
@@ -78,14 +101,28 @@ const DatabaseHostsContainer = () => {
         if (!deleteId) return;
         clearFlashes('admin:databases');
         deleteDatabaseHost(deleteId)
-            .then(() => { addFlash({ key: 'admin:databases', type: 'success', message: 'Database host deleted.' }); setDeleteId(null); mutate(); })
-            .catch((error) => { setDeleteId(null); clearAndAddHttpError({ key: 'admin:databases', error }); });
+            .then(() => {
+                addFlash({ key: 'admin:databases', type: 'success', message: 'Database host deleted.' });
+                setDeleteId(null);
+                mutate();
+            })
+            .catch((error) => {
+                setDeleteId(null);
+                clearAndAddHttpError({ key: 'admin:databases', error });
+            });
     };
 
     const nodes = nodesData?.items || [];
 
     const tools = (
-        <Button color={'primary'} size={'xsmall'} onClick={() => { setEditingHost(null); setShowForm(!showForm); }}>
+        <Button
+            color={'primary'}
+            size={'xsmall'}
+            onClick={() => {
+                setEditingHost(null);
+                setShowForm(!showForm);
+            }}
+        >
             {showForm ? 'Cancel' : 'Create New'}
         </Button>
     );
@@ -97,7 +134,13 @@ const DatabaseHostsContainer = () => {
             showFlashKey={'admin:databases'}
             breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Databases' }]}
         >
-            <ConfirmationModal visible={!!deleteId} title={'Delete Database Host'} buttonText={'Yes, Delete'} onConfirmed={handleDelete} onModalDismissed={() => setDeleteId(null)}>
+            <ConfirmationModal
+                visible={!!deleteId}
+                title={'Delete Database Host'}
+                buttonText={'Yes, Delete'}
+                onConfirmed={handleDelete}
+                onModalDismissed={() => setDeleteId(null)}
+            >
                 Are you sure you want to delete this database host?
             </ConfirmationModal>
 
@@ -105,11 +148,17 @@ const DatabaseHostsContainer = () => {
                 <AdminBox title={editingHost ? 'Edit Database Host' : 'Create Database Host'} css={tw`mb-4`}>
                     <Formik<FormValues>
                         initialValues={{
-                            name: editingHost?.name || '', host: editingHost?.host || '',
-                            port: editingHost?.port || 3306, username: editingHost?.username || '',
-                            password: '', nodeId: editingHost?.nodeId || 0, maxDatabases: editingHost?.maxDatabases || 0,
+                            name: editingHost?.name || '',
+                            host: editingHost?.host || '',
+                            port: editingHost?.port || 3306,
+                            username: editingHost?.username || '',
+                            password: '',
+                            nodeId: editingHost?.nodeId || 0,
+                            maxDatabases: editingHost?.maxDatabases || 0,
                         }}
-                        validationSchema={formSchema} onSubmit={submit} enableReinitialize
+                        validationSchema={formSchema}
+                        onSubmit={submit}
+                        enableReinitialize
                     >
                         {({ isSubmitting }) => (
                             <Form>
@@ -119,21 +168,37 @@ const DatabaseHostsContainer = () => {
                                     <Field name={'host'} label={'Host'} placeholder={'127.0.0.1'} />
                                     <Field name={'port'} label={'Port'} type={'number'} />
                                     <Field name={'username'} label={'Username'} />
-                                    <Field name={'password'} label={'Password'} type={'password'} description={editingHost ? 'Leave blank to keep current password.' : undefined} />
+                                    <Field
+                                        name={'password'}
+                                        label={'Password'}
+                                        type={'password'}
+                                        description={editingHost ? 'Leave blank to keep current password.' : undefined}
+                                    />
                                     <FormikField name={'nodeId'}>
                                         {({ field, form }: FieldProps) => (
                                             <div>
                                                 <Label>Linked Node</Label>
-                                                <Select {...field} onChange={(e) => form.setFieldValue('nodeId', Number(e.target.value))}>
+                                                <Select
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        form.setFieldValue('nodeId', Number(e.target.value))
+                                                    }
+                                                >
                                                     <option value={0}>None</option>
-                                                    {nodes.map((node) => <option key={node.id} value={node.id}>{node.name}</option>)}
+                                                    {nodes.map((node) => (
+                                                        <option key={node.id} value={node.id}>
+                                                            {node.name}
+                                                        </option>
+                                                    ))}
                                                 </Select>
                                             </div>
                                         )}
                                     </FormikField>
                                 </div>
                                 <div css={tw`mt-4 flex justify-end`}>
-                                    <Button type={'submit'} color={'green'} size={'xsmall'}>{editingHost ? 'Update' : 'Create'}</Button>
+                                    <Button type={'submit'} color={'green'} size={'xsmall'}>
+                                        {editingHost ? 'Update' : 'Create'}
+                                    </Button>
                                 </div>
                             </Form>
                         )}
@@ -162,20 +227,39 @@ const DatabaseHostsContainer = () => {
                             <AdminTableBody>
                                 {hosts.map((host) => (
                                     <AdminTableRow key={host.id}>
-                                        <AdminTableCell><code>{host.id}</code></AdminTableCell>
+                                        <AdminTableCell>
+                                            <code>{host.id}</code>
+                                        </AdminTableCell>
                                         <AdminTableCell>{host.name}</AdminTableCell>
-                                        <AdminTableCell><code>{host.host}</code></AdminTableCell>
+                                        <AdminTableCell>
+                                            <code>{host.host}</code>
+                                        </AdminTableCell>
                                         <AdminTableCell className={'text-center'}>{host.port}</AdminTableCell>
                                         <AdminTableCell>{host.username}</AdminTableCell>
-                                        <AdminTableCell className={'text-center'}>{host.databasesCount ?? '?'}</AdminTableCell>
                                         <AdminTableCell className={'text-center'}>
-                                            {host.nodeId ? `#${host.nodeId}` : <AdminStatusBadge $color={'default'}>None</AdminStatusBadge>}
+                                            {host.databasesCount ?? '?'}
                                         </AdminTableCell>
                                         <AdminTableCell className={'text-center'}>
-                                            <button onClick={() => { setEditingHost(host); setShowForm(true); }} css={tw`text-neutral-400 hover:text-neutral-200 mr-3`}>
+                                            {host.nodeId ? (
+                                                `#${host.nodeId}`
+                                            ) : (
+                                                <AdminStatusBadge $color={'default'}>None</AdminStatusBadge>
+                                            )}
+                                        </AdminTableCell>
+                                        <AdminTableCell className={'text-center'}>
+                                            <button
+                                                onClick={() => {
+                                                    setEditingHost(host);
+                                                    setShowForm(true);
+                                                }}
+                                                css={tw`text-neutral-400 hover:text-neutral-200 mr-3`}
+                                            >
                                                 <FontAwesomeIcon icon={faPen} />
                                             </button>
-                                            <button onClick={() => setDeleteId(host.id)} css={tw`text-neutral-400 hover:text-red-400`}>
+                                            <button
+                                                onClick={() => setDeleteId(host.id)}
+                                                css={tw`text-neutral-400 hover:text-red-400`}
+                                            >
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
                                         </AdminTableCell>
@@ -184,7 +268,9 @@ const DatabaseHostsContainer = () => {
                             </AdminTableBody>
                         </AdminTable>
                     ) : (
-                        <p css={tw`text-center text-sm text-neutral-400 py-6`}>No database hosts have been configured.</p>
+                        <p css={tw`text-center text-sm text-neutral-400 py-6`}>
+                            No database hosts have been configured.
+                        </p>
                     )}
                 </AdminBox>
             )}

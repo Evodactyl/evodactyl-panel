@@ -1,5 +1,5 @@
-import React, { CSSProperties } from 'react';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { CSSProperties } from 'react';
 import tw from 'twin.macro';
 
 interface Props {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
 import { NavLink, useLocation } from 'react-router-dom';
-import { encodePathSegments, hashToPath } from '@/helpers';
 import tw from 'twin.macro';
+import { encodePathSegments, hashToPath } from '@/helpers';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     renderLeft?: JSX.Element;
@@ -59,13 +59,9 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
                     <span key={index} css={tw`px-1 text-neutral-300`}>
                         {crumb.name}
                     </span>
-                )
+                ),
             )}
-            {file && (
-                <React.Fragment>
-                    <span css={tw`px-1 text-neutral-300`}>{file}</span>
-                </React.Fragment>
-            )}
+            {file && <span css={tw`px-1 text-neutral-300`}>{file}</span>}
         </div>
     );
 };

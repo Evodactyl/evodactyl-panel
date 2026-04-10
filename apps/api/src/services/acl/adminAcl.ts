@@ -23,29 +23,29 @@ export const RESOURCE_SERVER_DATABASES = 'server_databases';
  * Determine if a permission value allows a specific action level.
  */
 export function can(permission: number, action: number = READ): boolean {
-  return (permission & action) !== 0;
+    return (permission & action) !== 0;
 }
 
 /**
  * Check if an API key has permission for a resource at a given action level.
  */
 export function check(apiKey: Record<string, unknown>, resource: string, action: number = READ): boolean {
-  const columnName = `${COLUMN_IDENTIFIER}${resource}`;
-  const permission = (apiKey[columnName] as number) ?? NONE;
-  return can(permission, action);
+    const columnName = `${COLUMN_IDENTIFIER}${resource}`;
+    const permission = (apiKey[columnName] as number) ?? NONE;
+    return can(permission, action);
 }
 
 /**
  * All available resource names.
  */
 export const resourceList = [
-  RESOURCE_SERVERS,
-  RESOURCE_NODES,
-  RESOURCE_ALLOCATIONS,
-  RESOURCE_USERS,
-  RESOURCE_LOCATIONS,
-  RESOURCE_NESTS,
-  RESOURCE_EGGS,
-  RESOURCE_DATABASE_HOSTS,
-  RESOURCE_SERVER_DATABASES,
+    RESOURCE_SERVERS,
+    RESOURCE_NODES,
+    RESOURCE_ALLOCATIONS,
+    RESOURCE_USERS,
+    RESOURCE_LOCATIONS,
+    RESOURCE_NESTS,
+    RESOURCE_EGGS,
+    RESOURCE_DATABASE_HOSTS,
+    RESOURCE_SERVER_DATABASES,
 ];

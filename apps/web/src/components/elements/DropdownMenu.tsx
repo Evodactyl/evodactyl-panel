@@ -34,7 +34,7 @@ class DropdownMenu extends React.PureComponent<Props, State> {
         this.removeListeners();
     }
 
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+    componentDidUpdate(_prevProps: Readonly<Props>, prevState: Readonly<State>) {
         const menu = this.menu.current;
 
         if (this.state.visible && !prevState.visible && menu) {

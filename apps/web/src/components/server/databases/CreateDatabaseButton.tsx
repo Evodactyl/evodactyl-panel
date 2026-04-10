@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import Modal from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
+import { Form, Formik, type FormikHelpers } from 'formik';
+import { useState } from 'react';
+import tw from 'twin.macro';
 import { object, string } from 'yup';
-import createServerDatabase from '@/api/server/databases/createServerDatabase';
-import { ServerContext } from '@/state/server';
 import { httpErrorToHuman } from '@/api/http';
+import createServerDatabase from '@/api/server/databases/createServerDatabase';
+import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
+import Modal from '@/components/elements/Modal';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import Button from '@/components/elements/Button';
-import tw from 'twin.macro';
+import { ServerContext } from '@/state/server';
 
 interface Values {
     databaseName: string;
@@ -23,7 +23,7 @@ const schema = object().shape({
         .max(48, 'Database name must not exceed 48 characters.')
         .matches(
             /^[\w\-.]{3,48}$/,
-            'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.'
+            'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.',
         ),
     connectionsFrom: string().matches(/^[\w\-/.%:]+$/, 'A valid host address must be provided.'),
 });

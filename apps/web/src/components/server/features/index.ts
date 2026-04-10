@@ -1,4 +1,4 @@
-import { ComponentType, lazy } from 'react';
+import { type ComponentType, lazy } from 'react';
 
 /**
  * Custom features should be registered here as lazy components so that they do

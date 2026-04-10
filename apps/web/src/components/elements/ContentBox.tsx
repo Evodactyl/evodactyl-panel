@@ -1,7 +1,7 @@
-import React from 'react';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import type React from 'react';
 import tw from 'twin.macro';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
 
 type Props = Readonly<
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {

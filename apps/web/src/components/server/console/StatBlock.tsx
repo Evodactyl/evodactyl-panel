@@ -1,10 +1,10 @@
-import React from 'react';
-import Icon from '@/components/elements/Icon';
-import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
-import styles from './style.module.css';
+import type React from 'react';
 import useFitText from 'use-fit-text';
 import CopyOnClick from '@/components/elements/CopyOnClick';
+import Icon from '@/components/elements/Icon';
+import styles from './style.module.css';
 
 interface StatBlockProps {
     title: string;

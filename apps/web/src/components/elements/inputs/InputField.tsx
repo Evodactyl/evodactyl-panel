@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react';
 import classNames from 'classnames';
+import type React from 'react';
+import { forwardRef } from 'react';
 import styles from './styles.module.css';
 
 enum Variant {
@@ -16,11 +17,11 @@ const Component = forwardRef<HTMLInputElement, React.ComponentProps<'input'> & {
                 'form-input',
                 styles.text_input,
                 { [styles.loose]: variant === Variant.Loose },
-                className
+                className,
             )}
             {...props}
         />
-    )
+    ),
 );
 
 const InputField = Object.assign(Component, { Variants: Variant });

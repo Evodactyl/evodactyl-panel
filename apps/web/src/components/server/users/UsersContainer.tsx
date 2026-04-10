@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import Spinner from '@/components/elements/Spinner';
-import AddSubuserButton from '@/components/server/users/AddSubuserButton';
-import UserRow from '@/components/server/users/UserRow';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import getServerSubusers from '@/api/server/users/getServerSubusers';
+import { type Actions, useStoreActions, useStoreState } from 'easy-peasy';
+import { useEffect, useState } from 'react';
+import tw from 'twin.macro';
 import { httpErrorToHuman } from '@/api/http';
+import getServerSubusers from '@/api/server/users/getServerSubusers';
 import Can from '@/components/elements/Can';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import tw from 'twin.macro';
+import Spinner from '@/components/elements/Spinner';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import AddSubuserButton from '@/components/server/users/AddSubuserButton';
+import UserRow from '@/components/server/users/UserRow';
+import type { ApplicationStore } from '@/state';
+import { ServerContext } from '@/state/server';
 
 export default () => {
     const [loading, setLoading] = useState(true);
@@ -34,14 +34,14 @@ export default () => {
                 console.error(error);
                 addError({ key: 'users', message: httpErrorToHuman(error) });
             });
-    }, []);
+    }, [uuid, addError, setSubusers, clearFlashes]);
 
     useEffect(() => {
         getPermissions().catch((error) => {
             addError({ key: 'users', message: httpErrorToHuman(error) });
             console.error(error);
         });
-    }, []);
+    }, [getPermissions, addError]);
 
     if (!subusers.length && (loading || !Object.keys(permissions).length)) {
         return <Spinner size={'large'} centered />;

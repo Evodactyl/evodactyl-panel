@@ -16,7 +16,7 @@
         @apply text-gray-50 bg-transparent;
 
         &:disabled {
-            background: transparent !important;
+            background: transparent;
         }
     }
 

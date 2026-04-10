@@ -1,12 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
-import { prisma } from '../../../prisma/client.js';
+import type { NextFunction, Request, Response } from 'express';
+import { AccessDeniedHttpException, AuthenticationException, BadRequestHttpException } from '../../../errors/index.js';
 import { decrypt } from '../../../lib/encryption.js';
-import {
-  AuthenticationException,
-  AccessDeniedHttpException,
-  BadRequestHttpException,
-} from '../../../errors/index.js';
+import { prisma } from '../../../prisma/client.js';
 
 /**
  * Daemon authentication middleware.
@@ -17,45 +13,38 @@ import {
  * and compares using constant-time comparison.
  */
 export async function daemonAuthenticate(req: Request, _res: Response, next: NextFunction): Promise<void> {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(new AuthenticationException(
-      'Access to this endpoint must include an Authorization header.'
-    ));
-  }
-
-  const bearer = authHeader.slice(7);
-  const parts = bearer.split('.');
-
-  if (parts.length !== 2 || !parts[0] || !parts[1]) {
-    return next(new BadRequestHttpException(
-      'The Authorization header provided was not in a valid format.'
-    ));
-  }
-
-  const [tokenId, plainToken] = parts;
-
-  try {
-    const node = await prisma.nodes.findFirst({
-      where: { daemon_token_id: tokenId },
-    });
-
-    if (!node) {
-      return next(new AccessDeniedHttpException('You are not authorized to access this resource.'));
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+        return next(new AuthenticationException('Access to this endpoint must include an Authorization header.'));
     }
 
-    const storedToken = decrypt(node.daemon_token);
+    const bearer = authHeader.slice(7);
+    const parts = bearer.split('.');
 
-    if (crypto.timingSafeEqual(
-      Buffer.from(storedToken),
-      Buffer.from(plainToken)
-    )) {
-      (req as any).node = node;
-      return next();
+    if (parts.length !== 2 || !parts[0] || !parts[1]) {
+        return next(new BadRequestHttpException('The Authorization header provided was not in a valid format.'));
     }
-  } catch {
-    // Silently fail — don't expose node existence
-  }
 
-  next(new AccessDeniedHttpException('You are not authorized to access this resource.'));
+    const [tokenId, plainToken] = parts;
+
+    try {
+        const node = await prisma.nodes.findFirst({
+            where: { daemon_token_id: tokenId },
+        });
+
+        if (!node) {
+            return next(new AccessDeniedHttpException('You are not authorized to access this resource.'));
+        }
+
+        const storedToken = decrypt(node.daemon_token);
+
+        if (crypto.timingSafeEqual(Buffer.from(storedToken), Buffer.from(plainToken))) {
+            (req as any).node = node;
+            return next();
+        }
+    } catch {
+        // Silently fail — don't expose node existence
+    }
+
+    next(new AccessDeniedHttpException('You are not authorized to access this resource.'));
 }

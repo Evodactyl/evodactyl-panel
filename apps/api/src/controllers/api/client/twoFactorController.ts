@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../../../prisma/client.js';
-import { setupTwoFactor } from '../../../services/users/twoFactorSetupService.js';
-import { toggleTwoFactor } from '../../../services/users/toggleTwoFactorService.js';
-import { verifyPassword } from '../../../lib/password.js';
-import { activityFromRequest } from '../../../services/activity/activityLogService.js';
+import type { NextFunction, Request, Response } from 'express';
 import { BadRequestHttpException, ValidationException } from '../../../errors/index.js';
+import { verifyPassword } from '../../../lib/password.js';
+import { prisma } from '../../../prisma/client.js';
+import { activityFromRequest } from '../../../services/activity/activityLogService.js';
+import { toggleTwoFactor } from '../../../services/users/toggleTwoFactorService.js';
+import { setupTwoFactor } from '../../../services/users/twoFactorSetupService.js';
 
 /**
  * Client API Two-Factor Controller.
@@ -17,19 +17,19 @@ import { BadRequestHttpException, ValidationException } from '../../../errors/in
  * it on their account. Returns a 400 if 2FA is already enabled.
  */
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
+    try {
+        const user = (req as any).user;
 
-    if (user.use_totp) {
-      throw new BadRequestHttpException('Two-factor authentication is already enabled on this account.');
+        if (user.use_totp) {
+            throw new BadRequestHttpException('Two-factor authentication is already enabled on this account.');
+        }
+
+        const data = await setupTwoFactor(user);
+
+        res.json({ data });
+    } catch (err) {
+        next(err);
     }
-
-    const data = await setupTwoFactor(user);
-
-    res.json({ data });
-  } catch (err) {
-    next(err);
-  }
 }
 
 /**
@@ -37,43 +37,41 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * Enable two-factor authentication on the user's account.
  */
 export async function store(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
-    const { code, password } = req.body;
+    try {
+        const user = (req as any).user;
+        const { code, password } = req.body;
 
-    // Validate input
-    if (!code || typeof code !== 'string' || code.length !== 6) {
-      throw new ValidationException([
-        { sourceField: 'code', rule: 'size', detail: 'The code must be exactly 6 characters.' },
-      ]);
+        // Validate input
+        if (!code || typeof code !== 'string' || code.length !== 6) {
+            throw new ValidationException([
+                { sourceField: 'code', rule: 'size', detail: 'The code must be exactly 6 characters.' },
+            ]);
+        }
+
+        if (!password || typeof password !== 'string') {
+            throw new ValidationException([
+                { sourceField: 'password', rule: 'required', detail: 'The password field is required.' },
+            ]);
+        }
+
+        // Verify the user's password
+        if (!(await verifyPassword(password, user.password))) {
+            throw new BadRequestHttpException('The password provided was not valid.');
+        }
+
+        const tokens = await toggleTwoFactor(user, code, true);
+
+        await activityFromRequest(req).event('user:two-factor.create').log();
+
+        res.json({
+            object: 'recovery_tokens',
+            attributes: {
+                tokens,
+            },
+        });
+    } catch (err) {
+        next(err);
     }
-
-    if (!password || typeof password !== 'string') {
-      throw new ValidationException([
-        { sourceField: 'password', rule: 'required', detail: 'The password field is required.' },
-      ]);
-    }
-
-    // Verify the user's password
-    if (!await verifyPassword(password, user.password)) {
-      throw new BadRequestHttpException('The password provided was not valid.');
-    }
-
-    const tokens = await toggleTwoFactor(user, code, true);
-
-    await activityFromRequest(req)
-      .event('user:two-factor.create')
-      .log();
-
-    res.json({
-      object: 'recovery_tokens',
-      attributes: {
-        tokens,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
 }
 
 /**
@@ -81,29 +79,27 @@ export async function store(req: Request, res: Response, next: NextFunction): Pr
  * Disable two-factor authentication on the user's account.
  */
 export async function destroy(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const user = (req as any).user;
-    const password = req.body?.password ?? '';
+    try {
+        const user = (req as any).user;
+        const password = req.body?.password ?? '';
 
-    // Verify the user's password
-    if (!await verifyPassword(password, user.password)) {
-      throw new BadRequestHttpException('The password provided was not valid.');
+        // Verify the user's password
+        if (!(await verifyPassword(password, user.password))) {
+            throw new BadRequestHttpException('The password provided was not valid.');
+        }
+
+        await prisma.users.update({
+            where: { id: user.id },
+            data: {
+                totp_authenticated_at: new Date(),
+                use_totp: 0,
+            },
+        });
+
+        await activityFromRequest(req).event('user:two-factor.delete').log();
+
+        res.status(204).send();
+    } catch (err) {
+        next(err);
     }
-
-    await prisma.users.update({
-      where: { id: user.id },
-      data: {
-        totp_authenticated_at: new Date(),
-        use_totp: 0,
-      },
-    });
-
-    await activityFromRequest(req)
-      .event('user:two-factor.delete')
-      .log();
-
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
 }

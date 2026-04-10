@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
 import saveFileContents from '@/api/server/files/saveFileContents';
+import Button from '@/components/elements/Button';
+import Modal from '@/components/elements/Modal';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const EulaModalFeature = () => {
     const [visible, setVisible] = useState(false);
@@ -55,7 +55,7 @@ const EulaModalFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:eula');
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <Modal

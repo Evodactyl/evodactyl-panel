@@ -1,11 +1,10 @@
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import LoginContainer from '@/components/auth/LoginContainer';
-import ForgotPasswordContainer from '@/components/auth/ForgotPasswordContainer';
-import ResetPasswordContainer from '@/components/auth/ResetPasswordContainer';
-import LoginCheckpointContainer from '@/components/auth/LoginCheckpointContainer';
-import { NotFound } from '@/components/elements/ScreenBlock';
 import { useHistory, useLocation } from 'react-router';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import ForgotPasswordContainer from '@/components/auth/ForgotPasswordContainer';
+import LoginCheckpointContainer from '@/components/auth/LoginCheckpointContainer';
+import LoginContainer from '@/components/auth/LoginContainer';
+import ResetPasswordContainer from '@/components/auth/ResetPasswordContainer';
+import { NotFound } from '@/components/elements/ScreenBlock';
 
 export default () => {
     const history = useHistory();

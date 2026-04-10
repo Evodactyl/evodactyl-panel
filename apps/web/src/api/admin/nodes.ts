@@ -1,4 +1,4 @@
-import http, { FractalResponseData, FractalResponseList, getPaginationSet, PaginatedResult } from '@/api/http';
+import http, { type FractalResponseData, getPaginationSet, type PaginatedResult } from '@/api/http';
 
 export interface Node {
     id: number;
@@ -78,7 +78,9 @@ const rawDataToNode = (data: any): Node => ({
     updatedAt: new Date(data.updated_at),
     allocatedMemory: data.allocated_resources?.memory,
     allocatedDisk: data.allocated_resources?.disk,
-    allocations: data.relationships?.allocations?.data?.map((a: FractalResponseData) => rawDataToAllocation(a.attributes)),
+    allocations: data.relationships?.allocations?.data?.map((a: FractalResponseData) =>
+        rawDataToAllocation(a.attributes),
+    ),
     location: data.relationships?.location
         ? {
               id: data.relationships.location.attributes.id,
@@ -119,7 +121,7 @@ export const getNodes = (page = 1, filter?: string): Promise<PaginatedResult<Nod
                 resolve({
                     items: (data.data || []).map((d: FractalResponseData) => rawDataToNode(d.attributes)),
                     pagination: getPaginationSet(data.meta.pagination),
-                })
+                }),
             )
             .catch(reject);
     });
@@ -176,7 +178,7 @@ export const getAllocations = (nodeId: number, page = 1): Promise<PaginatedResul
                 resolve({
                     items: (data.data || []).map((d: FractalResponseData) => rawDataToAllocation(d.attributes)),
                     pagination: getPaginationSet(data.meta.pagination),
-                })
+                }),
             )
             .catch(reject);
     });

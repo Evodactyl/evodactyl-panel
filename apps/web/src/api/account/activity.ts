@@ -1,8 +1,8 @@
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import { ActivityLog, Transformers } from '@definitions/user';
-import { AxiosError } from 'axios';
-import http, { PaginatedResult, QueryBuilderParams, withQueryBuilderParams } from '@/api/http';
 import { toPaginatedSet } from '@definitions/helpers';
+import { type ActivityLog, Transformers } from '@definitions/user';
+import type { AxiosError } from 'axios';
+import useSWR, { type SWRConfiguration, type SWRResponse } from 'swr';
+import http, { type PaginatedResult, type QueryBuilderParams, withQueryBuilderParams } from '@/api/http';
 import useFilteredObject from '@/plugins/useFilteredObject';
 import { useUserSWRKey } from '@/plugins/useSWRKey';
 
@@ -10,7 +10,7 @@ export type ActivityLogFilters = QueryBuilderParams<'ip' | 'event', 'timestamp'>
 
 const useActivityLogs = (
     filters?: ActivityLogFilters,
-    config?: SWRConfiguration<PaginatedResult<ActivityLog>, AxiosError>
+    config?: SWRConfiguration<PaginatedResult<ActivityLog>, AxiosError>,
 ): SWRResponse<PaginatedResult<ActivityLog>, AxiosError> => {
     const key = useUserSWRKey(['account', 'activity', JSON.stringify(useFilteredObject(filters || {}))]);
 
@@ -26,7 +26,7 @@ const useActivityLogs = (
 
             return toPaginatedSet(data, Transformers.toActivityLog);
         },
-        { revalidateOnMount: false, ...(config || {}) }
+        { revalidateOnMount: false, ...(config || {}) },
     );
 };
 

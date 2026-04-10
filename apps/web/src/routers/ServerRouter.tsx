@@ -1,25 +1,25 @@
-import TransferListener from '@/components/server/TransferListener';
-import React, { useEffect, useState } from 'react';
-import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
-import NavigationBar from '@/components/NavigationBar';
-import TransitionRouter from '@/TransitionRouter';
-import WebsocketHandler from '@/components/server/WebsocketHandler';
-import { ServerContext } from '@/state/server';
-import { CSSTransition } from 'react-transition-group';
-import Can from '@/components/elements/Can';
-import Spinner from '@/components/elements/Spinner';
-import { NotFound, ServerError } from '@/components/elements/ScreenBlock';
-import { httpErrorToHuman } from '@/api/http';
-import { useStoreState } from 'easy-peasy';
-import SubNavigation from '@/components/elements/SubNavigation';
-import InstallListener from '@/components/server/InstallListener';
-import ErrorBoundary from '@/components/elements/ErrorBoundary';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useStoreState } from 'easy-peasy';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
-import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
+import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
+import { httpErrorToHuman } from '@/api/http';
+import Can from '@/components/elements/Can';
+import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import PermissionRoute from '@/components/elements/PermissionRoute';
+import { NotFound, ServerError } from '@/components/elements/ScreenBlock';
+import Spinner from '@/components/elements/Spinner';
+import SubNavigation from '@/components/elements/SubNavigation';
+import NavigationBar from '@/components/NavigationBar';
+import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
+import InstallListener from '@/components/server/InstallListener';
+import TransferListener from '@/components/server/TransferListener';
+import WebsocketHandler from '@/components/server/WebsocketHandler';
 import routes from '@/routers/routes';
+import { ServerContext } from '@/state/server';
+import TransitionRouter from '@/TransitionRouter';
 
 export default () => {
     const match = useRouteMatch<{ id: string }>();
@@ -46,7 +46,7 @@ export default () => {
         () => () => {
             clearServerState();
         },
-        []
+        [clearServerState],
     );
 
     useEffect(() => {
@@ -60,7 +60,7 @@ export default () => {
         return () => {
             clearServerState();
         };
-    }, [match.params.id]);
+    }, [match.params.id, getServer, clearServerState]);
 
     return (
         <React.Fragment key={'server-router'}>
@@ -89,11 +89,11 @@ export default () => {
                                             <NavLink key={route.path} to={to(route.path, true)} exact={route.exact}>
                                                 {route.name}
                                             </NavLink>
-                                        )
+                                        ),
                                     )}
                                 {rootAdmin && (
                                     // eslint-disable-next-line react/jsx-no-target-blank
-                                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
+                                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'} rel='noopener'>
                                         <FontAwesomeIcon icon={faExternalLinkAlt} />
                                     </a>
                                 )}

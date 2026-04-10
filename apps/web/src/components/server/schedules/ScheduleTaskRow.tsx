@@ -1,6 +1,3 @@
-import React, { useState } from 'react';
-import { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faArrowCircleDown,
     faClock,
@@ -10,16 +7,19 @@ import {
     faToggleOn,
     faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import deleteScheduleTask from '@/api/server/schedules/deleteScheduleTask';
-import { httpErrorToHuman } from '@/api/http';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import TaskDetailsModal from '@/components/server/schedules/TaskDetailsModal';
-import Can from '@/components/elements/Can';
-import useFlash from '@/plugins/useFlash';
-import { ServerContext } from '@/state/server';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 import tw from 'twin.macro';
+import { httpErrorToHuman } from '@/api/http';
+import deleteScheduleTask from '@/api/server/schedules/deleteScheduleTask';
+import type { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
+import Can from '@/components/elements/Can';
 import ConfirmationModal from '@/components/elements/ConfirmationModal';
 import Icon from '@/components/elements/Icon';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TaskDetailsModal from '@/components/server/schedules/TaskDetailsModal';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     schedule: Schedule;
@@ -55,7 +55,7 @@ export default ({ schedule, task }: Props) => {
                 appendSchedule({
                     ...schedule,
                     tasks: schedule.tasks.filter((t) => t.id !== task.id),
-                })
+                }),
             )
             .catch((error) => {
                 console.error(error);

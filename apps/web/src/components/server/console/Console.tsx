@@ -1,21 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ITerminalOptions, Terminal } from 'xterm';
+import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import classNames from 'classnames';
+import { debounce } from 'debounce';
+import type React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { theme as th } from 'twin.macro';
+import { type ITerminalOptions, Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { SearchAddon } from 'xterm-addon-search';
 import { SearchBarAddon } from 'xterm-addon-search-bar';
-import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Unicode11Addon } from 'xterm-addon-unicode11';
-import { ScrollDownHelperAddon } from '@/plugins/XtermScrollDownHelperAddon';
+import { WebLinksAddon } from 'xterm-addon-web-links';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ServerContext } from '@/state/server';
-import { usePermissions } from '@/plugins/usePermissions';
-import { theme as th } from 'twin.macro';
-import useEventListener from '@/plugins/useEventListener';
-import { debounce } from 'debounce';
-import { usePersistedState } from '@/plugins/usePersistedState';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
-import classNames from 'classnames';
-import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import useEventListener from '@/plugins/useEventListener';
+import { usePermissions } from '@/plugins/usePermissions';
+import { usePersistedState } from '@/plugins/usePersistedState';
+import { ScrollDownHelperAddon } from '@/plugins/XtermScrollDownHelperAddon';
+import { ServerContext } from '@/state/server';
 
 import 'xterm/css/xterm.css';
 import styles from './style.module.css';
@@ -75,24 +76,22 @@ export default () => {
     }`;
 
     const handleConsoleOutput = (line: string, prelude = false) =>
-        terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
+        terminal.writeln(`${(prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '')}\u001b[0m`);
 
     const handleTransferStatus = (status: string) => {
         switch (status) {
             // Sent by either the source or target node if a failure occurs.
             case 'failure':
-                terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
+                terminal.writeln(`${TERMINAL_PRELUDE}Transfer has failed.\u001b[0m`);
                 return;
         }
     };
 
     const handleDaemonErrorOutput = (line: string) =>
-        terminal.writeln(
-            TERMINAL_PRELUDE + '\u001b[1m\u001b[41m' + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m'
-        );
+        terminal.writeln(`${TERMINAL_PRELUDE}\u001b[1m\u001b[41m${line.replace(/(?:\r\n|\r|\n)$/im, '')}\u001b[0m`);
 
     const handlePowerChangeEvent = (state: string) =>
-        terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
+        terminal.writeln(`${TERMINAL_PRELUDE}Server marked as ${state}...\u001b[0m`);
 
     const handleCommandKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'ArrowUp') {
@@ -118,7 +117,7 @@ export default () => {
             setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
             setHistoryIndex(-1);
 
-            instance && instance.send('send command', command);
+            instance?.send('send command', command);
             e.currentTarget.value = '';
         }
     };
@@ -155,7 +154,18 @@ export default () => {
                 return true;
             });
         }
-    }, [terminal, connected]);
+    }, [
+        terminal,
+        connected,
+        unicode11Addon,
+        searchBar.addNewStyle,
+        fitAddon,
+        searchBar.show,
+        searchAddon,
+        searchBar,
+        webLinksAddon,
+        scrollDownHelperAddon,
+    ]);
 
     useEventListener(
         'resize',
@@ -163,7 +173,7 @@ export default () => {
             if (terminal.element) {
                 fitAddon.fit();
             }
-        }, 100)
+        }, 100),
     );
 
     useEffect(() => {
@@ -196,7 +206,16 @@ export default () => {
                 });
             }
         };
-    }, [connected, instance]);
+    }, [
+        connected,
+        instance,
+        handleTransferStatus,
+        handlePowerChangeEvent,
+        handleDaemonErrorOutput,
+        isTransferring,
+        terminal.clear,
+        handleConsoleOutput,
+    ]);
 
     return (
         <div className={classNames(styles.terminal, 'relative')}>
@@ -223,7 +242,7 @@ export default () => {
                     <div
                         className={classNames(
                             'text-gray-100 peer-focus:text-gray-50 peer-focus:animate-pulse',
-                            styles.command_icon
+                            styles.command_icon,
                         )}
                     >
                         <ChevronDoubleRightIcon className={'w-4 h-4'} />

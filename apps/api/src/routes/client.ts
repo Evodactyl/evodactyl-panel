@@ -1,55 +1,49 @@
 import { Router } from 'express';
-import {
-  sanctumAuth,
-  authenticateIPAccess,
-  requireTwoFactor,
-  clientRateLimit,
-  authenticateServerAccess,
-  resourceBelongsToServer,
-} from '../middleware/index.js';
-
 // Account controllers
-import {
-  index as accountIndex,
-  updateEmail,
-  updatePassword,
-} from '../controllers/api/client/accountController.js';
-import {
-  index as twoFactorIndex,
-  store as twoFactorStore,
-  destroy as twoFactorDestroy,
-} from '../controllers/api/client/twoFactorController.js';
-import {
-  index as apiKeyIndex,
-  store as apiKeyStore,
-  destroy as apiKeyDestroy,
-} from '../controllers/api/client/apiKeyController.js';
-import {
-  index as sshKeyIndex,
-  store as sshKeyStore,
-  destroy as sshKeyDestroy,
-} from '../controllers/api/client/sshKeyController.js';
+import { index as accountIndex, updateEmail, updatePassword } from '../controllers/api/client/accountController.js';
 import { accountActivityLog } from '../controllers/api/client/activityLogController.js';
-import { serverActivityLog } from '../controllers/api/client/servers/activityLogController.js';
-import * as NetworkAllocationController from '../controllers/api/client/servers/networkAllocationController.js';
-import { clientDatabaseController } from '../controllers/api/client/servers/databaseController.js';
+import {
+    destroy as apiKeyDestroy,
+    index as apiKeyIndex,
+    store as apiKeyStore,
+} from '../controllers/api/client/apiKeyController.js';
 import * as ClientController from '../controllers/api/client/clientController.js';
-import * as ClientServerController from '../controllers/api/client/servers/serverController.js';
-import * as PowerController from '../controllers/api/client/servers/powerController.js';
-import * as CommandController from '../controllers/api/client/servers/commandController.js';
-import * as ResourceUtilizationController from '../controllers/api/client/servers/resourceUtilizationController.js';
-import * as ClientStartupController from '../controllers/api/client/servers/startupController.js';
-import * as SettingsController from '../controllers/api/client/servers/settingsController.js';
-import * as WebsocketController from '../controllers/api/client/servers/websocketController.js';
+import { serverActivityLog } from '../controllers/api/client/servers/activityLogController.js';
 import { backupController } from '../controllers/api/client/servers/backupController.js';
+import * as CommandController from '../controllers/api/client/servers/commandController.js';
+import { clientDatabaseController } from '../controllers/api/client/servers/databaseController.js';
 import { fileController } from '../controllers/api/client/servers/fileController.js';
 import { fileUploadController } from '../controllers/api/client/servers/fileUploadController.js';
+import * as NetworkAllocationController from '../controllers/api/client/servers/networkAllocationController.js';
+import * as PowerController from '../controllers/api/client/servers/powerController.js';
+import * as ResourceUtilizationController from '../controllers/api/client/servers/resourceUtilizationController.js';
 import { scheduleController } from '../controllers/api/client/servers/scheduleController.js';
 import { scheduleTaskController } from '../controllers/api/client/servers/scheduleTaskController.js';
+import * as ClientServerController from '../controllers/api/client/servers/serverController.js';
+import * as SettingsController from '../controllers/api/client/servers/settingsController.js';
+import * as ClientStartupController from '../controllers/api/client/servers/startupController.js';
 import { subuserController } from '../controllers/api/client/servers/subuserController.js';
+import * as WebsocketController from '../controllers/api/client/servers/websocketController.js';
+import {
+    destroy as sshKeyDestroy,
+    index as sshKeyIndex,
+    store as sshKeyStore,
+} from '../controllers/api/client/sshKeyController.js';
+import {
+    destroy as twoFactorDestroy,
+    index as twoFactorIndex,
+    store as twoFactorStore,
+} from '../controllers/api/client/twoFactorController.js';
+import {
+    authenticateIPAccess,
+    authenticateServerAccess,
+    clientRateLimit,
+    requireTwoFactor,
+    resourceBelongsToServer,
+    sanctumAuth,
+} from '../middleware/index.js';
 
-const wrapAsync = (fn: Function) => (req: any, res: any, next: any) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
+const wrapAsync = (fn: Function) => (req: any, res: any, next: any) => Promise.resolve(fn(req, res, next)).catch(next);
 
 const router = Router();
 
@@ -107,32 +101,98 @@ serverRouter.post('/databases/:database/rotate-password', clientDatabaseControll
 serverRouter.delete('/databases/:database', clientDatabaseController.delete);
 
 // File management
-serverRouter.get('/files/list', wrapAsync((req: any, res: any) => fileController.directory(req, res)));
-serverRouter.get('/files/contents', wrapAsync((req: any, res: any) => fileController.contents(req, res)));
-serverRouter.get('/files/download', wrapAsync((req: any, res: any) => fileController.download(req, res)));
-serverRouter.get('/files/upload', wrapAsync((req: any, res: any) => fileUploadController.handle(req, res)));
-serverRouter.put('/files/rename', wrapAsync((req: any, res: any) => fileController.rename(req, res)));
-serverRouter.post('/files/copy', wrapAsync((req: any, res: any) => fileController.copy(req, res)));
-serverRouter.post('/files/write', wrapAsync((req: any, res: any) => fileController.write(req, res)));
-serverRouter.post('/files/compress', wrapAsync((req: any, res: any) => fileController.compress(req, res)));
-serverRouter.post('/files/decompress', wrapAsync((req: any, res: any) => fileController.decompress(req, res)));
-serverRouter.post('/files/delete', wrapAsync((req: any, res: any) => fileController.deleteFiles(req, res)));
-serverRouter.post('/files/create-folder', wrapAsync((req: any, res: any) => fileController.create(req, res)));
-serverRouter.post('/files/chmod', wrapAsync((req: any, res: any) => fileController.chmod(req, res)));
-serverRouter.post('/files/pull', wrapAsync((req: any, res: any) => fileController.pull(req, res)));
+serverRouter.get(
+    '/files/list',
+    wrapAsync((req: any, res: any) => fileController.directory(req, res)),
+);
+serverRouter.get(
+    '/files/contents',
+    wrapAsync((req: any, res: any) => fileController.contents(req, res)),
+);
+serverRouter.get(
+    '/files/download',
+    wrapAsync((req: any, res: any) => fileController.download(req, res)),
+);
+serverRouter.get(
+    '/files/upload',
+    wrapAsync((req: any, res: any) => fileUploadController.handle(req, res)),
+);
+serverRouter.put(
+    '/files/rename',
+    wrapAsync((req: any, res: any) => fileController.rename(req, res)),
+);
+serverRouter.post(
+    '/files/copy',
+    wrapAsync((req: any, res: any) => fileController.copy(req, res)),
+);
+serverRouter.post(
+    '/files/write',
+    wrapAsync((req: any, res: any) => fileController.write(req, res)),
+);
+serverRouter.post(
+    '/files/compress',
+    wrapAsync((req: any, res: any) => fileController.compress(req, res)),
+);
+serverRouter.post(
+    '/files/decompress',
+    wrapAsync((req: any, res: any) => fileController.decompress(req, res)),
+);
+serverRouter.post(
+    '/files/delete',
+    wrapAsync((req: any, res: any) => fileController.deleteFiles(req, res)),
+);
+serverRouter.post(
+    '/files/create-folder',
+    wrapAsync((req: any, res: any) => fileController.create(req, res)),
+);
+serverRouter.post(
+    '/files/chmod',
+    wrapAsync((req: any, res: any) => fileController.chmod(req, res)),
+);
+serverRouter.post(
+    '/files/pull',
+    wrapAsync((req: any, res: any) => fileController.pull(req, res)),
+);
 
 // Schedules
-serverRouter.get('/schedules', wrapAsync((req: any, res: any) => scheduleController.index(req, res)));
-serverRouter.post('/schedules', wrapAsync((req: any, res: any) => scheduleController.store(req, res)));
-serverRouter.get('/schedules/:schedule', wrapAsync((req: any, res: any) => scheduleController.view(req, res)));
-serverRouter.post('/schedules/:schedule', wrapAsync((req: any, res: any) => scheduleController.update(req, res)));
-serverRouter.post('/schedules/:schedule/execute', wrapAsync((req: any, res: any) => scheduleController.execute(req, res)));
-serverRouter.delete('/schedules/:schedule', wrapAsync((req: any, res: any) => scheduleController.delete(req, res)));
+serverRouter.get(
+    '/schedules',
+    wrapAsync((req: any, res: any) => scheduleController.index(req, res)),
+);
+serverRouter.post(
+    '/schedules',
+    wrapAsync((req: any, res: any) => scheduleController.store(req, res)),
+);
+serverRouter.get(
+    '/schedules/:schedule',
+    wrapAsync((req: any, res: any) => scheduleController.view(req, res)),
+);
+serverRouter.post(
+    '/schedules/:schedule',
+    wrapAsync((req: any, res: any) => scheduleController.update(req, res)),
+);
+serverRouter.post(
+    '/schedules/:schedule/execute',
+    wrapAsync((req: any, res: any) => scheduleController.execute(req, res)),
+);
+serverRouter.delete(
+    '/schedules/:schedule',
+    wrapAsync((req: any, res: any) => scheduleController.delete(req, res)),
+);
 
 // Schedule tasks
-serverRouter.post('/schedules/:schedule/tasks', wrapAsync((req: any, res: any) => scheduleTaskController.store(req, res)));
-serverRouter.post('/schedules/:schedule/tasks/:task', wrapAsync((req: any, res: any) => scheduleTaskController.update(req, res)));
-serverRouter.delete('/schedules/:schedule/tasks/:task', wrapAsync((req: any, res: any) => scheduleTaskController.delete(req, res)));
+serverRouter.post(
+    '/schedules/:schedule/tasks',
+    wrapAsync((req: any, res: any) => scheduleTaskController.store(req, res)),
+);
+serverRouter.post(
+    '/schedules/:schedule/tasks/:task',
+    wrapAsync((req: any, res: any) => scheduleTaskController.update(req, res)),
+);
+serverRouter.delete(
+    '/schedules/:schedule/tasks/:task',
+    wrapAsync((req: any, res: any) => scheduleTaskController.delete(req, res)),
+);
 
 // Network allocations
 serverRouter.get('/network/allocations', NetworkAllocationController.index);
@@ -142,20 +202,56 @@ serverRouter.post('/network/allocations/:allocation/primary', NetworkAllocationC
 serverRouter.delete('/network/allocations/:allocation', NetworkAllocationController.remove);
 
 // Subusers
-serverRouter.get('/users', wrapAsync((req: any, res: any) => subuserController.index(req, res)));
-serverRouter.post('/users', wrapAsync((req: any, res: any) => subuserController.store(req, res)));
-serverRouter.get('/users/:user', wrapAsync((req: any, res: any) => subuserController.view(req, res)));
-serverRouter.post('/users/:user', wrapAsync((req: any, res: any) => subuserController.update(req, res)));
-serverRouter.delete('/users/:user', wrapAsync((req: any, res: any) => subuserController.delete(req, res)));
+serverRouter.get(
+    '/users',
+    wrapAsync((req: any, res: any) => subuserController.index(req, res)),
+);
+serverRouter.post(
+    '/users',
+    wrapAsync((req: any, res: any) => subuserController.store(req, res)),
+);
+serverRouter.get(
+    '/users/:user',
+    wrapAsync((req: any, res: any) => subuserController.view(req, res)),
+);
+serverRouter.post(
+    '/users/:user',
+    wrapAsync((req: any, res: any) => subuserController.update(req, res)),
+);
+serverRouter.delete(
+    '/users/:user',
+    wrapAsync((req: any, res: any) => subuserController.delete(req, res)),
+);
 
 // Backups
-serverRouter.get('/backups', wrapAsync((req: any, res: any) => backupController.index(req, res)));
-serverRouter.post('/backups', wrapAsync((req: any, res: any) => backupController.store(req, res)));
-serverRouter.get('/backups/:backup', wrapAsync((req: any, res: any) => backupController.view(req, res)));
-serverRouter.get('/backups/:backup/download', wrapAsync((req: any, res: any) => backupController.download(req, res)));
-serverRouter.post('/backups/:backup/lock', wrapAsync((req: any, res: any) => backupController.toggleLock(req, res)));
-serverRouter.post('/backups/:backup/restore', wrapAsync((req: any, res: any) => backupController.restore(req, res)));
-serverRouter.delete('/backups/:backup', wrapAsync((req: any, res: any) => backupController.delete(req, res)));
+serverRouter.get(
+    '/backups',
+    wrapAsync((req: any, res: any) => backupController.index(req, res)),
+);
+serverRouter.post(
+    '/backups',
+    wrapAsync((req: any, res: any) => backupController.store(req, res)),
+);
+serverRouter.get(
+    '/backups/:backup',
+    wrapAsync((req: any, res: any) => backupController.view(req, res)),
+);
+serverRouter.get(
+    '/backups/:backup/download',
+    wrapAsync((req: any, res: any) => backupController.download(req, res)),
+);
+serverRouter.post(
+    '/backups/:backup/lock',
+    wrapAsync((req: any, res: any) => backupController.toggleLock(req, res)),
+);
+serverRouter.post(
+    '/backups/:backup/restore',
+    wrapAsync((req: any, res: any) => backupController.restore(req, res)),
+);
+serverRouter.delete(
+    '/backups/:backup',
+    wrapAsync((req: any, res: any) => backupController.delete(req, res)),
+);
 
 // Startup
 serverRouter.get('/startup', ClientStartupController.index);

@@ -27,7 +27,7 @@ jobs:
         run: bun run typecheck
 
       - name: Lint
-        run: bun --filter @pterodactyl/web run lint
+        run: bun run lint
 
       - name: Build
         run: bun --filter @pterodactyl/web run build:production

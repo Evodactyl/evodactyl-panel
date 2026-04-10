@@ -1,10 +1,10 @@
 import http, {
-    FractalPaginatedResponse,
-    FractalResponseData,
+    type FractalPaginatedResponse,
+    type FractalResponseData,
     getPaginationSet,
-    PaginatedResult,
+    type PaginatedResult,
+    type QueryBuilderParams,
     withQueryBuilderParams,
-    QueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminServer {
@@ -157,7 +157,7 @@ type ServerSortKeys = 'id' | 'uuid' | 'name';
 
 export const getServers = (
     params?: QueryBuilderParams<ServerFilterKeys, ServerSortKeys>,
-    include?: string[]
+    include?: string[],
 ): Promise<PaginatedResult<AdminServer>> => {
     return new Promise((resolve, reject) => {
         http.get('/api/application/servers', {
@@ -170,7 +170,7 @@ export const getServers = (
                 resolve({
                     items: (data as FractalPaginatedResponse).data.map(rawDataToAdminServer),
                     pagination: getPaginationSet(data.meta.pagination),
-                })
+                }),
             )
             .catch(reject);
     });
@@ -319,7 +319,10 @@ export const toggleInstallStatus = (id: number): Promise<void> => {
     });
 };
 
-export const transferServer = (id: number, data: { node_id: number; allocation_id: number; allocation_additional?: number[] }): Promise<void> => {
+export const transferServer = (
+    id: number,
+    data: { node_id: number; allocation_id: number; allocation_additional?: number[] },
+): Promise<void> => {
     return new Promise((resolve, reject) => {
         http.post(`/api/application/servers/${id}/transfer`, data)
             .then(() => resolve())
@@ -338,8 +341,8 @@ export const searchUsers = (email: string): Promise<Array<{ id: number; username
                         id: item.attributes.id,
                         username: item.attributes.username,
                         email: item.attributes.email,
-                    }))
-                )
+                    })),
+                ),
             )
             .catch(reject);
     });
@@ -354,8 +357,8 @@ export const getNodes = (): Promise<AdminNode[]> => {
                         id: item.attributes.id,
                         name: item.attributes.name,
                         fqdn: item.attributes.fqdn,
-                    }))
-                )
+                    })),
+                ),
             )
             .catch(reject);
     });
@@ -372,8 +375,8 @@ export const getNodeAllocations = (nodeId: number): Promise<AdminAllocation[]> =
                         port: item.attributes.port,
                         alias: item.attributes.alias,
                         assigned: item.attributes.assigned,
-                    }))
-                )
+                    })),
+                ),
             )
             .catch(reject);
     });
@@ -404,12 +407,12 @@ export const getNests = (): Promise<AdminNest[]> => {
                                         defaultValue: v.attributes.default_value,
                                         isEditable: v.attributes.user_editable,
                                         rules: v.attributes.rules,
-                                    })
+                                    }),
                                 ),
                             })),
                         };
-                    })
-                )
+                    }),
+                ),
             )
             .catch(reject);
     });

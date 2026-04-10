@@ -1,7 +1,7 @@
-import http, { FractalResponseData, FractalResponseList } from '@/api/http';
+import type { Identifier } from '@/api/definitions';
+import http, { type FractalResponseData, type FractalResponseList } from '@/api/http';
+import type { ServerEggVariable, ServerStatus } from '@/api/server/types';
 import { rawDataToServerAllocation, rawDataToServerEggVariable } from '@/api/transformers';
-import { ServerEggVariable, ServerStatus } from '@/api/server/types';
-import { Identifier } from '@/api/definitions';
 
 export interface Allocation {
     id: number;
@@ -84,10 +84,10 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     featureLimits: { ...data.feature_limits },
     isTransferring: data.is_transferring,
     variables: ((data.relationships?.variables as FractalResponseList | undefined)?.data || []).map(
-        rawDataToServerEggVariable
+        rawDataToServerEggVariable,
     ),
     allocations: ((data.relationships?.allocations as FractalResponseList | undefined)?.data || []).map(
-        rawDataToServerAllocation
+        rawDataToServerAllocation,
     ),
 });
 
@@ -99,7 +99,7 @@ export default (uuid: string): Promise<[Server, string[]]> => {
                     rawDataToServerObject(data),
                     // eslint-disable-next-line camelcase
                     data.meta?.is_server_owner ? ['*'] : data.meta?.user_permissions || [],
-                ])
+                ]),
             )
             .catch(reject);
     });

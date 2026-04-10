@@ -1,14 +1,13 @@
-import * as React from 'react';
-import ContentBox from '@/components/elements/ContentBox';
-import UpdatePasswordForm from '@/components/dashboard/forms/UpdatePasswordForm';
-import UpdateEmailAddressForm from '@/components/dashboard/forms/UpdateEmailAddressForm';
-import ConfigureTwoFactorForm from '@/components/dashboard/forms/ConfigureTwoFactorForm';
-import PageContentBlock from '@/components/elements/PageContentBlock';
-import tw from 'twin.macro';
-import { breakpoint } from '@/theme';
-import styled from 'styled-components';
-import MessageBox from '@/components/MessageBox';
 import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import tw from 'twin.macro';
+import ConfigureTwoFactorForm from '@/components/dashboard/forms/ConfigureTwoFactorForm';
+import UpdateEmailAddressForm from '@/components/dashboard/forms/UpdateEmailAddressForm';
+import UpdatePasswordForm from '@/components/dashboard/forms/UpdatePasswordForm';
+import ContentBox from '@/components/elements/ContentBox';
+import PageContentBlock from '@/components/elements/PageContentBlock';
+import MessageBox from '@/components/MessageBox';
+import { breakpoint } from '@/theme';
 
 const Container = styled.div`
     ${tw`flex flex-wrap`};

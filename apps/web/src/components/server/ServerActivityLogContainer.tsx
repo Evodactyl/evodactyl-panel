@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useActivityLogs } from '@/api/server/activity';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { useFlashKey } from '@/plugins/useFlash';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Spinner from '@/components/elements/Spinner';
-import ActivityLogEntry from '@/components/elements/activity/ActivityLogEntry';
-import PaginationFooter from '@/components/elements/table/PaginationFooter';
-import { ActivityLogFilters } from '@/api/account/activity';
-import { Link } from 'react-router-dom';
-import classNames from 'classnames';
-import { styles as btnStyles } from '@/components/elements/button/index';
 import { XCircleIcon } from '@heroicons/react/solid';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import type { ActivityLogFilters } from '@/api/account/activity';
+import { useActivityLogs } from '@/api/server/activity';
+import ActivityLogEntry from '@/components/elements/activity/ActivityLogEntry';
+import { styles as btnStyles } from '@/components/elements/button/index';
+import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import PaginationFooter from '@/components/elements/table/PaginationFooter';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { useFlashKey } from '@/plugins/useFlash';
 import useLocationHash from '@/plugins/useLocationHash';
 
 export default () => {
@@ -29,7 +29,7 @@ export default () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     return (
         <ServerContentBlock title={'Activity Log'}>

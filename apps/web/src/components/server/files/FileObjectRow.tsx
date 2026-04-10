@@ -1,18 +1,19 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faFileArchive, faFileImport, faFolder } from '@fortawesome/free-solid-svg-icons';
-import { encodePathSegments } from '@/helpers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
-import React, { memo } from 'react';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import FileDropdownMenu from '@/components/server/files/FileDropdownMenu';
-import { ServerContext } from '@/state/server';
+import { join } from 'pathe';
+import type React from 'react';
+import { memo } from 'react';
+import isEqual from 'react-fast-compare';
 import { NavLink, useRouteMatch } from 'react-router-dom';
 import tw from 'twin.macro';
-import isEqual from 'react-fast-compare';
+import type { FileObject } from '@/api/server/files/loadDirectory';
+import FileDropdownMenu from '@/components/server/files/FileDropdownMenu';
 import SelectFileCheckbox from '@/components/server/files/SelectFileCheckbox';
-import { usePermissions } from '@/plugins/usePermissions';
-import { join } from 'pathe';
+import { encodePathSegments } from '@/helpers';
 import { bytesToString } from '@/lib/formatters';
+import { usePermissions } from '@/plugins/usePermissions';
+import { ServerContext } from '@/state/server';
 import styles from './style.module.css';
 
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {

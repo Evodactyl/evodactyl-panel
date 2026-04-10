@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import ContentBox from '@/components/elements/ContentBox';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import PageContentBlock from '@/components/elements/PageContentBlock';
-import tw from 'twin.macro';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import { useSSHKeys } from '@/api/account/ssh-keys';
-import { useFlashKey } from '@/plugins/useFlash';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
+import { useEffect } from 'react';
+import tw from 'twin.macro';
+import { useSSHKeys } from '@/api/account/ssh-keys';
 import CreateSSHKeyForm from '@/components/dashboard/ssh/CreateSSHKeyForm';
 import DeleteSSHKeyButton from '@/components/dashboard/ssh/DeleteSSHKeyButton';
+import ContentBox from '@/components/elements/ContentBox';
+import GreyRowBox from '@/components/elements/GreyRowBox';
+import PageContentBlock from '@/components/elements/PageContentBlock';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { useFlashKey } from '@/plugins/useFlash';
 
 export default () => {
     const { clearAndAddHttpError } = useFlashKey('account');
@@ -22,7 +22,7 @@ export default () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     return (
         <PageContentBlock title={'SSH Keys'}>
@@ -33,7 +33,7 @@ export default () => {
                 </ContentBox>
                 <ContentBox title={'SSH Keys'} css={tw`flex-1 overflow-hidden mt-8 md:mt-0 md:ml-8`}>
                     <SpinnerOverlay visible={!data && isValidating} />
-                    {!data || !data.length ? (
+                    {!data?.length ? (
                         <p css={tw`text-center text-sm`}>
                             {!data ? 'Loading...' : 'No SSH Keys exist for this account.'}
                         </p>

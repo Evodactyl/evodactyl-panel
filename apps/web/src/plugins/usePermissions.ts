@@ -1,5 +1,5 @@
-import { ServerContext } from '@/state/server';
 import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
+import { ServerContext } from '@/state/server';
 
 export const usePermissions = (action: string | string[]): boolean[] => {
     const userPermissions = ServerContext.useStoreState((state) => state.server.permissions);
@@ -16,7 +16,7 @@ export const usePermissions = (action: string | string[]): boolean[] => {
                 (permission.endsWith('.*') &&
                     userPermissions.filter((p) => p.startsWith(permission.split('.')[0])).length > 0) ||
                 // Otherwise just check if the entire permission exists in the array or not.
-                userPermissions.indexOf(permission) >= 0
+                userPermissions.indexOf(permission) >= 0,
         );
     }, [action, userPermissions]);
 };

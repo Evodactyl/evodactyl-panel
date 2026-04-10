@@ -1,32 +1,37 @@
 import { Router } from 'express';
-import { sanctumAuth, authenticateIPAccess, authenticateApplicationUser, applicationRateLimit } from '../middleware/index.js';
-import {
-  index as userIndex,
-  view as userView,
-  store as userStore,
-  update as userUpdate,
-  destroy as userDelete,
-  viewExternal as userViewExternal,
-} from '../controllers/api/application/userController.js';
-import * as NodeController from '../controllers/api/application/nodeController.js';
-import { getConfiguration as NodeConfigurationController } from '../controllers/api/application/nodeConfigurationController.js';
-import { getDeployableNodes as NodeDeploymentController } from '../controllers/api/application/nodeDeploymentController.js';
-import { getSystemInformation as NodeSystemInformationController } from '../controllers/api/application/nodeSystemInformationController.js';
-import { generateDeployToken as NodeAutoDeployController } from '../controllers/api/application/nodeAutoDeployController.js';
 import * as AllocationController from '../controllers/api/application/allocationController.js';
-import * as LocationController from '../controllers/api/application/locationController.js';
-import { nestController } from '../controllers/api/application/nestController.js';
-import { eggController } from '../controllers/api/application/eggController.js';
+import * as ApiKeyController from '../controllers/api/application/apiKeyController.js';
 import { databaseController } from '../controllers/api/application/databaseController.js';
 import * as DatabaseHostController from '../controllers/api/application/databaseHostController.js';
-import * as SettingsController from '../controllers/api/application/settingsController.js';
+import { eggController } from '../controllers/api/application/eggController.js';
+import * as LocationController from '../controllers/api/application/locationController.js';
 import * as MountController from '../controllers/api/application/mountController.js';
+import { nestController } from '../controllers/api/application/nestController.js';
+import { generateDeployToken as NodeAutoDeployController } from '../controllers/api/application/nodeAutoDeployController.js';
+import { getConfiguration as NodeConfigurationController } from '../controllers/api/application/nodeConfigurationController.js';
+import * as NodeController from '../controllers/api/application/nodeController.js';
+import { getDeployableNodes as NodeDeploymentController } from '../controllers/api/application/nodeDeploymentController.js';
+import { getSystemInformation as NodeSystemInformationController } from '../controllers/api/application/nodeSystemInformationController.js';
 import * as AppServerController from '../controllers/api/application/serverController.js';
 import * as AppServerDetailsController from '../controllers/api/application/serverDetailsController.js';
 import * as AppServerManagementController from '../controllers/api/application/serverManagementController.js';
-import * as AppStartupController from '../controllers/api/application/startupController.js';
-import * as ApiKeyController from '../controllers/api/application/apiKeyController.js';
 import { transfer as serverTransfer } from '../controllers/api/application/serverTransferController.js';
+import * as SettingsController from '../controllers/api/application/settingsController.js';
+import * as AppStartupController from '../controllers/api/application/startupController.js';
+import {
+    destroy as userDelete,
+    index as userIndex,
+    store as userStore,
+    update as userUpdate,
+    view as userView,
+    viewExternal as userViewExternal,
+} from '../controllers/api/application/userController.js';
+import {
+    applicationRateLimit,
+    authenticateApplicationUser,
+    authenticateIPAccess,
+    sanctumAuth,
+} from '../middleware/index.js';
 
 const router = Router();
 
@@ -38,14 +43,14 @@ router.use(applicationRateLimit);
 
 // ---- System Information ----
 router.get('/system-info', async (_req, res) => {
-  const { config } = await import('../config/index.js');
-  const pkg = await import('../../package.json');
-  const isBun = typeof globalThis.Bun !== 'undefined';
-  res.json({
-    version: `${pkg.version}-${config.app.version}`,
-    runtime: isBun ? `Bun ${Bun.version}` : `Node.js ${process.version}`,
-    environment: config.app.env,
-  });
+    const { config } = await import('../config/index.js');
+    const pkg = await import('../../package.json');
+    const isBun = typeof globalThis.Bun !== 'undefined';
+    res.json({
+        version: `${pkg.version}-${config.app.version}`,
+        runtime: isBun ? `Bun ${Bun.version}` : `Node.js ${process.version}`,
+        environment: config.app.env,
+    });
 });
 
 // ---- Users ----
@@ -159,62 +164,59 @@ router.delete('/databases/:id', DatabaseHostController.remove);
 
 // ---- Server Mounts ----
 router.get('/servers/:serverId/mounts', async (req, res, next) => {
-  try {
-    const serverId = parseInt(req.params.serverId, 10);
-    const { prisma } = await import('../prisma/client.js');
-    const { fractal } = await import('../serializers/fractal.js');
-    const { MountTransformer } = await import('../transformers/application/mountTransformer.js');
+    try {
+        const serverId = parseInt(req.params.serverId, 10);
+        const { prisma } = await import('../prisma/client.js');
+        const { fractal } = await import('../serializers/fractal.js');
+        const { MountTransformer } = await import('../transformers/application/mountTransformer.js');
 
-    const pivots = await prisma.mount_server.findMany({
-      where: { server_id: serverId },
-      include: { mounts: true },
-    });
+        const pivots = await prisma.mount_server.findMany({
+            where: { server_id: serverId },
+            include: { mounts: true },
+        });
 
-    const mounts = pivots.map((p: any) => p.mounts);
-    const transformer = MountTransformer.fromRequest(req);
-    const response = await fractal(req)
-      .collection(mounts)
-      .transformWith(transformer)
-      .toArray();
+        const mounts = pivots.map((p: any) => p.mounts);
+        const transformer = MountTransformer.fromRequest(req);
+        const response = await fractal(req).collection(mounts).transformWith(transformer).toArray();
 
-    res.json(response);
-  } catch (err) {
-    next(err);
-  }
+        res.json(response);
+    } catch (err) {
+        next(err);
+    }
 });
 
 router.post('/servers/:serverId/mounts/:mountId', async (req, res, next) => {
-  try {
-    const serverId = parseInt(req.params.serverId, 10);
-    const mountId = parseInt(req.params.mountId, 10);
-    const { prisma } = await import('../prisma/client.js');
+    try {
+        const serverId = parseInt(req.params.serverId, 10);
+        const mountId = parseInt(req.params.mountId, 10);
+        const { prisma } = await import('../prisma/client.js');
 
-    await prisma.mount_server.create({
-      data: { server_id: serverId, mount_id: mountId },
-    });
+        await prisma.mount_server.create({
+            data: { server_id: serverId, mount_id: mountId },
+        });
 
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
+        res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
 });
 
 router.delete('/servers/:serverId/mounts/:mountId', async (req, res, next) => {
-  try {
-    const serverId = parseInt(req.params.serverId, 10);
-    const mountId = parseInt(req.params.mountId, 10);
-    const { prisma } = await import('../prisma/client.js');
+    try {
+        const serverId = parseInt(req.params.serverId, 10);
+        const mountId = parseInt(req.params.mountId, 10);
+        const { prisma } = await import('../prisma/client.js');
 
-    await prisma.mount_server.delete({
-      where: {
-        server_id_mount_id: { server_id: serverId, mount_id: mountId },
-      },
-    });
+        await prisma.mount_server.delete({
+            where: {
+                server_id_mount_id: { server_id: serverId, mount_id: mountId },
+            },
+        });
 
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
+        res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
 });
 
 // ---- Settings ----

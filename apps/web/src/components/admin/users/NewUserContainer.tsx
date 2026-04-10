@@ -1,16 +1,14 @@
-import React from 'react';
+import { Form, Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
-import AdminLayout from '@/components/admin/AdminLayout';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import tw from 'twin.macro';
-import Field from '@/components/elements/Field';
-import Button from '@/components/elements/Button';
-import { Formik, Form } from 'formik';
-import { object, string, boolean } from 'yup';
-import useFlash from '@/plugins/useFlash';
-import FlashMessageRender from '@/components/FlashMessageRender';
+import { object, string } from 'yup';
 import { createUser } from '@/api/admin/users';
+import AdminLayout from '@/components/admin/AdminLayout';
+import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import useFlash from '@/plugins/useFlash';
 
 interface FormValues {
     email: string;
@@ -59,16 +57,27 @@ export default () => {
     };
 
     return (
-        <AdminLayout title={'Create User'} subtitle={'Add a new user account to the panel.'} showFlashKey={'admin:user:new'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Users', to: '/admin/users' }, { label: 'New User' }]}>
+        <AdminLayout
+            title={'Create User'}
+            subtitle={'Add a new user account to the panel.'}
+            showFlashKey={'admin:user:new'}
+            breadcrumbs={[
+                { label: 'Admin', to: '/admin' },
+                { label: 'Users', to: '/admin/users' },
+                { label: 'New User' },
+            ]}
+        >
             <Formik
-                initialValues={{
-                    email: '',
-                    username: '',
-                    firstName: '',
-                    lastName: '',
-                    password: '',
-                    rootAdmin: false,
-                } as FormValues}
+                initialValues={
+                    {
+                        email: '',
+                        username: '',
+                        firstName: '',
+                        lastName: '',
+                        password: '',
+                        rootAdmin: false,
+                    } as FormValues
+                }
                 validationSchema={schema}
                 onSubmit={handleSubmit}
             >
@@ -99,7 +108,9 @@ export default () => {
                                             name={'password'}
                                             label={'Password'}
                                             type={'password'}
-                                            description={'Leave blank to send the user a setup email. Must be at least 8 characters if set.'}
+                                            description={
+                                                'Leave blank to send the user a setup email. Must be at least 8 characters if set.'
+                                            }
                                             autoComplete={'new-password'}
                                         />
                                     </div>

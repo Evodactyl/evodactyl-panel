@@ -1,10 +1,10 @@
-import React from 'react';
-import { PaginatedResult } from '@/api/http';
-import tw from 'twin.macro';
-import styled from 'styled-components';
-import Button from '@/components/elements/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type React from 'react';
+import styled from 'styled-components';
+import tw from 'twin.macro';
+import type { PaginatedResult } from '@/api/http';
+import Button from '@/components/elements/Button';
 
 interface RenderFuncProps<T> {
     items: T[];

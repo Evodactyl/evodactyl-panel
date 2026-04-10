@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Schedule } from '@/api/server/schedules/getServerSchedules';
-import Field from '@/components/elements/Field';
-import { Form, Formik, FormikHelpers } from 'formik';
-import FormikSwitch from '@/components/elements/FormikSwitch';
-import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
-import { ServerContext } from '@/state/server';
-import { httpErrorToHuman } from '@/api/http';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
+import { Form, Formik, type FormikHelpers } from 'formik';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { httpErrorToHuman } from '@/api/http';
+import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
+import type { Schedule } from '@/api/server/schedules/getServerSchedules';
 import { Button } from '@/components/elements/button/index';
+import Field from '@/components/elements/Field';
+import FormikSwitch from '@/components/elements/FormikSwitch';
+import Switch from '@/components/elements/Switch';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import ScheduleCheatsheetCards from '@/components/server/schedules/ScheduleCheatsheetCards';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
-import Switch from '@/components/elements/Switch';
-import ScheduleCheatsheetCards from '@/components/server/schedules/ScheduleCheatsheetCards';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     schedule?: Schedule;
@@ -42,7 +42,7 @@ const EditScheduleModal = ({ schedule }: Props) => {
         return () => {
             clearFlashes('schedule:edit');
         };
-    }, []);
+    }, [clearFlashes]);
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('schedule:edit');

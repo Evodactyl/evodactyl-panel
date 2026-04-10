@@ -1,13 +1,13 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import I18NextHttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
+import I18NextHttpBackend, { type HttpBackendOptions } from 'i18next-http-backend';
 import I18NextMultiloadBackendAdapter from 'i18next-multiload-backend-adapter';
+import { initReactI18next } from 'react-i18next';
 
 // In dev we want fresh translations on every reload; in prod the bundled
 // build hash pins the cache. Vite replaces `import.meta.env.DEV` at build time.
 const hash = import.meta.env.DEV
     ? Date.now().toString(16)
-    : import.meta.env.VITE_BUILD_HASH ?? Date.now().toString(16);
+    : (import.meta.env.VITE_BUILD_HASH ?? Date.now().toString(16));
 
 i18n.use(I18NextMultiloadBackendAdapter)
     .use(initReactI18next)

@@ -1,4 +1,4 @@
-import http, { FractalResponseData, getPaginationSet, PaginatedResult } from '@/api/http';
+import http, { type FractalResponseData, getPaginationSet, type PaginatedResult } from '@/api/http';
 
 export interface AdminLocation {
     id: number;
@@ -62,7 +62,7 @@ export const getLocations = ({ page }: GetLocationsParams = {}): Promise<Paginat
                 resolve({
                     items: (data.data || []).map((datum: any) => rawDataToAdminLocation(datum)),
                     pagination: getPaginationSet(data.meta.pagination),
-                })
+                }),
             )
             .catch(reject);
     });

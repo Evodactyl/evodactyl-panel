@@ -1,16 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
-import Translate from '@/components/elements/Translate';
-import { format, formatDistanceToNowStrict } from 'date-fns';
-import { ActivityLog } from '@definitions/user';
-import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMetaButton';
+import type { ActivityLog } from '@definitions/user';
 import { FolderOpenIcon, TerminalIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
-import style from './style.module.css';
+import { format, formatDistanceToNowStrict } from 'date-fns';
+import type React from 'react';
+import { Link } from 'react-router-dom';
 import Avatar from '@/components/Avatar';
-import useLocationHash from '@/plugins/useLocationHash';
+import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMetaButton';
+import Translate from '@/components/elements/Translate';
+import Tooltip from '@/components/elements/tooltip/Tooltip';
 import { getObjectKeys, isObject } from '@/lib/objects';
+import useLocationHash from '@/plugins/useLocationHash';
+import style from './style.module.css';
 
 interface Props {
     activity: ActivityLog;
@@ -23,12 +23,15 @@ function wrapProperties(value: unknown): any {
     }
 
     if (isObject(value)) {
-        return getObjectKeys(value).reduce((obj, key) => {
-            if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
-                return { ...obj, [key]: value[key] };
-            }
-            return { ...obj, [key]: wrapProperties(value[key]) };
-        }, {} as Record<string, unknown>);
+        return getObjectKeys(value).reduce(
+            (obj, key) => {
+                if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
+                    return { ...obj, [key]: value[key] };
+                }
+                return { ...obj, [key]: wrapProperties(value[key]) };
+            },
+            {} as Record<string, unknown>,
+        );
     }
 
     if (Array.isArray(value)) {

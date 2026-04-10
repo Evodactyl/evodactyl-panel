@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
 import tw from 'twin.macro';
-import Label from '@/components/elements/Label';
+import { v4 } from 'uuid';
 import Input from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
 
 const ToggleContainer = styled.div`
     ${tw`relative select-none w-12 leading-normal`};
@@ -57,7 +58,7 @@ const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, 
                         id={uuid}
                         name={name}
                         type={'checkbox'}
-                        onChange={(e) => onChange && onChange(e)}
+                        onChange={(e) => onChange?.(e)}
                         defaultChecked={defaultChecked}
                         disabled={readOnly}
                     />

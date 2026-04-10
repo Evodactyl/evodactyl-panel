@@ -1,22 +1,22 @@
-import React, { useContext, useEffect } from 'react';
-import { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
-import { Field as FormikField, Form, Formik, FormikHelpers, useField } from 'formik';
-import { ServerContext } from '@/state/server';
-import createOrUpdateScheduleTask from '@/api/server/schedules/createOrUpdateScheduleTask';
-import { httpErrorToHuman } from '@/api/http';
-import Field from '@/components/elements/Field';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { boolean, number, object, string } from 'yup';
-import useFlash from '@/plugins/useFlash';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+import { Form, Formik, Field as FormikField, type FormikHelpers, useField } from 'formik';
+import { useContext, useEffect } from 'react';
 import tw from 'twin.macro';
-import Label from '@/components/elements/Label';
-import { Textarea } from '@/components/elements/Input';
+import { boolean, number, object, string } from 'yup';
+import { httpErrorToHuman } from '@/api/http';
+import createOrUpdateScheduleTask from '@/api/server/schedules/createOrUpdateScheduleTask';
+import type { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
 import { Button } from '@/components/elements/button/index';
+import Field from '@/components/elements/Field';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+import FormikSwitch from '@/components/elements/FormikSwitch';
+import { Textarea } from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
-import FormikSwitch from '@/components/elements/FormikSwitch';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     schedule: Schedule;
@@ -59,7 +59,7 @@ const ActionListener = () => {
             setValue(initialPayload || '');
             setTouched(false);
         }
-    }, [value]);
+    }, [value, setValue, setTouched, initialPayload, initialAction]);
 
     return null;
 };
@@ -76,7 +76,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
         return () => {
             clearFlashes('schedule:task');
         };
-    }, []);
+    }, [clearFlashes]);
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('schedule:task');

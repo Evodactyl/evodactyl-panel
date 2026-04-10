@@ -6,20 +6,20 @@ import { DaemonServerRepository } from '../../repositories/wings/daemonServerRep
  * Mirrors app/Services/Servers/ReinstallServerService.php
  */
 export class ReinstallServerService {
-  private daemonServerRepository = new DaemonServerRepository();
+    private daemonServerRepository = new DaemonServerRepository();
 
-  /**
-   * Reinstall a server on the remote daemon.
-   */
-  async handle(server: any): Promise<any> {
-    const updated = await prisma.servers.update({
-      where: { id: server.id },
-      data: { status: 'installing' },
-    });
+    /**
+     * Reinstall a server on the remote daemon.
+     */
+    async handle(server: any): Promise<any> {
+        const updated = await prisma.servers.update({
+            where: { id: server.id },
+            data: { status: 'installing' },
+        });
 
-    const node = server.nodes ?? await prisma.nodes.findUnique({ where: { id: server.node_id } });
-    await this.daemonServerRepository.setServer({ ...server, node }).reinstall();
+        const node = server.nodes ?? (await prisma.nodes.findUnique({ where: { id: server.node_id } }));
+        await this.daemonServerRepository.setServer({ ...server, node }).reinstall();
 
-    return updated;
-  }
+        return updated;
+    }
 }

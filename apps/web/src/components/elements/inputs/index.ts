@@ -6,8 +6,8 @@ const Input = Object.assign(
     {
         Text: InputField,
         Checkbox: Checkbox,
-    }
+    },
 );
 
-export { Input };
 export { default as styles } from './styles.module.css';
+export { Input };

@@ -1,17 +1,16 @@
-import * as React from 'react';
+import { faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useStoreState } from 'easy-peasy';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { useStoreState } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import SearchContainer from '@/components/dashboard/search/SearchContainer';
-import tw, { theme } from 'twin.macro';
 import styled from 'styled-components';
+import tw, { theme } from 'twin.macro';
 import http from '@/api/http';
+import Avatar from '@/components/Avatar';
+import SearchContainer from '@/components/dashboard/search/SearchContainer';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
-import Avatar from '@/components/Avatar';
+import type { ApplicationStore } from '@/state';
 
 const RightNavigation = styled.div`
     & > a,

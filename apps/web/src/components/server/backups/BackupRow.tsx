@@ -1,17 +1,16 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArchive, faEllipsisH, faLock } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format, formatDistanceToNow } from 'date-fns';
-import Spinner from '@/components/elements/Spinner';
-import { bytesToString } from '@/lib/formatters';
-import Can from '@/components/elements/Can';
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import BackupContextMenu from '@/components/server/backups/BackupContextMenu';
 import tw from 'twin.macro';
-import GreyRowBox from '@/components/elements/GreyRowBox';
+import type { ServerBackup } from '@/api/server/types';
 import getServerBackups from '@/api/swr/getServerBackups';
-import { ServerBackup } from '@/api/server/types';
+import Can from '@/components/elements/Can';
+import GreyRowBox from '@/components/elements/GreyRowBox';
+import Spinner from '@/components/elements/Spinner';
+import BackupContextMenu from '@/components/server/backups/BackupContextMenu';
 import { SocketEvent } from '@/components/server/events';
+import { bytesToString } from '@/lib/formatters';
+import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 
 interface Props {
     backup: ServerBackup;
@@ -34,13 +33,13 @@ export default ({ backup, className }: Props) => {
                             : {
                                   ...b,
                                   isSuccessful: parsed.is_successful || true,
-                                  checksum: (parsed.checksum_type || '') + ':' + (parsed.checksum || ''),
+                                  checksum: `${parsed.checksum_type || ''}:${parsed.checksum || ''}`,
                                   bytes: parsed.file_size || 0,
                                   completedAt: new Date(),
-                              }
+                              },
                     ),
                 }),
-                false
+                false,
             );
         } catch (e) {
             console.warn(e);

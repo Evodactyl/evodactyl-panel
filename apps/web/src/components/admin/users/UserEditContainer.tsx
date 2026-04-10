@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import AdminLayout from '@/components/admin/AdminLayout';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import Spinner from '@/components/elements/Spinner';
+import { Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import tw from 'twin.macro';
-import Field from '@/components/elements/Field';
+import { object, string } from 'yup';
+import { type AdminUser, deleteUser, getUser, updateUser } from '@/api/admin/users';
+import AdminLayout from '@/components/admin/AdminLayout';
 import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import Field from '@/components/elements/Field';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
-import { Formik, Form } from 'formik';
-import { object, string, boolean } from 'yup';
-import useFlash from '@/plugins/useFlash';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { AdminUser, getUser, updateUser, deleteUser } from '@/api/admin/users';
-import { httpErrorToHuman } from '@/api/http';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import Spinner from '@/components/elements/Spinner';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import useFlash from '@/plugins/useFlash';
 
 interface FormValues {
     email: string;
@@ -48,11 +46,18 @@ export default () => {
                 clearAndAddHttpError({ key: 'admin:user', error });
                 setLoading(false);
             });
-    }, [id]);
+    }, [id, clearFlashes, clearAndAddHttpError]);
 
     if (loading) {
         return (
-            <AdminLayout title={'Loading...'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Users', to: '/admin/users' }, { label: 'Loading...' }]}>
+            <AdminLayout
+                title={'Loading...'}
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Users', to: '/admin/users' },
+                    { label: 'Loading...' },
+                ]}
+            >
                 <Spinner centered size={'large'} />
             </AdminLayout>
         );
@@ -60,7 +65,15 @@ export default () => {
 
     if (!user) {
         return (
-            <AdminLayout title={'User Not Found'} showFlashKey={'admin:user'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Users', to: '/admin/users' }, { label: 'Not Found' }]}>
+            <AdminLayout
+                title={'User Not Found'}
+                showFlashKey={'admin:user'}
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Users', to: '/admin/users' },
+                    { label: 'Not Found' },
+                ]}
+            >
                 <p css={tw`text-center text-neutral-400`}>User could not be loaded.</p>
             </AdminLayout>
         );
@@ -123,7 +136,16 @@ export default () => {
     };
 
     return (
-        <AdminLayout title={`Edit User: ${user.username}`} subtitle={`User ID: ${user.id}`} showFlashKey={'admin:user'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Users', to: '/admin/users' }, { label: user.username }]}>
+        <AdminLayout
+            title={`Edit User: ${user.username}`}
+            subtitle={`User ID: ${user.id}`}
+            showFlashKey={'admin:user'}
+            breadcrumbs={[
+                { label: 'Admin', to: '/admin' },
+                { label: 'Users', to: '/admin/users' },
+                { label: user.username },
+            ]}
+        >
             <ConfirmationModal
                 visible={showDeleteModal}
                 title={'Delete User'}
@@ -132,19 +154,21 @@ export default () => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowDeleteModal(false)}
             >
-                Are you sure you want to delete this user? This action is permanent and cannot be undone.
-                All servers owned by this user will need to be transferred or deleted first.
+                Are you sure you want to delete this user? This action is permanent and cannot be undone. All servers
+                owned by this user will need to be transferred or deleted first.
             </ConfirmationModal>
             <Formik
-                initialValues={{
-                    email: user.email,
-                    username: user.username,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    language: user.language,
-                    password: '',
-                    rootAdmin: user.rootAdmin,
-                } as FormValues}
+                initialValues={
+                    {
+                        email: user.email,
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        language: user.language,
+                        password: '',
+                        rootAdmin: user.rootAdmin,
+                    } as FormValues
+                }
                 validationSchema={schema}
                 onSubmit={handleSubmit}
             >
@@ -177,7 +201,9 @@ export default () => {
                                             <option value={'es'}>Espa&#241;ol</option>
                                             <option value={'fr'}>Fran&#231;ais</option>
                                             <option value={'pt'}>Portugu&#234;s</option>
-                                            <option value={'ru'}>&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</option>
+                                            <option value={'ru'}>
+                                                &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;
+                                            </option>
                                             <option value={'zh'}>&#20013;&#25991;</option>
                                         </Select>
                                     </div>

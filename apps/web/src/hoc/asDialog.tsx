@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { Dialog, DialogProps, DialogWrapperContext, WrapperProps } from '@/components/elements/dialog';
+import type React from 'react';
+import { useState } from 'react';
+import { Dialog, type DialogProps, DialogWrapperContext, type WrapperProps } from '@/components/elements/dialog';
 
 function asDialog(
-    initialProps?: WrapperProps
+    initialProps?: WrapperProps,
     // eslint-disable-next-line @typescript-eslint/ban-types
 ): <P extends {}>(C: React.ComponentType<P>) => React.FunctionComponent<P & DialogProps> {
-    return function (Component) {
-        return function ({ open, onClose, ...rest }) {
+    return (Component) =>
+        ({ open, onClose, ...rest }) => {
             const [props, setProps] = useState<WrapperProps>(initialProps || {});
 
             return (
@@ -17,7 +18,6 @@ function asDialog(
                 </DialogWrapperContext.Provider>
             );
         };
-    };
 }
 
 export default asDialog;

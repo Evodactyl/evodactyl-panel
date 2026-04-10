@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import { type FieldProps, Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Form, Formik, FormikHelpers, Field as FormikField, FieldProps } from 'formik';
-import * as Yup from 'yup';
-import tw from 'twin.macro';
 import useSWR from 'swr';
-import { Node, updateNode, deleteNode } from '@/api/admin/nodes';
-import { AdminLocation, getLocations } from '@/api/admin/locations';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Field from '@/components/elements/Field';
+import tw from 'twin.macro';
+import * as Yup from 'yup';
+import { type AdminLocation, getLocations } from '@/api/admin/locations';
+import { deleteNode, type Node, updateNode } from '@/api/admin/nodes';
 import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import Field from '@/components/elements/Field';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
 
 interface Props {
@@ -120,8 +120,8 @@ const NodeSettings = ({ node, mutate }: Props) => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowDeleteModal(false)}
             >
-                Are you sure you want to delete this node? This action cannot be undone and any servers on this node must
-                be removed first.
+                Are you sure you want to delete this node? This action cannot be undone and any servers on this node
+                must be removed first.
             </ConfirmationModal>
 
             <Formik<Values>
@@ -165,7 +165,9 @@ const NodeSettings = ({ node, mutate }: Props) => {
                                                 <Label>Location</Label>
                                                 <Select
                                                     {...field}
-                                                    onChange={(e) => form.setFieldValue('locationId', Number(e.target.value))}
+                                                    onChange={(e) =>
+                                                        form.setFieldValue('locationId', Number(e.target.value))
+                                                    }
                                                 >
                                                     <option value={0}>Select a location...</option>
                                                     {locations?.map((loc) => (
@@ -185,7 +187,11 @@ const NodeSettings = ({ node, mutate }: Props) => {
                                     <FormikSwitch name={'behindProxy'} label={'Behind Proxy'} />
                                 </div>
                                 <div css={tw`mb-4`}>
-                                    <FormikSwitch name={'maintenanceMode'} label={'Maintenance Mode'} description={'If enabled, no servers can be started on this node.'} />
+                                    <FormikSwitch
+                                        name={'maintenanceMode'}
+                                        label={'Maintenance Mode'}
+                                        description={'If enabled, no servers can be started on this node.'}
+                                    />
                                 </div>
                             </div>
 

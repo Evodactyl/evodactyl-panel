@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import { type Actions, useStoreActions } from 'easy-peasy';
+import { Formik, type FormikHelpers } from 'formik';
+import { useState } from 'react';
+import type { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
+import tw from 'twin.macro';
+import { object, ref, string } from 'yup';
 import performPasswordReset from '@/api/auth/performPasswordReset';
 import { httpErrorToHuman } from '@/api/http';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { Actions, useStoreActions } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import { Formik, FormikHelpers } from 'formik';
-import { object, ref, string } from 'yup';
+import Button from '@/components/elements/Button';
 import Field from '@/components/elements/Field';
 import Input from '@/components/elements/Input';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
+import type { ApplicationStore } from '@/state';
 
 interface Values {
     password: string;

@@ -1,5 +1,3 @@
-import React, { memo, useRef, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBoxOpen,
     faCopy,
@@ -10,28 +8,31 @@ import {
     faLevelUpAlt,
     faPencilAlt,
     faTrashAlt,
-    IconDefinition,
+    type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
-import RenameFileModal from '@/components/server/files/RenameFileModal';
-import { ServerContext } from '@/state/server';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { join } from 'pathe';
-import deleteFiles from '@/api/server/files/deleteFiles';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import copyFile from '@/api/server/files/copyFile';
-import Can from '@/components/elements/Can';
-import getFileDownloadUrl from '@/api/server/files/getFileDownloadUrl';
-import useFlash from '@/plugins/useFlash';
-import tw from 'twin.macro';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
-import DropdownMenu from '@/components/elements/DropdownMenu';
-import styled from 'styled-components';
-import useEventListener from '@/plugins/useEventListener';
-import compressFiles from '@/api/server/files/compressFiles';
-import decompressFiles from '@/api/server/files/decompressFiles';
+import type React from 'react';
+import { memo, useRef, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import ChmodFileModal from '@/components/server/files/ChmodFileModal';
+import styled from 'styled-components';
+import tw from 'twin.macro';
+import compressFiles from '@/api/server/files/compressFiles';
+import copyFile from '@/api/server/files/copyFile';
+import decompressFiles from '@/api/server/files/decompressFiles';
+import deleteFiles from '@/api/server/files/deleteFiles';
+import getFileDownloadUrl from '@/api/server/files/getFileDownloadUrl';
+import type { FileObject } from '@/api/server/files/loadDirectory';
+import Can from '@/components/elements/Can';
+import DropdownMenu from '@/components/elements/DropdownMenu';
 import { Dialog } from '@/components/elements/dialog';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import ChmodFileModal from '@/components/server/files/ChmodFileModal';
+import RenameFileModal from '@/components/server/files/RenameFileModal';
+import useEventListener from '@/plugins/useEventListener';
+import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 type ModalType = 'rename' | 'move' | 'chmod';
 

@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import CodeMirror from 'codemirror';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import tw from 'twin.macro';
 import modes from '@/modes';
@@ -119,7 +120,7 @@ const findModeByFilename = (filename: string) => {
     for (let i = 0; i < modes.length; i++) {
         const info = modes[i];
 
-        if (info.file && info.file.test(filename)) {
+        if (info.file?.test(filename)) {
             return info;
         }
     }
@@ -184,10 +185,10 @@ export default ({ style, initialContent, filename, mode, fetchContent, onContent
         }
 
         onModeChanged(findModeByFilename(filename)?.mime || 'text/plain');
-    }, [filename]);
+    }, [filename, onModeChanged]);
 
     useEffect(() => {
-        editor && editor.setOption('mode', mode);
+        editor?.setOption('mode', mode);
     }, [editor, mode]);
 
     useEffect(() => {

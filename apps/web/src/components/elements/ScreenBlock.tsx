@@ -1,12 +1,11 @@
-import React from 'react';
-import PageContentBlock from '@/components/elements/PageContentBlock';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled, { keyframes } from 'styled-components';
 import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
 import NotFoundSvg from '@/assets/images/not_found.svg';
 import ServerErrorSvg from '@/assets/images/server_error.svg';
+import Button from '@/components/elements/Button';
+import PageContentBlock from '@/components/elements/PageContentBlock';
 
 interface BaseProps {
     title: string;
@@ -81,5 +80,5 @@ const NotFound = ({ title, message, onBack }: Partial<Pick<ScreenBlockProps, 'ti
     />
 );
 
-export { ServerError, NotFound };
+export { NotFound, ServerError };
 export default ScreenBlock;

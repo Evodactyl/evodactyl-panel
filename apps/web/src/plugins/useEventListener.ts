@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 export default (
     eventName: string,
     handler: (e: Event | CustomEvent | UIEvent | any) => void,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
 ) => {
     const savedHandler = useRef<any>(null);
 
@@ -12,7 +12,7 @@ export default (
     }, [handler]);
 
     useEffect(() => {
-        const isSupported = window && window.addEventListener;
+        const isSupported = window?.addEventListener;
         if (!isSupported) return;
 
         const eventListener = (event: any) => savedHandler.current(event);
@@ -20,5 +20,5 @@ export default (
         return () => {
             window.removeEventListener(eventName, eventListener);
         };
-    }, [eventName, window]);
+    }, [eventName, options]);
 };

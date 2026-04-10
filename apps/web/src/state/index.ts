@@ -1,9 +1,9 @@
 import { createStore } from 'easy-peasy';
-import flashes, { FlashStore } from '@/state/flashes';
-import user, { UserStore } from '@/state/user';
-import permissions, { GloablPermissionsStore } from '@/state/permissions';
-import settings, { SettingsStore } from '@/state/settings';
-import progress, { ProgressStore } from '@/state/progress';
+import flashes, { type FlashStore } from '@/state/flashes';
+import permissions, { type GloablPermissionsStore } from '@/state/permissions';
+import progress, { type ProgressStore } from '@/state/progress';
+import settings, { type SettingsStore } from '@/state/settings';
+import user, { type UserStore } from '@/state/user';
 
 export interface ApplicationStore {
     permissions: GloablPermissionsStore;

@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { randomInt } from '@/helpers';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import styled from 'styled-components';
 import tw from 'twin.macro';
+import { randomInt } from '@/helpers';
 
 const BarFill = styled.div`
     ${tw`h-full bg-cyan-400`};
@@ -35,7 +36,7 @@ const ProgressBar = () => {
         if (progress === 100) {
             timeout.current = setTimeout(() => setProgress(undefined), 500);
         }
-    }, [progress]);
+    }, [progress, setProgress]);
 
     useEffect(() => {
         if (!continuous) {
@@ -46,7 +47,7 @@ const ProgressBar = () => {
         if (!progress || progress === 0) {
             setProgress(randomInt(20, 30));
         }
-    }, [continuous]);
+    }, [continuous, progress, setProgress]);
 
     useEffect(() => {
         if (continuous) {
@@ -57,7 +58,7 @@ const ProgressBar = () => {
                 interval.current = setTimeout(() => setProgress((progress || 0) + randomInt(1, 5)), 500);
             }
         }
-    }, [progress, continuous]);
+    }, [progress, continuous, setProgress]);
 
     return (
         <div css={tw`w-full fixed`} style={{ height: '2px' }}>

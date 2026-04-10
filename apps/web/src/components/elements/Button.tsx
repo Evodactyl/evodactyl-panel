@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 import Spinner from '@/components/elements/Spinner';
@@ -110,5 +110,5 @@ type LinkProps = Omit<JSX.IntrinsicElements['a'], 'ref' | keyof Props> & Props;
 
 const LinkButton: React.FC<LinkProps> = (props) => <ButtonStyle as={'a'} {...props} />;
 
-export { LinkButton, ButtonStyle };
+export { ButtonStyle, LinkButton };
 export default Button;

@@ -1,20 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import tw from 'twin.macro';
-import VariableBox from '@/components/server/startup/VariableBox';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import getServerStartup from '@/api/swr/getServerStartup';
-import Spinner from '@/components/elements/Spinner';
-import { ServerError } from '@/components/elements/ScreenBlock';
-import { httpErrorToHuman } from '@/api/http';
-import { ServerContext } from '@/state/server';
-import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
-import Select from '@/components/elements/Select';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import Input from '@/components/elements/Input';
+import tw from 'twin.macro';
+import { httpErrorToHuman } from '@/api/http';
 import setSelectedDockerImage from '@/api/server/setSelectedDockerImage';
+import getServerStartup from '@/api/swr/getServerStartup';
+import Input from '@/components/elements/Input';
 import InputSpinner from '@/components/elements/InputSpinner';
+import { ServerError } from '@/components/elements/ScreenBlock';
+import Select from '@/components/elements/Select';
+import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import Spinner from '@/components/elements/Spinner';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import VariableBox from '@/components/server/startup/VariableBox';
+import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
 import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const StartupContainer = () => {
     const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ const StartupContainer = () => {
             invocation: server.data!.invocation,
             dockerImage: server.data!.dockerImage,
         }),
-        isEqual
+        isEqual,
     );
 
     const { data, error, isValidating, mutate } = getServerStartup(uuid, {
@@ -47,7 +48,12 @@ const StartupContainer = () => {
         // want to always fetch fresh information from the API however when we're loading the startup
         // information.
         mutate();
-    }, []);
+    }, [
+        // Since we're passing in initial data this will not trigger on mount automatically. We
+        // want to always fetch fresh information from the API however when we're loading the startup
+        // information.
+        mutate,
+    ]);
 
     useDeepCompareEffect(() => {
         if (!data) return;
@@ -73,7 +79,7 @@ const StartupContainer = () => {
                 })
                 .then(() => setLoading(false));
         },
-        [uuid]
+        [uuid, setServerFromState, clearFlashes, clearAndAddHttpError],
     );
 
     return !data ? (

@@ -1,19 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import {
+    type AdminAllocation,
+    type AdminNode,
+    getNodeAllocations,
+    getNodes,
+    reinstallServer,
+    suspendServer,
+    toggleInstallStatus,
+    transferServer,
+    unsuspendServer,
+} from '@/api/admin/servers';
+import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import {
-    suspendServer, unsuspendServer, reinstallServer, toggleInstallStatus,
-    transferServer, getNodes, getNodeAllocations,
-    AdminNode, AdminAllocation,
-} from '@/api/admin/servers';
-import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 
 const ServerManage = () => {
     const { server, setServer } = useContext(AdminServerContext);
@@ -35,16 +41,20 @@ const ServerManage = () => {
     const isInstalled = server.status === null;
 
     useEffect(() => {
-        getNodes().then(setNodes).catch(() => {});
+        getNodes()
+            .then(setNodes)
+            .catch(() => {});
     }, []);
 
     useEffect(() => {
         if (selectedNode > 0) {
-            getNodeAllocations(selectedNode).then((allocs) => {
-                const unassigned = allocs.filter(a => !a.assigned);
-                setNodeAllocations(unassigned);
-                setSelectedAllocation(unassigned[0]?.id || 0);
-            }).catch(() => setNodeAllocations([]));
+            getNodeAllocations(selectedNode)
+                .then((allocs) => {
+                    const unassigned = allocs.filter((a) => !a.assigned);
+                    setNodeAllocations(unassigned);
+                    setSelectedAllocation(unassigned[0]?.id || 0);
+                })
+                .catch(() => setNodeAllocations([]));
         } else {
             setNodeAllocations([]);
             setSelectedAllocation(0);
@@ -60,7 +70,8 @@ const ServerManage = () => {
             .then(() => {
                 setServer({ ...server, suspended: !server.suspended });
                 addFlash({
-                    key: 'admin:server:manage', type: 'success',
+                    key: 'admin:server:manage',
+                    type: 'success',
                     message: server.suspended ? 'Server has been unsuspended.' : 'Server has been suspended.',
                 });
             })
@@ -74,7 +85,13 @@ const ServerManage = () => {
         setShowReinstallModal(false);
 
         reinstallServer(server.id)
-            .then(() => addFlash({ key: 'admin:server:manage', type: 'success', message: 'Server reinstallation has been initiated.' }))
+            .then(() =>
+                addFlash({
+                    key: 'admin:server:manage',
+                    type: 'success',
+                    message: 'Server reinstallation has been initiated.',
+                }),
+            )
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:manage', error }))
             .finally(() => setReinstallLoading(false));
     };
@@ -87,7 +104,11 @@ const ServerManage = () => {
             .then(() => {
                 const newStatus = server.status === null ? 'installing' : null;
                 setServer({ ...server, status: newStatus });
-                addFlash({ key: 'admin:server:manage', type: 'success', message: 'Server install status has been toggled.' });
+                addFlash({
+                    key: 'admin:server:manage',
+                    type: 'success',
+                    message: 'Server install status has been toggled.',
+                });
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:manage', error }))
             .finally(() => setToggleLoading(false));
@@ -103,14 +124,18 @@ const ServerManage = () => {
             allocation_id: selectedAllocation,
         })
             .then(() => {
-                addFlash({ key: 'admin:server:manage', type: 'success', message: 'Server transfer has been initiated.' });
+                addFlash({
+                    key: 'admin:server:manage',
+                    type: 'success',
+                    message: 'Server transfer has been initiated.',
+                });
                 setShowTransferModal(false);
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:manage', error }))
             .finally(() => setTransferLoading(false));
     };
 
-    const otherNodes = nodes.filter(n => n.id !== server.nodeId);
+    const otherNodes = nodes.filter((n) => n.id !== server.nodeId);
 
     return (
         <>
@@ -138,13 +163,12 @@ const ServerManage = () => {
             >
                 <div css={tw`mb-4`}>
                     <Label>Node</Label>
-                    <Select
-                        value={selectedNode}
-                        onChange={(e) => setSelectedNode(Number(e.target.value))}
-                    >
+                    <Select value={selectedNode} onChange={(e) => setSelectedNode(Number(e.target.value))}>
                         <option value={0}>Select a node...</option>
-                        {otherNodes.map(n => (
-                            <option key={n.id} value={n.id}>{n.name}</option>
+                        {otherNodes.map((n) => (
+                            <option key={n.id} value={n.id}>
+                                {n.name}
+                            </option>
                         ))}
                     </Select>
                 </div>
@@ -156,7 +180,7 @@ const ServerManage = () => {
                             onChange={(e) => setSelectedAllocation(Number(e.target.value))}
                         >
                             <option value={0}>Select an allocation...</option>
-                            {nodeAllocations.map(a => (
+                            {nodeAllocations.map((a) => (
                                 <option key={a.id} value={a.id}>
                                     {a.alias ? `${a.alias}:${a.port}` : `${a.ip}:${a.port}`}
                                 </option>
@@ -171,8 +195,8 @@ const ServerManage = () => {
                 <TitledGreyBox title={'Reinstall Server'} css={tw`relative`}>
                     <SpinnerOverlay visible={reinstallLoading} />
                     <p css={tw`text-sm text-neutral-300 mb-4`}>
-                        This will reinstall the server with the assigned service scripts.
-                        Danger! This could overwrite server data.
+                        This will reinstall the server with the assigned service scripts. Danger! This could overwrite
+                        server data.
                     </p>
                     <Button
                         color={'red'}
@@ -188,8 +212,8 @@ const ServerManage = () => {
                 <TitledGreyBox title={'Install Status'} css={tw`relative`}>
                     <SpinnerOverlay visible={toggleLoading} />
                     <p css={tw`text-sm text-neutral-300 mb-4`}>
-                        If you need to change the install status from uninstalled to installed, or vice versa,
-                        you may do so with the button below.
+                        If you need to change the install status from uninstalled to installed, or vice versa, you may
+                        do so with the button below.
                     </p>
                     <Button
                         color={'primary'}
@@ -225,13 +249,17 @@ const ServerManage = () => {
                 <TitledGreyBox title={'Transfer Server'} css={tw`relative`}>
                     <p css={tw`text-sm text-neutral-300 mb-4`}>
                         Transfer this server to another node connected to this panel.
-                        <span css={tw`text-yellow-400`}> Warning!</span> This feature has not been fully tested and may have bugs.
+                        <span css={tw`text-yellow-400`}> Warning!</span> This feature has not been fully tested and may
+                        have bugs.
                     </p>
                     {otherNodes.length > 0 ? (
                         <Button
                             color={'green'}
                             size={'small'}
-                            onClick={() => { setSelectedNode(0); setShowTransferModal(true); }}
+                            onClick={() => {
+                                setSelectedNode(0);
+                                setShowTransferModal(true);
+                            }}
                         >
                             Transfer Server
                         </Button>

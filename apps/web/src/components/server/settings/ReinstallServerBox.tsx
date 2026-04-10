@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import reinstallServer from '@/api/server/reinstallServer';
-import { Actions, useStoreActions } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import { httpErrorToHuman } from '@/api/http';
+import { type Actions, useStoreActions } from 'easy-peasy';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { httpErrorToHuman } from '@/api/http';
+import reinstallServer from '@/api/server/reinstallServer';
 import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import type { ApplicationStore } from '@/state';
+import { ServerContext } from '@/state/server';
 
 export default () => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -34,7 +34,7 @@ export default () => {
 
     useEffect(() => {
         clearFlashes();
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <TitledGreyBox title={'Reinstall Server'} css={tw`relative`}>

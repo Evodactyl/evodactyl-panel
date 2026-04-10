@@ -5,27 +5,27 @@ import { DaemonRepository } from './daemonRepository.js';
  * Mirrors app/Repositories/Wings/DaemonPowerRepository.php
  */
 export class DaemonPowerRepository extends DaemonRepository {
-  protected server: any;
+    protected server: any;
 
-  /**
-   * Set the server to operate on.
-   */
-  setServer(server: any): this {
-    this.server = server;
-    if (server.nodes) {
-      this.setNode(server.nodes);
+    /**
+     * Set the server to operate on.
+     */
+    setServer(server: any): this {
+        this.server = server;
+        if (server.nodes) {
+            this.setNode(server.nodes);
+        }
+        return this;
     }
-    return this;
-  }
 
-  /**
-   * Sends a power action to the server instance.
-   */
-  async send(action: string): Promise<Response> {
-    if (!this.server) throw new Error('No server set on DaemonPowerRepository');
+    /**
+     * Sends a power action to the server instance.
+     */
+    async send(action: string): Promise<Response> {
+        if (!this.server) throw new Error('No server set on DaemonPowerRepository');
 
-    return this.post(`/api/servers/${this.server.uuid}/power`, {
-      action,
-    });
-  }
+        return this.post(`/api/servers/${this.server.uuid}/power`, {
+            action,
+        });
+    }
 }

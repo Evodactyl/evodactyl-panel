@@ -1,17 +1,17 @@
-import axios, { AxiosProgressEvent } from 'axios';
-import getFileUploadUrl from '@/api/server/files/getFileUploadUrl';
-import tw from 'twin.macro';
-import { Button } from '@/components/elements/button/index';
-import React, { useEffect, useRef, useState } from 'react';
-import { ModalMask } from '@/components/elements/Modal';
-import Fade from '@/components/elements/Fade';
-import useEventListener from '@/plugins/useEventListener';
-import { useFlashKey } from '@/plugins/useFlash';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
-import { ServerContext } from '@/state/server';
-import { WithClassname } from '@/components/types';
-import Portal from '@/components/elements/Portal';
 import { CloudUploadIcon } from '@heroicons/react/outline';
+import axios, { type AxiosProgressEvent } from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import tw from 'twin.macro';
+import getFileUploadUrl from '@/api/server/files/getFileUploadUrl';
+import { Button } from '@/components/elements/button/index';
+import Fade from '@/components/elements/Fade';
+import { ModalMask } from '@/components/elements/Modal';
+import Portal from '@/components/elements/Portal';
+import type { WithClassname } from '@/components/types';
+import useEventListener from '@/plugins/useEventListener';
+import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import { useFlashKey } from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 function isFileOrDirectory(event: DragEvent): boolean {
     if (!event.dataTransfer?.types) {
@@ -33,7 +33,7 @@ export default ({ className }: WithClassname) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const directory = ServerContext.useStoreState((state) => state.files.directory);
     const { clearFileUploads, removeFileUpload, pushFileUpload, setUploadProgress } = ServerContext.useStoreActions(
-        (actions) => actions.files
+        (actions) => actions.files,
     );
 
     useEventListener(
@@ -45,7 +45,7 @@ export default ({ className }: WithClassname) => {
                 setVisible(true);
             }
         },
-        { capture: true }
+        { capture: true },
     );
 
     useEventListener('dragexit', () => setVisible(false), { capture: true });
@@ -85,9 +85,9 @@ export default ({ className }: WithClassname) => {
                                 headers: { 'Content-Type': 'multipart/form-data' },
                                 params: { directory },
                                 onUploadProgress: (data) => onUploadProgress(data, file.name),
-                            }
+                            },
                         )
-                        .then(() => timeouts.current.push(setTimeout(() => removeFileUpload(file.name), 500)))
+                        .then(() => timeouts.current.push(setTimeout(() => removeFileUpload(file.name), 500))),
                 );
         });
 
@@ -145,7 +145,7 @@ export default ({ className }: WithClassname) => {
                 }}
                 multiple
             />
-            <Button className={className} onClick={() => fileUploadInput.current && fileUploadInput.current.click()}>
+            <Button className={className} onClick={() => fileUploadInput.current?.click()}>
                 Upload
             </Button>
         </>

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import tw from 'twin.macro';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { Node, getNodeConfiguration, generateDeployToken } from '@/api/admin/nodes';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Spinner from '@/components/elements/Spinner';
+import tw from 'twin.macro';
+import { generateDeployToken, getNodeConfiguration, type Node } from '@/api/admin/nodes';
 import AdminBox from '@/components/admin/AdminBox';
-import CopyOnClick from '@/components/elements/CopyOnClick';
 import Button from '@/components/elements/Button';
+import CopyOnClick from '@/components/elements/CopyOnClick';
+import Spinner from '@/components/elements/Spinner';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
 
 interface Props {
@@ -18,15 +18,14 @@ const NodeConfiguration = ({ node }: Props) => {
     const [deployCommand, setDeployCommand] = useState<string | null>(null);
     const [generating, setGenerating] = useState(false);
 
-    const { data: config, error } = useSWR<string>(
-        `/api/application/nodes/${node.id}/configuration`,
-        () => getNodeConfiguration(node.id)
+    const { data: config, error } = useSWR<string>(`/api/application/nodes/${node.id}/configuration`, () =>
+        getNodeConfiguration(node.id),
     );
 
     useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'admin:node:config', error });
         if (!error) clearFlashes('admin:node:config');
-    }, [error]);
+    }, [error, clearFlashes, clearAndAddHttpError]);
 
     const handleGenerateToken = () => {
         setGenerating(true);
@@ -63,13 +62,17 @@ const NodeConfiguration = ({ node }: Props) => {
                                         </Button>
                                     </CopyOnClick>
                                 </div>
-                                <pre css={tw`bg-neutral-900 p-4 rounded text-sm text-neutral-200 overflow-x-auto whitespace-pre-wrap`}>
+                                <pre
+                                    css={tw`bg-neutral-900 p-4 rounded text-sm text-neutral-200 overflow-x-auto whitespace-pre-wrap`}
+                                >
                                     {config}
                                 </pre>
                             </>
                         )}
                         <p css={tw`text-sm text-neutral-400 mt-4`}>
-                            This file should be placed in your daemon&apos;s root directory (usually <code css={tw`bg-neutral-800 px-1 rounded`}>/etc/pterodactyl</code>) in a file called <code css={tw`bg-neutral-800 px-1 rounded`}>config.yml</code>.
+                            This file should be placed in your daemon&apos;s root directory (usually{' '}
+                            <code css={tw`bg-neutral-800 px-1 rounded`}>/etc/pterodactyl</code>) in a file called{' '}
+                            <code css={tw`bg-neutral-800 px-1 rounded`}>config.yml</code>.
                         </p>
                     </AdminBox>
                 </div>
@@ -84,7 +87,9 @@ const NodeConfiguration = ({ node }: Props) => {
 
                         {deployCommand && (
                             <CopyOnClick text={deployCommand}>
-                                <pre css={tw`bg-neutral-900 p-3 rounded text-xs text-neutral-200 overflow-x-auto cursor-pointer mb-4 whitespace-pre-wrap break-all`}>
+                                <pre
+                                    css={tw`bg-neutral-900 p-3 rounded text-xs text-neutral-200 overflow-x-auto cursor-pointer mb-4 whitespace-pre-wrap break-all`}
+                                >
                                     {deployCommand}
                                 </pre>
                             </CopyOnClick>

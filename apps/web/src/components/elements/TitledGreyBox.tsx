@@ -1,8 +1,9 @@
-import React, { memo } from 'react';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import tw from 'twin.macro';
+import type React from 'react';
+import { memo } from 'react';
 import isEqual from 'react-fast-compare';
+import tw from 'twin.macro';
 
 interface Props {
     icon?: IconProp;

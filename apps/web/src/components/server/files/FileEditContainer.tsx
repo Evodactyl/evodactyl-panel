@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import getFileContents from '@/api/server/files/getFileContents';
-import { httpErrorToHuman } from '@/api/http';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import saveFileContents from '@/api/server/files/saveFileContents';
-import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
+import { dirname } from 'pathe';
+import { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router';
-import FileNameModal from '@/components/server/files/FileNameModal';
+import tw from 'twin.macro';
+import { httpErrorToHuman } from '@/api/http';
+import getFileContents from '@/api/server/files/getFileContents';
+import saveFileContents from '@/api/server/files/saveFileContents';
+import Button from '@/components/elements/Button';
 import Can from '@/components/elements/Can';
-import FlashMessageRender from '@/components/FlashMessageRender';
+import CodemirrorEditor from '@/components/elements/CodemirrorEditor';
+import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import { ServerError } from '@/components/elements/ScreenBlock';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
 import Select from '@/components/elements/Select';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
+import FileNameModal from '@/components/server/files/FileNameModal';
+import { encodePathSegments, hashToPath } from '@/helpers';
 import modes from '@/modes';
 import useFlash from '@/plugins/useFlash';
 import { ServerContext } from '@/state/server';
-import ErrorBoundary from '@/components/elements/ErrorBoundary';
-import { encodePathSegments, hashToPath } from '@/helpers';
-import { dirname } from 'pathe';
-import CodemirrorEditor from '@/components/elements/CodemirrorEditor';
 
 export default () => {
     const [error, setError] = useState('');
@@ -53,7 +53,7 @@ export default () => {
                 setError(httpErrorToHuman(error));
             })
             .then(() => setLoading(false));
-    }, [action, uuid, hash]);
+    }, [action, uuid, hash, setDirectory]);
 
     const save = (name?: string) => {
         if (!fetchFileContent) {

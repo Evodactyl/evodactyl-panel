@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/elements/button/index';
 import Can from '@/components/elements/Can';
-import { ServerContext } from '@/state/server';
-import { PowerAction } from '@/components/server/console/ServerConsoleContainer';
 import { Dialog } from '@/components/elements/dialog';
+import type { PowerAction } from '@/components/server/console/ServerConsoleContainer';
+import { ServerContext } from '@/state/server';
 
 interface PowerButtonProps {
     className?: string;
@@ -17,7 +18,7 @@ export default ({ className }: PowerButtonProps) => {
     const killable = status === 'stopping';
     const onButtonClick = (
         action: PowerAction | 'kill-confirmed',
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ): void => {
         e.preventDefault();
         if (action === 'kill') {

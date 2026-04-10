@@ -1,22 +1,22 @@
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { NavLink, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
-import tw from 'twin.macro';
 import styled from 'styled-components';
-import { AdminServer, getServer } from '@/api/admin/servers';
-import Spinner from '@/components/elements/Spinner';
-import { ServerError } from '@/components/elements/ScreenBlock';
+import tw from 'twin.macro';
+import { type AdminServer, getServer } from '@/api/admin/servers';
 import { httpErrorToHuman } from '@/api/http';
-import ServerAbout from '@/components/admin/servers/ServerAbout';
-import ServerDetailsEdit from '@/components/admin/servers/ServerDetailsEdit';
-import ServerBuildEdit from '@/components/admin/servers/ServerBuildEdit';
-import ServerStartupEdit from '@/components/admin/servers/ServerStartupEdit';
-import ServerManage from '@/components/admin/servers/ServerManage';
-import ServerDatabases from '@/components/admin/servers/ServerDatabases';
-import ServerMounts from '@/components/admin/servers/ServerMounts';
-import ServerDelete from '@/components/admin/servers/ServerDelete';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import ServerAbout from '@/components/admin/servers/ServerAbout';
+import ServerBuildEdit from '@/components/admin/servers/ServerBuildEdit';
+import ServerDatabases from '@/components/admin/servers/ServerDatabases';
+import ServerDelete from '@/components/admin/servers/ServerDelete';
+import ServerDetailsEdit from '@/components/admin/servers/ServerDetailsEdit';
+import ServerManage from '@/components/admin/servers/ServerManage';
+import ServerMounts from '@/components/admin/servers/ServerMounts';
+import ServerStartupEdit from '@/components/admin/servers/ServerStartupEdit';
+import { ServerError } from '@/components/elements/ScreenBlock';
+import Spinner from '@/components/elements/Spinner';
 
 export const AdminServerContext = React.createContext<{
     server: AdminServer;
@@ -82,32 +82,59 @@ const ServerRouter = () => {
                     { label: server?.name || '...' },
                 ]}
             >
-                {error ? <ServerError message={error} /> :
-                !server ? <Spinner size={'large'} centered /> : (<>
-                <TabNav>
-                    <NavLink to={`${match.url}`} exact>About</NavLink>
-                    {isInstalled && <NavLink to={`${match.url}/details`}>Details</NavLink>}
-                    {isInstalled && <NavLink to={`${match.url}/build`}>Build Configuration</NavLink>}
-                    {isInstalled && <NavLink to={`${match.url}/startup`}>Startup</NavLink>}
-                    {isInstalled && <NavLink to={`${match.url}/databases`}>Database</NavLink>}
-                    {isInstalled && <NavLink to={`${match.url}/mounts`}>Mounts</NavLink>}
-                    <NavLink to={`${match.url}/manage`}>Manage</NavLink>
-                    <DangerTab to={`${match.url}/delete`}>Delete</DangerTab>
-                    <ExternalTab href={`/server/${server.identifier}`} target={'_blank'} rel={'noopener noreferrer'}>
-                        <FontAwesomeIcon icon={faExternalLinkAlt} />
-                    </ExternalTab>
-                </TabNav>
-                <Switch>
-                    <Route path={`${match.path}`} exact><ServerAbout /></Route>
-                    <Route path={`${match.path}/details`} exact><ServerDetailsEdit /></Route>
-                    <Route path={`${match.path}/build`} exact><ServerBuildEdit /></Route>
-                    <Route path={`${match.path}/startup`} exact><ServerStartupEdit /></Route>
-                    <Route path={`${match.path}/databases`} exact><ServerDatabases /></Route>
-                    <Route path={`${match.path}/mounts`} exact><ServerMounts /></Route>
-                    <Route path={`${match.path}/manage`} exact><ServerManage /></Route>
-                    <Route path={`${match.path}/delete`} exact><ServerDelete /></Route>
-                </Switch>
-                </>)}
+                {error ? (
+                    <ServerError message={error} />
+                ) : !server ? (
+                    <Spinner size={'large'} centered />
+                ) : (
+                    <>
+                        <TabNav>
+                            <NavLink to={`${match.url}`} exact>
+                                About
+                            </NavLink>
+                            {isInstalled && <NavLink to={`${match.url}/details`}>Details</NavLink>}
+                            {isInstalled && <NavLink to={`${match.url}/build`}>Build Configuration</NavLink>}
+                            {isInstalled && <NavLink to={`${match.url}/startup`}>Startup</NavLink>}
+                            {isInstalled && <NavLink to={`${match.url}/databases`}>Database</NavLink>}
+                            {isInstalled && <NavLink to={`${match.url}/mounts`}>Mounts</NavLink>}
+                            <NavLink to={`${match.url}/manage`}>Manage</NavLink>
+                            <DangerTab to={`${match.url}/delete`}>Delete</DangerTab>
+                            <ExternalTab
+                                href={`/server/${server.identifier}`}
+                                target={'_blank'}
+                                rel={'noopener noreferrer'}
+                            >
+                                <FontAwesomeIcon icon={faExternalLinkAlt} />
+                            </ExternalTab>
+                        </TabNav>
+                        <Switch>
+                            <Route path={`${match.path}`} exact>
+                                <ServerAbout />
+                            </Route>
+                            <Route path={`${match.path}/details`} exact>
+                                <ServerDetailsEdit />
+                            </Route>
+                            <Route path={`${match.path}/build`} exact>
+                                <ServerBuildEdit />
+                            </Route>
+                            <Route path={`${match.path}/startup`} exact>
+                                <ServerStartupEdit />
+                            </Route>
+                            <Route path={`${match.path}/databases`} exact>
+                                <ServerDatabases />
+                            </Route>
+                            <Route path={`${match.path}/mounts`} exact>
+                                <ServerMounts />
+                            </Route>
+                            <Route path={`${match.path}/manage`} exact>
+                                <ServerManage />
+                            </Route>
+                            <Route path={`${match.path}/delete`} exact>
+                                <ServerDelete />
+                            </Route>
+                        </Switch>
+                    </>
+                )}
             </AdminLayout>
         </AdminServerContext.Provider>
     );

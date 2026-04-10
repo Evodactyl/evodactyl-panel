@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import loadDirectory, { FileObject } from '@/api/server/files/loadDirectory';
+import loadDirectory, { type FileObject } from '@/api/server/files/loadDirectory';
 import { cleanDirectoryPath } from '@/helpers';
 import { ServerContext } from '@/state/server';
 
@@ -17,6 +17,6 @@ export default () => {
             revalidateOnMount: false,
             refreshInterval: 0,
             errorRetryCount: 2,
-        }
+        },
     );
 };

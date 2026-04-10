@@ -18,7 +18,7 @@ function bytesToString(bytes: number, decimals = 2): string {
 
     decimals = Math.floor(Math.max(0, decimals));
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const value = Number((bytes / Math.pow(k, i)).toFixed(decimals));
+    const value = Number((bytes / k ** i).toFixed(decimals));
 
     return `${value} ${['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'][i]}`;
 }
@@ -31,4 +31,4 @@ function ip(value: string): string {
     return /([a-f0-9:]+:+)+[a-f0-9]+/.test(value) ? `[${value}]` : value;
 }
 
-export { ip, mbToBytes, bytesToString };
+export { bytesToString, ip, mbToBytes };

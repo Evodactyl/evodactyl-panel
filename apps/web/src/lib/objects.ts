@@ -25,4 +25,4 @@ function getObjectKeys<T extends {}>(o: T): (keyof T)[] {
     return Object.keys(o) as (keyof typeof o)[];
 }
 
-export { isObject, isEmptyObject, getObjectKeys };
+export { getObjectKeys, isEmptyObject, isObject };

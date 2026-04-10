@@ -1,15 +1,15 @@
-import React, { memo } from 'react';
-import { ServerContext } from '@/state/server';
+import Features from '@feature/Features';
+import { memo } from 'react';
+import isEqual from 'react-fast-compare';
+import { Alert } from '@/components/elements/alert';
 import Can from '@/components/elements/Can';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import isEqual from 'react-fast-compare';
 import Spinner from '@/components/elements/Spinner';
-import Features from '@feature/Features';
 import Console from '@/components/server/console/Console';
-import StatGraphs from '@/components/server/console/StatGraphs';
 import PowerButtons from '@/components/server/console/PowerButtons';
 import ServerDetailsBlock from '@/components/server/console/ServerDetailsBlock';
-import { Alert } from '@/components/elements/alert';
+import StatGraphs from '@/components/server/console/StatGraphs';
+import { ServerContext } from '@/state/server';
 
 export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
@@ -28,8 +28,8 @@ const ServerConsoleContainer = () => {
                     {isNodeUnderMaintenance
                         ? 'The node of this server is currently under maintenance and all actions are unavailable.'
                         : isInstalling
-                        ? 'This server is currently running its installation process and most actions are unavailable.'
-                        : 'This server is currently being transferred to another node and all actions are unavailable.'}
+                          ? 'This server is currently running its installation process and most actions are unavailable.'
+                          : 'This server is currently being transferred to another node and all actions are unavailable.'}
                 </Alert>
             )}
             <div className={'grid grid-cols-4 gap-4 mb-4'}>

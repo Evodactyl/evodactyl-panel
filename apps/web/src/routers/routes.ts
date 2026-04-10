@@ -1,18 +1,19 @@
-import React, { lazy } from 'react';
+import type React from 'react';
+import { lazy } from 'react';
+import AccountApiContainer from '@/components/dashboard/AccountApiContainer';
+import AccountOverviewContainer from '@/components/dashboard/AccountOverviewContainer';
+import ActivityLogContainer from '@/components/dashboard/activity/ActivityLogContainer';
+import AccountSSHContainer from '@/components/dashboard/ssh/AccountSSHContainer';
+import BackupContainer from '@/components/server/backups/BackupContainer';
 import ServerConsole from '@/components/server/console/ServerConsoleContainer';
 import DatabasesContainer from '@/components/server/databases/DatabasesContainer';
-import ScheduleContainer from '@/components/server/schedules/ScheduleContainer';
-import UsersContainer from '@/components/server/users/UsersContainer';
-import BackupContainer from '@/components/server/backups/BackupContainer';
-import NetworkContainer from '@/components/server/network/NetworkContainer';
-import StartupContainer from '@/components/server/startup/StartupContainer';
 import FileManagerContainer from '@/components/server/files/FileManagerContainer';
-import SettingsContainer from '@/components/server/settings/SettingsContainer';
-import AccountOverviewContainer from '@/components/dashboard/AccountOverviewContainer';
-import AccountApiContainer from '@/components/dashboard/AccountApiContainer';
-import AccountSSHContainer from '@/components/dashboard/ssh/AccountSSHContainer';
-import ActivityLogContainer from '@/components/dashboard/activity/ActivityLogContainer';
+import NetworkContainer from '@/components/server/network/NetworkContainer';
 import ServerActivityLogContainer from '@/components/server/ServerActivityLogContainer';
+import ScheduleContainer from '@/components/server/schedules/ScheduleContainer';
+import SettingsContainer from '@/components/server/settings/SettingsContainer';
+import StartupContainer from '@/components/server/startup/StartupContainer';
+import UsersContainer from '@/components/server/users/UsersContainer';
 
 // Each of the router files is already code split out appropriately — so
 // all of the items above will only be loaded in when that router is loaded.

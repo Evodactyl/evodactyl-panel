@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Formik, FormikHelpers, Field as FormikField, FieldProps } from 'formik';
-import { object, number, string } from 'yup';
+import { type FieldProps, Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import { number, object, string } from 'yup';
+import { type AdminAllocation, getNodeAllocations, updateServerBuild } from '@/api/admin/servers';
+import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
+import Button from '@/components/elements/Button';
 import Field from '@/components/elements/Field';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
-import Switch from '@/components/elements/Switch';
-import Button from '@/components/elements/Button';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import Switch from '@/components/elements/Switch';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import { updateServerBuild, getNodeAllocations, AdminAllocation } from '@/api/admin/servers';
-import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 
 interface Values {
     memory: number;
@@ -50,7 +50,7 @@ const ServerBuildEdit = () => {
     // Load unassigned allocations from the server's node
     useEffect(() => {
         getNodeAllocations(server.nodeId)
-            .then((allocs) => setUnassignedAllocations(allocs.filter(a => !a.assigned)))
+            .then((allocs) => setUnassignedAllocations(allocs.filter((a) => !a.assigned)))
             .catch(() => {});
     }, [server.nodeId]);
 
@@ -83,7 +83,11 @@ const ServerBuildEdit = () => {
         })
             .then((updatedServer) => {
                 setServer({ ...server, ...updatedServer });
-                addFlash({ key: 'admin:server:build', type: 'success', message: 'Server build configuration has been updated.' });
+                addFlash({
+                    key: 'admin:server:build',
+                    type: 'success',
+                    message: 'Server build configuration has been updated.',
+                });
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:build', error }))
             .finally(() => setSubmitting(false));
@@ -119,26 +123,66 @@ const ServerBuildEdit = () => {
                                 <TitledGreyBox title={'Resource Management'} css={tw`relative`}>
                                     <SpinnerOverlay visible={isSubmitting} />
                                     <div css={tw`mb-4`}>
-                                        <Field id={'cpu'} name={'cpu'} label={'CPU Limit (%)'} type={'number'} min={0}
-                                            description={'Each virtual core = 100%. Set to 0 for unlimited.'} />
+                                        <Field
+                                            id={'cpu'}
+                                            name={'cpu'}
+                                            label={'CPU Limit (%)'}
+                                            type={'number'}
+                                            min={0}
+                                            description={'Each virtual core = 100%. Set to 0 for unlimited.'}
+                                        />
                                     </div>
                                     <div css={tw`mb-4`}>
-                                        <Field id={'threads'} name={'threads'} label={'CPU Pinning'} type={'text'}
-                                            description={'Advanced: e.g. 0, 0-1,3, or 0,1,3,4. Leave blank for all cores.'} />
+                                        <Field
+                                            id={'threads'}
+                                            name={'threads'}
+                                            label={'CPU Pinning'}
+                                            type={'text'}
+                                            description={
+                                                'Advanced: e.g. 0, 0-1,3, or 0,1,3,4. Leave blank for all cores.'
+                                            }
+                                        />
                                     </div>
                                     <div css={tw`grid grid-cols-2 gap-4 mb-4`}>
-                                        <Field id={'memory'} name={'memory'} label={'Memory (MiB)'} type={'number'} min={0} />
-                                        <Field id={'swap'} name={'swap'} label={'Swap (MiB)'} type={'number'} min={-1}
-                                            description={'0 = disabled, -1 = unlimited'} />
+                                        <Field
+                                            id={'memory'}
+                                            name={'memory'}
+                                            label={'Memory (MiB)'}
+                                            type={'number'}
+                                            min={0}
+                                        />
+                                        <Field
+                                            id={'swap'}
+                                            name={'swap'}
+                                            label={'Swap (MiB)'}
+                                            type={'number'}
+                                            min={-1}
+                                            description={'0 = disabled, -1 = unlimited'}
+                                        />
                                     </div>
                                     <div css={tw`grid grid-cols-2 gap-4 mb-4`}>
-                                        <Field id={'disk'} name={'disk'} label={'Disk Space (MiB)'} type={'number'} min={0} />
-                                        <Field id={'io'} name={'io'} label={'Block IO Weight'} type={'number'} min={10} max={1000} />
+                                        <Field
+                                            id={'disk'}
+                                            name={'disk'}
+                                            label={'Disk Space (MiB)'}
+                                            type={'number'}
+                                            min={0}
+                                        />
+                                        <Field
+                                            id={'io'}
+                                            name={'io'}
+                                            label={'Block IO Weight'}
+                                            type={'number'}
+                                            min={10}
+                                            max={1000}
+                                        />
                                     </div>
                                     <Switch
                                         name={'oomDisabled'}
                                         label={'Disable OOM Killer'}
-                                        description={'Prevents the server from being killed when it runs out of memory.'}
+                                        description={
+                                            'Prevents the server from being killed when it runs out of memory.'
+                                        }
                                         defaultChecked={values.oomDisabled}
                                         onChange={(e) => setFieldValue('oomDisabled', e.target.checked)}
                                     />
@@ -150,9 +194,27 @@ const ServerBuildEdit = () => {
                                 <TitledGreyBox title={'Application Feature Limits'} css={tw`relative mb-6`}>
                                     <SpinnerOverlay visible={isSubmitting} />
                                     <div css={tw`grid grid-cols-3 gap-4`}>
-                                        <Field id={'databaseLimit'} name={'databaseLimit'} label={'Database Limit'} type={'number'} min={0} />
-                                        <Field id={'allocationLimit'} name={'allocationLimit'} label={'Allocation Limit'} type={'number'} min={0} />
-                                        <Field id={'backupLimit'} name={'backupLimit'} label={'Backup Limit'} type={'number'} min={0} />
+                                        <Field
+                                            id={'databaseLimit'}
+                                            name={'databaseLimit'}
+                                            label={'Database Limit'}
+                                            type={'number'}
+                                            min={0}
+                                        />
+                                        <Field
+                                            id={'allocationLimit'}
+                                            name={'allocationLimit'}
+                                            label={'Allocation Limit'}
+                                            type={'number'}
+                                            min={0}
+                                        />
+                                        <Field
+                                            id={'backupLimit'}
+                                            name={'backupLimit'}
+                                            label={'Backup Limit'}
+                                            type={'number'}
+                                            min={0}
+                                        />
                                     </div>
                                 </TitledGreyBox>
 
@@ -165,9 +227,11 @@ const ServerBuildEdit = () => {
                                                     <Label>Game Port</Label>
                                                     <Select
                                                         {...field}
-                                                        onChange={(e) => form.setFieldValue('allocationId', Number(e.target.value))}
+                                                        onChange={(e) =>
+                                                            form.setFieldValue('allocationId', Number(e.target.value))
+                                                        }
                                                     >
-                                                        {serverAllocations.map(a => (
+                                                        {serverAllocations.map((a) => (
                                                             <option key={a.id} value={a.id}>
                                                                 {a.alias ? `${a.alias}:${a.port}` : `${a.ip}:${a.port}`}
                                                             </option>
@@ -184,18 +248,22 @@ const ServerBuildEdit = () => {
                                             multiple
                                             value={values.addAllocations.map(String)}
                                             onChange={(e) => {
-                                                const selected = Array.from(e.target.selectedOptions).map(o => Number(o.value));
+                                                const selected = Array.from(e.target.selectedOptions).map((o) =>
+                                                    Number(o.value),
+                                                );
                                                 setFieldValue('addAllocations', selected);
                                             }}
                                             css={tw`h-24`}
                                         >
-                                            {unassignedAllocations.map(a => (
+                                            {unassignedAllocations.map((a) => (
                                                 <option key={a.id} value={a.id}>
                                                     {a.alias ? `${a.alias}:${a.port}` : `${a.ip}:${a.port}`}
                                                 </option>
                                             ))}
                                         </Select>
-                                        <p css={tw`text-xs text-neutral-500 mt-1`}>Select ports from unassigned allocations on this node.</p>
+                                        <p css={tw`text-xs text-neutral-500 mt-1`}>
+                                            Select ports from unassigned allocations on this node.
+                                        </p>
                                     </div>
 
                                     <div>
@@ -204,20 +272,24 @@ const ServerBuildEdit = () => {
                                             multiple
                                             value={values.removeAllocations.map(String)}
                                             onChange={(e) => {
-                                                const selected = Array.from(e.target.selectedOptions).map(o => Number(o.value));
+                                                const selected = Array.from(e.target.selectedOptions).map((o) =>
+                                                    Number(o.value),
+                                                );
                                                 setFieldValue('removeAllocations', selected);
                                             }}
                                             css={tw`h-24`}
                                         >
                                             {serverAllocations
-                                                .filter(a => a.id !== values.allocationId)
-                                                .map(a => (
+                                                .filter((a) => a.id !== values.allocationId)
+                                                .map((a) => (
                                                     <option key={a.id} value={a.id}>
                                                         {a.alias ? `${a.alias}:${a.port}` : `${a.ip}:${a.port}`}
                                                     </option>
                                                 ))}
                                         </Select>
-                                        <p css={tw`text-xs text-neutral-500 mt-1`}>Select secondary ports to remove from this server.</p>
+                                        <p css={tw`text-xs text-neutral-500 mt-1`}>
+                                            Select secondary ports to remove from this server.
+                                        </p>
                                     </div>
                                 </TitledGreyBox>
                             </div>

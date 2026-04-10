@@ -1,5 +1,5 @@
 import React from 'react';
-import { SettableModalProps } from '@/hoc/asModal';
+import type { SettableModalProps } from '@/hoc/asModal';
 
 export interface ModalContextValues {
     dismiss: () => void;
@@ -7,7 +7,7 @@ export interface ModalContextValues {
         value:
             | ((current: Readonly<Partial<SettableModalProps>>) => Partial<SettableModalProps>)
             | Partial<SettableModalProps>
-            | null
+            | null,
     ) => void;
 }
 

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import { SocketEvent, SocketRequest } from '@/components/server/events';
-import Field from '@/components/elements/Field';
-import updateStartupVariable from '@/api/server/updateStartupVariable';
 import { Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import tw from 'twin.macro';
+import updateStartupVariable from '@/api/server/updateStartupVariable';
+import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
+import Modal from '@/components/elements/Modal';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { SocketEvent, SocketRequest } from '@/components/server/events';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Values {
     gslToken: string;
@@ -63,7 +63,7 @@ const GSLTokenModalFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:gslToken');
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <Formik onSubmit={updateGSLToken} initialValues={{ gslToken: '' }}>

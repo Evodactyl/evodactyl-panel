@@ -1,18 +1,19 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Form, Formik, FormikHelpers, Field as FormikField } from 'formik';
-import { object, string, number } from 'yup';
+import { Form, Formik, Field as FormikField, type FormikHelpers } from 'formik';
+import type React from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import tw from 'twin.macro';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import Field from '@/components/elements/Field';
-import Label from '@/components/elements/Label';
+import { number, object, string } from 'yup';
+import { searchUsers, updateServerDetails } from '@/api/admin/servers';
+import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 import Button from '@/components/elements/Button';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import Field from '@/components/elements/Field';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import { Textarea } from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
-import { updateServerDetails, searchUsers } from '@/api/admin/servers';
-import { AdminServerContext } from '@/components/admin/servers/ServerRouter';
 
 interface Values {
     name: string;
@@ -33,7 +34,11 @@ const schema = object().shape({
     externalId: string().nullable(),
 });
 
-const UserSearch = ({ value, onChange, currentUser }: {
+const UserSearch = ({
+    value,
+    onChange,
+    currentUser,
+}: {
     value: number;
     onChange: (userId: number) => void;
     currentUser?: { id: number; username: string; email: string };
@@ -42,13 +47,16 @@ const UserSearch = ({ value, onChange, currentUser }: {
     const [results, setResults] = useState<UserResult[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedDisplay, setSelectedDisplay] = useState(
-        currentUser ? `${currentUser.username} (${currentUser.email})` : `User #${value}`
+        currentUser ? `${currentUser.username} (${currentUser.email})` : `User #${value}`,
     );
     const timerRef = useRef<ReturnType<typeof setTimeout>>();
     const containerRef = useRef<HTMLDivElement>(null);
 
     const doSearch = useCallback((q: string) => {
-        if (q.length < 2) { setResults([]); return; }
+        if (q.length < 2) {
+            setResults([]);
+            return;
+        }
         searchUsers(q)
             .then(setResults)
             .catch(() => setResults([]));
@@ -78,7 +86,10 @@ const UserSearch = ({ value, onChange, currentUser }: {
             }
         };
         document.addEventListener('mousedown', handler);
-        return () => { document.removeEventListener('mousedown', handler); if (timerRef.current) clearTimeout(timerRef.current); };
+        return () => {
+            document.removeEventListener('mousedown', handler);
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
     }, []);
 
     return (
@@ -91,13 +102,17 @@ const UserSearch = ({ value, onChange, currentUser }: {
                 type={'text'}
                 value={query}
                 onChange={handleInput}
-                onFocus={() => { if (results.length > 0) setShowDropdown(true); }}
+                onFocus={() => {
+                    if (results.length > 0) setShowDropdown(true);
+                }}
                 placeholder={'Search by email...'}
                 css={tw`w-full bg-neutral-600 border border-neutral-500 rounded px-3 py-2 text-sm text-neutral-200 outline-none focus:border-primary-400`}
             />
             {showDropdown && results.length > 0 && (
-                <div css={tw`absolute z-10 w-full mt-1 bg-neutral-700 border border-neutral-500 rounded shadow-lg max-h-48 overflow-y-auto`}>
-                    {results.map(user => (
+                <div
+                    css={tw`absolute z-10 w-full mt-1 bg-neutral-700 border border-neutral-500 rounded shadow-lg max-h-48 overflow-y-auto`}
+                >
+                    {results.map((user) => (
                         <button
                             key={user.id}
                             type={'button'}
@@ -129,7 +144,11 @@ const ServerDetailsEdit = () => {
         })
             .then((updatedServer) => {
                 setServer({ ...server, ...updatedServer });
-                addFlash({ key: 'admin:server:details', type: 'success', message: 'Server details have been updated.' });
+                addFlash({
+                    key: 'admin:server:details',
+                    type: 'success',
+                    message: 'Server details have been updated.',
+                });
             })
             .catch((error) => clearAndAddHttpError({ key: 'admin:server:details', error }))
             .finally(() => setSubmitting(false));

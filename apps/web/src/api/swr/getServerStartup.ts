@@ -1,7 +1,7 @@
-import useSWR, { SWRConfiguration } from 'swr';
-import http, { FractalResponseList } from '@/api/http';
+import useSWR, { type SWRConfiguration } from 'swr';
+import http, { type FractalResponseList } from '@/api/http';
+import type { ServerEggVariable } from '@/api/server/types';
 import { rawDataToServerEggVariable } from '@/api/transformers';
-import { ServerEggVariable } from '@/api/server/types';
 
 interface Response {
     invocation: string;
@@ -23,5 +23,5 @@ export default (uuid: string, initialData?: Response | null, config?: SWRConfigu
                 dockerImages: data.meta.docker_images || {},
             };
         },
-        { fallbackData: initialData || undefined, errorRetryCount: 3, ...(config || {}) }
+        { fallbackData: initialData || undefined, errorRetryCount: 3, ...(config || {}) },
     );

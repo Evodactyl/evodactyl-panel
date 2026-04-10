@@ -1,14 +1,13 @@
+import { Form, Formik, type FormikHelpers } from 'formik';
+import tw from 'twin.macro';
+import chmodFiles from '@/api/server/files/chmodFiles';
+import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
+import Modal, { type RequiredModalProps } from '@/components/elements/Modal';
 import { fileBitsToString } from '@/helpers';
 import useFileManagerSwr from '@/plugins/useFileManagerSwr';
-import React from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import chmodFiles from '@/api/server/files/chmodFiles';
-import { ServerContext } from '@/state/server';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
 import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface FormikValues {
     mode: string;
@@ -34,9 +33,9 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
         mutate(
             (data) =>
                 data.map((f) =>
-                    f.name === files[0].file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f
+                    f.name === files[0].file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f,
                 ),
-            false
+            false,
         );
 
         const data = files.map((f) => ({ file: f.file, mode: mode }));

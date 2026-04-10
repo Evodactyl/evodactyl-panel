@@ -1,5 +1,5 @@
-import React from 'react';
 import { Transition } from '@headlessui/react';
+import type React from 'react';
 
 type Duration = `duration-${number}`;
 
@@ -14,8 +14,8 @@ export default ({ children, duration, ...props }: Props) => {
     const [enterDuration, exitDuration] = Array.isArray(duration)
         ? duration
         : !duration
-        ? ['duration-200', 'duration-100']
-        : [duration, duration];
+          ? ['duration-200', 'duration-100']
+          : [duration, duration];
 
     return (
         <Transition

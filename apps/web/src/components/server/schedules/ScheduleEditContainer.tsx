@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { useCallback, useEffect, useState } from 'react';
+import isEqual from 'react-fast-compare';
 import { useHistory, useParams } from 'react-router-dom';
+import tw from 'twin.macro';
 import getServerSchedule from '@/api/server/schedules/getServerSchedule';
+import { Button } from '@/components/elements/button/index';
+import Can from '@/components/elements/Can';
+import PageContentBlock from '@/components/elements/PageContentBlock';
 import Spinner from '@/components/elements/Spinner';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import DeleteScheduleButton from '@/components/server/schedules/DeleteScheduleButton';
 import EditScheduleModal from '@/components/server/schedules/EditScheduleModal';
 import NewTaskButton from '@/components/server/schedules/NewTaskButton';
-import DeleteScheduleButton from '@/components/server/schedules/DeleteScheduleButton';
-import Can from '@/components/elements/Can';
+import RunScheduleButton from '@/components/server/schedules/RunScheduleButton';
+import ScheduleCronRow from '@/components/server/schedules/ScheduleCronRow';
+import ScheduleTaskRow from '@/components/server/schedules/ScheduleTaskRow';
 import useFlash from '@/plugins/useFlash';
 import { ServerContext } from '@/state/server';
-import PageContentBlock from '@/components/elements/PageContentBlock';
-import tw from 'twin.macro';
-import { Button } from '@/components/elements/button/index';
-import ScheduleTaskRow from '@/components/server/schedules/ScheduleTaskRow';
-import isEqual from 'react-fast-compare';
-import { format } from 'date-fns';
-import ScheduleCronRow from '@/components/server/schedules/ScheduleCronRow';
-import RunScheduleButton from '@/components/server/schedules/RunScheduleButton';
 
 interface Params {
     id: string;
@@ -53,7 +53,7 @@ export default () => {
 
     const schedule = ServerContext.useStoreState(
         (st) => st.schedules.data.find((s) => s.id === Number(scheduleId)),
-        isEqual
+        isEqual,
     );
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
 
@@ -71,7 +71,7 @@ export default () => {
                 clearAndAddHttpError({ error, key: 'schedules' });
             })
             .then(() => setIsLoading(false));
-    }, [scheduleId]);
+    }, [scheduleId, clearAndAddHttpError, uuid, schedule?.id, clearFlashes, appendSchedule]);
 
     const toggleEditModal = useCallback(() => {
         setShowEditModal((s) => !s);
@@ -140,7 +140,7 @@ export default () => {
                             {schedule.tasks.length > 0
                                 ? schedule.tasks
                                       .sort((a, b) =>
-                                          a.sequenceId === b.sequenceId ? 0 : a.sequenceId > b.sequenceId ? 1 : -1
+                                          a.sequenceId === b.sequenceId ? 0 : a.sequenceId > b.sequenceId ? 1 : -1,
                                       )
                                       .map((task) => (
                                           <ScheduleTaskRow

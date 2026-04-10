@@ -1,10 +1,10 @@
 import { decrypt } from './encryption.js';
 
 export interface NodeConnectionFields {
-  scheme: string | null;
-  fqdn: string;
-  daemonListen: number;
-  daemon_token: string;
+    scheme: string | null;
+    fqdn: string;
+    daemonListen: number;
+    daemon_token: string;
 }
 
 /**
@@ -12,8 +12,8 @@ export interface NodeConnectionFields {
  * Laravel's Node::getConnectionAddress().
  */
 export function getConnectionAddress(node: NodeConnectionFields): string {
-  const scheme = node.scheme || 'https';
-  return `${scheme}://${node.fqdn}:${node.daemonListen}`;
+    const scheme = node.scheme || 'https';
+    return `${scheme}://${node.fqdn}:${node.daemonListen}`;
 }
 
 /**
@@ -21,14 +21,14 @@ export function getConnectionAddress(node: NodeConnectionFields): string {
  * matching Laravel's WebsocketController::__invoke() replacement.
  */
 export function getWebsocketAddress(node: NodeConnectionFields): string {
-  return getConnectionAddress(node)
-    .replace(/^https:/, 'wss:')
-    .replace(/^http:/, 'ws:');
+    return getConnectionAddress(node)
+        .replace(/^https:/, 'wss:')
+        .replace(/^http:/, 'ws:');
 }
 
 /**
  * Decrypts the node's daemon token. Mirrors Node::getDecryptedKey().
  */
 export function getDecryptedKey(node: NodeConnectionFields): string {
-  return decrypt(node.daemon_token);
+    return decrypt(node.daemon_token);
 }

@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import MessageBox from '@/components/MessageBox';
 import { useStoreState } from 'easy-peasy';
+import React, { useMemo } from 'react';
 import tw from 'twin.macro';
+import MessageBox from '@/components/MessageBox';
 
 type Props = Readonly<{
     byKey?: string;
@@ -10,10 +10,7 @@ type Props = Readonly<{
 
 const FlashMessageRender = ({ byKey, className }: Props) => {
     const items = useStoreState((state) => state.flashes.items);
-    const flashes = useMemo(
-        () => items.filter((flash) => (byKey ? flash.key === byKey : true)),
-        [items, byKey],
-    );
+    const flashes = useMemo(() => items.filter((flash) => (byKey ? flash.key === byKey : true)), [items, byKey]);
 
     return flashes.length ? (
         <div className={className}>

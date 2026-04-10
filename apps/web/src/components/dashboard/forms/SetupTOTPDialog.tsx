@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
-import getTwoFactorTokenData, { TwoFactorTokenData } from '@/api/account/getTwoFactorTokenData';
-import { useFlashKey } from '@/plugins/useFlash';
-import tw from 'twin.macro';
+import { type Actions, useStoreActions } from 'easy-peasy';
 import QRCode from 'qrcode.react';
-import { Button } from '@/components/elements/button/index';
-import Spinner from '@/components/elements/Spinner';
-import { Input } from '@/components/elements/inputs';
-import CopyOnClick from '@/components/elements/CopyOnClick';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
+import type React from 'react';
+import { useContext, useEffect, useState } from 'react';
+import tw from 'twin.macro';
 import enableAccountTwoFactor from '@/api/account/enableAccountTwoFactor';
+import getTwoFactorTokenData, { type TwoFactorTokenData } from '@/api/account/getTwoFactorTokenData';
+import { Button } from '@/components/elements/button/index';
+import CopyOnClick from '@/components/elements/CopyOnClick';
+import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
+import { Input } from '@/components/elements/inputs';
+import Spinner from '@/components/elements/Spinner';
+import Tooltip from '@/components/elements/tooltip/Tooltip';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { Actions, useStoreActions } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
 import asDialog from '@/hoc/asDialog';
+import { useFlashKey } from '@/plugins/useFlash';
+import type { ApplicationStore } from '@/state';
 
 interface Props {
     onTokens: (tokens: string[]) => void;
@@ -33,11 +34,11 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
         getTwoFactorTokenData()
             .then(setToken)
             .catch((error) => clearAndAddHttpError(error));
-    }, []);
+    }, [clearAndAddHttpError]);
 
     useEffect(() => {
         setProps((state) => ({ ...state, preventExternalClose: submitting }));
-    }, [submitting]);
+    }, [submitting, setProps]);
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -70,7 +71,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
             </div>
             <CopyOnClick text={token?.secret}>
                 <p className={'font-mono text-sm text-gray-100 text-center mt-2'}>
-                    {token?.secret.match(/.{1,4}/g)!.join(' ') || 'Loading...'}
+                    {token?.secret.match(/.{1,4}/g)?.join(' ') || 'Loading...'}
                 </p>
             </CopyOnClick>
             <p id={'totp-code-description'} className={'mt-6'}>

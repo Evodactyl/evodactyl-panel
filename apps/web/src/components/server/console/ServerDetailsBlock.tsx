@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import {
     faClock,
     faCloudDownloadAlt,
@@ -8,14 +7,16 @@ import {
     faMicrochip,
     faWifi,
 } from '@fortawesome/free-solid-svg-icons';
-import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
-import { ServerContext } from '@/state/server';
+import classNames from 'classnames';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import StatBlock from '@/components/server/console/StatBlock';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 import UptimeDuration from '@/components/server/UptimeDuration';
-import StatBlock from '@/components/server/console/StatBlock';
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import classNames from 'classnames';
+import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
 import { capitalize } from '@/lib/strings';
+import useWebsocketEvent from '@/plugins/useWebsocketEvent';
+import { ServerContext } from '@/state/server';
 
 type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
 
@@ -53,7 +54,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
             memory: limits?.memory ? bytesToString(mbToBytes(limits.memory)) : null,
             disk: limits?.disk ? bytesToString(mbToBytes(limits.disk)) : null,
         }),
-        [limits]
+        [limits],
     );
 
     const allocation = ServerContext.useStoreState((state) => {
@@ -74,7 +75,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         let stats: any = {};
         try {
             stats = JSON.parse(data);
-        } catch (e) {
+        } catch (_e) {
             return;
         }
 

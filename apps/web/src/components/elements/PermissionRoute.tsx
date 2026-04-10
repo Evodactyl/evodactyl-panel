@@ -1,6 +1,5 @@
-import React from 'react';
+import type { RouteProps } from 'react-router';
 import { Route } from 'react-router-dom';
-import { RouteProps } from 'react-router';
 import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
 

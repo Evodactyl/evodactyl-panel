@@ -1,19 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
-import { object, string } from 'yup';
 import debounce from 'debounce';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import InputSpinner from '@/components/elements/InputSpinner';
-import getServers from '@/api/getServers';
-import { Server } from '@/api/server/getServer';
-import { ApplicationStore } from '@/state';
+import { type Actions, useStoreActions, useStoreState } from 'easy-peasy';
+import { Field, Form, Formik, type FormikHelpers, useFormikContext } from 'formik';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import tw from 'twin.macro';
+import { object, string } from 'yup';
+import getServers from '@/api/getServers';
+import type { Server } from '@/api/server/getServer';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import Input from '@/components/elements/Input';
+import InputSpinner from '@/components/elements/InputSpinner';
+import Modal, { type RequiredModalProps } from '@/components/elements/Modal';
 import { ip } from '@/lib/formatters';
+import type { ApplicationStore } from '@/state';
 
 type Props = RequiredModalProps;
 
@@ -40,7 +40,7 @@ const SearchWatcher = () => {
         if (values.term.length >= 3) {
             submitForm();
         }
-    }, [values.term]);
+    }, [values.term, submitForm]);
 
     return null;
 };
@@ -50,7 +50,7 @@ export default ({ ...props }: Props) => {
     const isAdmin = useStoreState((state) => state.user.data!.rootAdmin);
     const [servers, setServers] = useState<Server[]>([]);
     const { clearAndAddHttpError, clearFlashes } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes
+        (actions: Actions<ApplicationStore>) => actions.flashes,
     );
 
     const search = debounce(({ term }: Values, { setSubmitting }: FormikHelpers<Values>) => {

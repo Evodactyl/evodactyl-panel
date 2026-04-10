@@ -1,10 +1,11 @@
-import React, { forwardRef } from 'react';
 import { Form } from 'formik';
+import type React from 'react';
+import { forwardRef } from 'react';
 import styled from 'styled-components';
-import { breakpoint } from '@/theme';
-import FlashMessageRender from '@/components/FlashMessageRender';
 import tw from 'twin.macro';
 import PterodactylLogo from '@/assets/images/pterodactyl.svg';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { breakpoint } from '@/theme';
 
 type Props = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> & {
     title?: string;

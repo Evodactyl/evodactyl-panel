@@ -1,13 +1,13 @@
 import React from 'react';
+import { useLocation } from 'react-router';
 import { NavLink, Route, Switch } from 'react-router-dom';
-import NavigationBar from '@/components/NavigationBar';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import { NotFound } from '@/components/elements/ScreenBlock';
-import TransitionRouter from '@/TransitionRouter';
-import SubNavigation from '@/components/elements/SubNavigation';
-import { useLocation } from 'react-router';
 import Spinner from '@/components/elements/Spinner';
+import SubNavigation from '@/components/elements/SubNavigation';
+import NavigationBar from '@/components/NavigationBar';
 import routes from '@/routers/routes';
+import TransitionRouter from '@/TransitionRouter';
 
 export default () => {
     const location = useLocation();

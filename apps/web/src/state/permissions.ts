@@ -1,4 +1,4 @@
-import { action, Action, thunk, Thunk } from 'easy-peasy';
+import { type Action, action, type Thunk, thunk } from 'easy-peasy';
 import getSystemPermissions from '@/api/getSystemPermissions';
 
 export interface PanelPermissions {

@@ -1,26 +1,39 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Form, Formik, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import tw from 'twin.macro';
-import useSWR from 'swr';
-import {
-    Node, Allocation, getAllocations, createAllocations, deleteAllocation,
-    updateAllocationAlias, bulkDeleteAllocations,
-} from '@/api/admin/nodes';
-import { PaginatedResult } from '@/api/http';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Spinner from '@/components/elements/Spinner';
-import Pagination from '@/components/elements/Pagination';
-import Button from '@/components/elements/Button';
-import Field from '@/components/elements/Field';
-import AdminBox from '@/components/admin/AdminBox';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
-import useFlash from '@/plugins/useFlash';
-import { AdminTable, AdminTableHead, AdminTableBody, AdminTableHeader, AdminTableRow, AdminTableCell } from '@/components/admin/AdminTable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Form, Formik, type FormikHelpers } from 'formik';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import useSWR from 'swr';
+import tw from 'twin.macro';
+import * as Yup from 'yup';
+import {
+    type Allocation,
+    bulkDeleteAllocations,
+    createAllocations,
+    deleteAllocation,
+    getAllocations,
+    type Node,
+    updateAllocationAlias,
+} from '@/api/admin/nodes';
+import type { PaginatedResult } from '@/api/http';
+import AdminBox from '@/components/admin/AdminBox';
+import {
+    AdminTable,
+    AdminTableBody,
+    AdminTableCell,
+    AdminTableHead,
+    AdminTableHeader,
+    AdminTableRow,
+} from '@/components/admin/AdminTable';
+import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import Field from '@/components/elements/Field';
+import Pagination from '@/components/elements/Pagination';
+import Spinner from '@/components/elements/Spinner';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import useFlash from '@/plugins/useFlash';
 
 interface Props {
     node: Node;
@@ -38,24 +51,35 @@ const createSchema = Yup.object().shape({
     ports: Yup.string().required('At least one port or port range is required.'),
 });
 
-const AliasInput = ({ allocation, nodeId, onUpdated }: { allocation: Allocation; nodeId: number; onUpdated: () => void }) => {
+const AliasInput = ({
+    allocation,
+    nodeId,
+    onUpdated,
+}: {
+    allocation: Allocation;
+    nodeId: number;
+    onUpdated: () => void;
+}) => {
     const [value, setValue] = useState(allocation.alias || '');
     const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
     const timerRef = useRef<ReturnType<typeof setTimeout>>();
     const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-    const save = useCallback((newValue: string) => {
-        setStatus('saving');
-        updateAllocationAlias(nodeId, allocation.id, newValue || null)
-            .then(() => {
-                setStatus('success');
-                saveTimerRef.current = setTimeout(() => setStatus('idle'), 2000);
-            })
-            .catch(() => {
-                setStatus('error');
-                saveTimerRef.current = setTimeout(() => setStatus('idle'), 2000);
-            });
-    }, [nodeId, allocation.id]);
+    const save = useCallback(
+        (newValue: string) => {
+            setStatus('saving');
+            updateAllocationAlias(nodeId, allocation.id, newValue || null)
+                .then(() => {
+                    setStatus('success');
+                    saveTimerRef.current = setTimeout(() => setStatus('idle'), 2000);
+                })
+                .catch(() => {
+                    setStatus('error');
+                    saveTimerRef.current = setTimeout(() => setStatus('idle'), 2000);
+                });
+        },
+        [nodeId, allocation.id],
+    );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
@@ -71,7 +95,8 @@ const AliasInput = ({ allocation, nodeId, onUpdated }: { allocation: Allocation;
         };
     }, []);
 
-    const borderColor = status === 'success' ? 'border-green-500' : status === 'error' ? 'border-red-500' : 'border-neutral-500';
+    const borderColor =
+        status === 'success' ? 'border-green-500' : status === 'error' ? 'border-red-500' : 'border-neutral-500';
 
     return (
         <input
@@ -94,21 +119,26 @@ const NodeAllocations = ({ node }: Props) => {
     const [bulkDeleting, setBulkDeleting] = useState(false);
     const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
 
-    const { data: allocations, error, mutate } = useSWR<PaginatedResult<Allocation>>(
-        [`/api/application/nodes/${node.id}/allocations`, page],
-        () => getAllocations(node.id, page)
+    const {
+        data: allocations,
+        error,
+        mutate,
+    } = useSWR<PaginatedResult<Allocation>>([`/api/application/nodes/${node.id}/allocations`, page], () =>
+        getAllocations(node.id, page),
     );
 
     useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'admin:node:allocations', error });
         if (!error) clearFlashes('admin:node:allocations');
-    }, [error]);
+    }, [error, clearAndAddHttpError, clearFlashes]);
 
     // Reset selection on page change
-    useEffect(() => { setSelected(new Set()); }, [page]);
+    useEffect(() => {
+        setSelected(new Set());
+    }, []);
 
     const toggleSelection = (id: number) => {
-        setSelected(prev => {
+        setSelected((prev) => {
             const next = new Set(prev);
             if (next.has(id)) next.delete(id);
             else next.add(id);
@@ -118,11 +148,11 @@ const NodeAllocations = ({ node }: Props) => {
 
     const toggleSelectAll = () => {
         if (!allocations) return;
-        const unassigned = allocations.items.filter(a => !a.assigned);
+        const unassigned = allocations.items.filter((a) => !a.assigned);
         if (selected.size === unassigned.length) {
             setSelected(new Set());
         } else {
-            setSelected(new Set(unassigned.map(a => a.id)));
+            setSelected(new Set(unassigned.map((a) => a.id)));
         }
     };
 
@@ -165,7 +195,11 @@ const NodeAllocations = ({ node }: Props) => {
 
         bulkDeleteAllocations(node.id, Array.from(selected))
             .then(() => {
-                addFlash({ key: 'admin:node:allocations', type: 'success', message: `${selected.size} allocation(s) deleted.` });
+                addFlash({
+                    key: 'admin:node:allocations',
+                    type: 'success',
+                    message: `${selected.size} allocation(s) deleted.`,
+                });
                 setSelected(new Set());
                 setShowBulkDeleteModal(false);
                 mutate();
@@ -182,9 +216,7 @@ const NodeAllocations = ({ node }: Props) => {
         setBulkDeleting(true);
         clearFlashes('admin:node:allocations');
 
-        const idsForIp = allocations.items
-            .filter(a => a.ip === deleteIp && !a.assigned)
-            .map(a => a.id);
+        const idsForIp = allocations.items.filter((a) => a.ip === deleteIp && !a.assigned).map((a) => a.id);
 
         if (idsForIp.length === 0) {
             setShowIpBlockModal(false);
@@ -194,7 +226,11 @@ const NodeAllocations = ({ node }: Props) => {
 
         bulkDeleteAllocations(node.id, idsForIp)
             .then(() => {
-                addFlash({ key: 'admin:node:allocations', type: 'success', message: `Allocations for ${deleteIp} deleted.` });
+                addFlash({
+                    key: 'admin:node:allocations',
+                    type: 'success',
+                    message: `Allocations for ${deleteIp} deleted.`,
+                });
                 setShowIpBlockModal(false);
                 mutate();
             })
@@ -206,7 +242,7 @@ const NodeAllocations = ({ node }: Props) => {
     };
 
     // Get unique IPs from current page
-    const uniqueIps = allocations ? [...new Set(allocations.items.map(a => a.ip))] : [];
+    const uniqueIps = allocations ? [...new Set(allocations.items.map((a) => a.ip))] : [];
 
     return (
         <>
@@ -232,15 +268,19 @@ const NodeAllocations = ({ node }: Props) => {
                 onModalDismissed={() => setShowIpBlockModal(false)}
             >
                 <div css={tw`mb-4`}>
-                    <p css={tw`text-sm text-neutral-300 mb-3`}>Select the IP address to delete all unassigned allocations for:</p>
+                    <p css={tw`text-sm text-neutral-300 mb-3`}>
+                        Select the IP address to delete all unassigned allocations for:
+                    </p>
                     <select
                         value={deleteIp}
                         onChange={(e) => setDeleteIp(e.target.value)}
                         css={tw`bg-neutral-600 border border-neutral-500 rounded px-3 py-2 text-sm text-neutral-200 w-full outline-none`}
                     >
                         <option value={''}>Select an IP...</option>
-                        {uniqueIps.map(ip => (
-                            <option key={ip} value={ip}>{ip}</option>
+                        {uniqueIps.map((ip) => (
+                            <option key={ip} value={ip}>
+                                {ip}
+                            </option>
                         ))}
                     </select>
                 </div>
@@ -255,11 +295,24 @@ const NodeAllocations = ({ node }: Props) => {
                         tools={
                             <div css={tw`flex items-center gap-2`}>
                                 {selected.size > 0 && (
-                                    <Button size={'xsmall'} color={'red'} isSecondary onClick={() => setShowBulkDeleteModal(true)}>
+                                    <Button
+                                        size={'xsmall'}
+                                        color={'red'}
+                                        isSecondary
+                                        onClick={() => setShowBulkDeleteModal(true)}
+                                    >
                                         Delete Selected ({selected.size})
                                     </Button>
                                 )}
-                                <Button size={'xsmall'} color={'red'} isSecondary onClick={() => { setDeleteIp(''); setShowIpBlockModal(true); }}>
+                                <Button
+                                    size={'xsmall'}
+                                    color={'red'}
+                                    isSecondary
+                                    onClick={() => {
+                                        setDeleteIp('');
+                                        setShowIpBlockModal(true);
+                                    }}
+                                >
                                     Delete IP Block
                                 </Button>
                             </div>
@@ -279,7 +332,11 @@ const NodeAllocations = ({ node }: Props) => {
                                                     <AdminTableHeader css={tw`w-8`}>
                                                         <input
                                                             type={'checkbox'}
-                                                            checked={items.filter(a => !a.assigned).length > 0 && selected.size === items.filter(a => !a.assigned).length}
+                                                            checked={
+                                                                items.filter((a) => !a.assigned).length > 0 &&
+                                                                selected.size ===
+                                                                    items.filter((a) => !a.assigned).length
+                                                            }
                                                             onChange={toggleSelectAll}
                                                             css={tw`cursor-pointer`}
                                                         />
@@ -305,14 +362,24 @@ const NodeAllocations = ({ node }: Props) => {
                                                         </AdminTableCell>
                                                         <AdminTableCell>{allocation.ip}</AdminTableCell>
                                                         <AdminTableCell css={tw`w-40`}>
-                                                            <AliasInput allocation={allocation} nodeId={node.id} onUpdated={() => mutate()} />
+                                                            <AliasInput
+                                                                allocation={allocation}
+                                                                nodeId={node.id}
+                                                                onUpdated={() => mutate()}
+                                                            />
                                                         </AdminTableCell>
                                                         <AdminTableCell>{allocation.port}</AdminTableCell>
                                                         <AdminTableCell>
-                                                            {allocation.assigned && allocation.serverId
-                                                                ? <Link to={`/admin/servers/${allocation.serverId}`} css={tw`text-primary-400 hover:text-primary-300`}>Server #{allocation.serverId}</Link>
-                                                                : <span css={tw`text-neutral-500`}></span>
-                                                            }
+                                                            {allocation.assigned && allocation.serverId ? (
+                                                                <Link
+                                                                    to={`/admin/servers/${allocation.serverId}`}
+                                                                    css={tw`text-primary-400 hover:text-primary-300`}
+                                                                >
+                                                                    Server #{allocation.serverId}
+                                                                </Link>
+                                                            ) : (
+                                                                <span css={tw`text-neutral-500`}></span>
+                                                            )}
                                                         </AdminTableCell>
                                                         <AdminTableCell>
                                                             {!allocation.assigned && (
@@ -371,7 +438,9 @@ const NodeAllocations = ({ node }: Props) => {
                                             name={'ports'}
                                             label={'Ports'}
                                             placeholder={'25565-25570 or 25565,25566'}
-                                            description={'Enter individual ports or port ranges separated by commas or spaces.'}
+                                            description={
+                                                'Enter individual ports or port ranges separated by commas or spaces.'
+                                            }
                                         />
                                     </div>
                                     <div css={tw`flex justify-end`}>

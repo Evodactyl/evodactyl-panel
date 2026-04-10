@@ -1,14 +1,13 @@
-import React from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
-import Input, { Textarea } from '@/components/elements/Input';
+import { Field, Form, Formik, type FormikHelpers } from 'formik';
 import styled from 'styled-components';
-import { useFlashKey } from '@/plugins/useFlash';
+import tw from 'twin.macro';
+import { object, string } from 'yup';
 import { createSSHKey, useSSHKeys } from '@/api/account/ssh-keys';
+import Button from '@/components/elements/Button';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+import Input, { Textarea } from '@/components/elements/Input';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import { useFlashKey } from '@/plugins/useFlash';
 
 interface Values {
     name: string;
@@ -36,34 +35,32 @@ export default () => {
     };
 
     return (
-        <>
-            <Formik
-                onSubmit={submit}
-                initialValues={{ name: '', publicKey: '' }}
-                validationSchema={object().shape({
-                    name: string().required(),
-                    publicKey: string().required(),
-                })}
-            >
-                {({ isSubmitting }) => (
-                    <Form>
-                        <SpinnerOverlay visible={isSubmitting} />
-                        <FormikFieldWrapper label={'SSH Key Name'} name={'name'} css={tw`mb-6`}>
-                            <Field name={'name'} as={Input} />
-                        </FormikFieldWrapper>
-                        <FormikFieldWrapper
-                            label={'Public Key'}
-                            name={'publicKey'}
-                            description={'Enter your public SSH key.'}
-                        >
-                            <Field name={'publicKey'} as={CustomTextarea} />
-                        </FormikFieldWrapper>
-                        <div css={tw`flex justify-end mt-6`}>
-                            <Button>Save</Button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
-        </>
+        <Formik
+            onSubmit={submit}
+            initialValues={{ name: '', publicKey: '' }}
+            validationSchema={object().shape({
+                name: string().required(),
+                publicKey: string().required(),
+            })}
+        >
+            {({ isSubmitting }) => (
+                <Form>
+                    <SpinnerOverlay visible={isSubmitting} />
+                    <FormikFieldWrapper label={'SSH Key Name'} name={'name'} css={tw`mb-6`}>
+                        <Field name={'name'} as={Input} />
+                    </FormikFieldWrapper>
+                    <FormikFieldWrapper
+                        label={'Public Key'}
+                        name={'publicKey'}
+                        description={'Enter your public SSH key.'}
+                    >
+                        <Field name={'publicKey'} as={CustomTextarea} />
+                    </FormikFieldWrapper>
+                    <div css={tw`flex justify-end mt-6`}>
+                        <Button>Save</Button>
+                    </div>
+                </Form>
+            )}
+        </Formik>
     );
 };

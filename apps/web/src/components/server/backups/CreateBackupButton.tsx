@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
+import { Form, Formik, Field as FormikField, type FormikHelpers, useFormikContext } from 'formik';
+import { useEffect, useState } from 'react';
+import tw from 'twin.macro';
 import { boolean, object, string } from 'yup';
+import createServerBackup from '@/api/server/backups/createServerBackup';
+import getServerBackups from '@/api/swr/getServerBackups';
+import Button from '@/components/elements/Button';
+import Can from '@/components/elements/Can';
 import Field from '@/components/elements/Field';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import useFlash from '@/plugins/useFlash';
-import createServerBackup from '@/api/server/backups/createServerBackup';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Button from '@/components/elements/Button';
-import tw from 'twin.macro';
-import { Textarea } from '@/components/elements/Input';
-import getServerBackups from '@/api/swr/getServerBackups';
-import { ServerContext } from '@/state/server';
 import FormikSwitch from '@/components/elements/FormikSwitch';
-import Can from '@/components/elements/Can';
+import { Textarea } from '@/components/elements/Input';
+import Modal, { type RequiredModalProps } from '@/components/elements/Modal';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Values {
     name: string;
@@ -75,7 +75,7 @@ export default () => {
 
     useEffect(() => {
         clearFlashes('backups:create');
-    }, [visible]);
+    }, [clearFlashes]);
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('backups:create');
@@ -83,7 +83,7 @@ export default () => {
             .then((backup) => {
                 mutate(
                     (data) => ({ ...data, items: data.items.concat(backup), backupCount: data.backupCount + 1 }),
-                    false
+                    false,
                 );
                 setVisible(false);
             })

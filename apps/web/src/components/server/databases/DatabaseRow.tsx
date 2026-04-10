@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDatabase, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Modal from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import { object, string } from 'yup';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { ServerContext } from '@/state/server';
-import deleteServerDatabase from '@/api/server/databases/deleteServerDatabase';
-import { httpErrorToHuman } from '@/api/http';
-import RotatePasswordButton from '@/components/server/databases/RotatePasswordButton';
-import Can from '@/components/elements/Can';
-import { ServerDatabase } from '@/api/server/databases/getServerDatabases';
-import useFlash from '@/plugins/useFlash';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Form, Formik, type FormikHelpers } from 'formik';
+import { useState } from 'react';
 import tw from 'twin.macro';
+import { object, string } from 'yup';
+import { httpErrorToHuman } from '@/api/http';
+import deleteServerDatabase from '@/api/server/databases/deleteServerDatabase';
+import type { ServerDatabase } from '@/api/server/databases/getServerDatabases';
 import Button from '@/components/elements/Button';
-import Label from '@/components/elements/Label';
-import Input from '@/components/elements/Input';
-import GreyRowBox from '@/components/elements/GreyRowBox';
+import Can from '@/components/elements/Can';
 import CopyOnClick from '@/components/elements/CopyOnClick';
+import Field from '@/components/elements/Field';
+import GreyRowBox from '@/components/elements/GreyRowBox';
+import Input from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
+import Modal from '@/components/elements/Modal';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import RotatePasswordButton from '@/components/server/databases/RotatePasswordButton';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 interface Props {
     database: ServerDatabase;
@@ -44,7 +44,7 @@ export default ({ database, className }: Props) => {
             .oneOf([database.name.split('_', 2)[1], database.name], 'The database name must be provided.'),
     });
 
-    const submit = (values: { confirm: string }, { setSubmitting }: FormikHelpers<{ confirm: string }>) => {
+    const submit = (_values: { confirm: string }, { setSubmitting }: FormikHelpers<{ confirm: string }>) => {
         clearFlashes();
         deleteServerDatabase(uuid, database.id)
             .then(() => {

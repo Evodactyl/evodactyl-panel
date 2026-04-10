@@ -1,6 +1,5 @@
-import React from 'react';
-import { Schedule } from '@/api/server/schedules/getServerSchedules';
 import classNames from 'classnames';
+import type { Schedule } from '@/api/server/schedules/getServerSchedules';
 
 interface Props {
     cron: Schedule['cron'];

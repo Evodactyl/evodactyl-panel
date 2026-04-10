@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import AdminLayout from '@/components/admin/AdminLayout';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import Spinner from '@/components/elements/Spinner';
-import tw from 'twin.macro';
-import Field from '@/components/elements/Field';
-import Button from '@/components/elements/Button';
-import { Formik, Form } from 'formik';
-import { object, string } from 'yup';
-import useFlash from '@/plugins/useFlash';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { AdminLocation, getLocation, updateLocation, deleteLocation } from '@/api/admin/locations';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import tw from 'twin.macro';
+import { object, string } from 'yup';
+import { type AdminLocation, deleteLocation, getLocation, updateLocation } from '@/api/admin/locations';
+import AdminLayout from '@/components/admin/AdminLayout';
+import Button from '@/components/elements/Button';
+import ConfirmationModal from '@/components/elements/ConfirmationModal';
+import Field from '@/components/elements/Field';
+import GreyRowBox from '@/components/elements/GreyRowBox';
+import Spinner from '@/components/elements/Spinner';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import useFlash from '@/plugins/useFlash';
 
 interface FormValues {
     short: string;
@@ -43,11 +42,18 @@ export default () => {
                 clearAndAddHttpError({ key: 'admin:location', error });
                 setLoading(false);
             });
-    }, [id]);
+    }, [id, clearFlashes, clearAndAddHttpError]);
 
     if (loading) {
         return (
-            <AdminLayout title={'Loading...'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Locations', to: '/admin/locations' }, { label: 'Loading...' }]}>
+            <AdminLayout
+                title={'Loading...'}
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Locations', to: '/admin/locations' },
+                    { label: 'Loading...' },
+                ]}
+            >
                 <Spinner centered size={'large'} />
             </AdminLayout>
         );
@@ -55,7 +61,15 @@ export default () => {
 
     if (!location) {
         return (
-            <AdminLayout title={'Location Not Found'} showFlashKey={'admin:location'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Locations', to: '/admin/locations' }, { label: 'Not Found' }]}>
+            <AdminLayout
+                title={'Location Not Found'}
+                showFlashKey={'admin:location'}
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Locations', to: '/admin/locations' },
+                    { label: 'Not Found' },
+                ]}
+            >
                 <p css={tw`text-center text-neutral-400`}>Location could not be loaded.</p>
             </AdminLayout>
         );
@@ -101,7 +115,16 @@ export default () => {
     };
 
     return (
-        <AdminLayout title={`Edit Location: ${location.short}`} subtitle={`Location ID: ${location.id}`} showFlashKey={'admin:location'} breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Locations', to: '/admin/locations' }, { label: location.short }]}>
+        <AdminLayout
+            title={`Edit Location: ${location.short}`}
+            subtitle={`Location ID: ${location.id}`}
+            showFlashKey={'admin:location'}
+            breadcrumbs={[
+                { label: 'Admin', to: '/admin' },
+                { label: 'Locations', to: '/admin/locations' },
+                { label: location.short },
+            ]}
+        >
             <ConfirmationModal
                 visible={showDeleteModal}
                 title={'Delete Location'}
@@ -110,14 +133,16 @@ export default () => {
                 showSpinnerOverlay={deleting}
                 onModalDismissed={() => setShowDeleteModal(false)}
             >
-                Are you sure you want to delete this location? All nodes assigned to this location will need
-                to be moved to a different location first.
+                Are you sure you want to delete this location? All nodes assigned to this location will need to be moved
+                to a different location first.
             </ConfirmationModal>
             <Formik
-                initialValues={{
-                    short: location.short,
-                    long: location.long || '',
-                } as FormValues}
+                initialValues={
+                    {
+                        short: location.short,
+                        long: location.long || '',
+                    } as FormValues
+                }
                 validationSchema={schema}
                 onSubmit={handleSubmit}
             >
@@ -150,7 +175,10 @@ export default () => {
                                     <div css={tw`flex flex-col gap-2`}>
                                         {location.nodes.map((node) => (
                                             <GreyRowBox key={node.id} $hoverable={false}>
-                                                <FontAwesomeIcon icon={faNetworkWired} css={tw`text-neutral-400 mr-3`} />
+                                                <FontAwesomeIcon
+                                                    icon={faNetworkWired}
+                                                    css={tw`text-neutral-400 mr-3`}
+                                                />
                                                 <div css={tw`flex-1`}>
                                                     <p css={tw`text-sm text-neutral-100`}>{node.name}</p>
                                                     <p css={tw`text-xs text-neutral-400`}>{node.fqdn}</p>

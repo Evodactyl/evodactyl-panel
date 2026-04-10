@@ -1,7 +1,7 @@
-import tw from 'twin.macro';
-import { createGlobalStyle } from 'styled-components';
 // @ts-expect-error untyped font file
 import font from '@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2';
+import { createGlobalStyle } from 'styled-components';
+import tw from 'twin.macro';
 
 export default createGlobalStyle`
     @font-face {

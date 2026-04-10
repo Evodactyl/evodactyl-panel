@@ -1,12 +1,12 @@
-import getServer, { Server } from '@/api/server/getServer';
-import { action, Action, computed, Computed, createContextStore, thunk, Thunk } from 'easy-peasy';
-import socket, { SocketStore } from './socket';
-import files, { ServerFileStore } from '@/state/server/files';
-import subusers, { ServerSubuserStore } from '@/state/server/subusers';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import schedules, { ServerScheduleStore } from '@/state/server/schedules';
-import databases, { ServerDatabaseStore } from '@/state/server/databases';
+import { type Action, action, type Computed, computed, createContextStore, type Thunk, thunk } from 'easy-peasy';
 import isEqual from 'react-fast-compare';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import getServer, { type Server } from '@/api/server/getServer';
+import databases, { type ServerDatabaseStore } from '@/state/server/databases';
+import files, { type ServerFileStore } from '@/state/server/files';
+import schedules, { type ServerScheduleStore } from '@/state/server/schedules';
+import subusers, { type ServerSubuserStore } from '@/state/server/subusers';
+import socket, { type SocketStore } from './socket';
 
 export type ServerStatus = 'offline' | 'starting' | 'stopping' | 'running' | null;
 
@@ -119,5 +119,5 @@ export const ServerContext = createContextStore<ServerStore>(
             name: 'ServerStore',
             trace: true,
         }),
-    }
+    },
 );

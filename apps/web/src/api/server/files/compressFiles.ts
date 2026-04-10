@@ -1,5 +1,5 @@
-import { FileObject } from '@/api/server/files/loadDirectory';
 import http from '@/api/http';
+import type { FileObject } from '@/api/server/files/loadDirectory';
 import { rawDataToFileObject } from '@/api/transformers';
 
 export default async (uuid: string, directory: string, files: string[]): Promise<FileObject> => {
@@ -10,7 +10,7 @@ export default async (uuid: string, directory: string, files: string[]): Promise
             timeout: 60000,
             timeoutErrorMessage:
                 'It looks like this archive is taking a long time to generate. It will appear once completed.',
-        }
+        },
     );
 
     return rawDataToFileObject(data);

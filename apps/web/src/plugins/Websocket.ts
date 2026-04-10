@@ -1,5 +1,5 @@
-import Sockette from 'sockette';
 import { EventEmitter } from 'events';
+import Sockette from 'sockette';
 
 export class Websocket extends EventEmitter {
     // The socket instance being tracked.

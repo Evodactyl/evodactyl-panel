@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import ContentContainer from '@/components/elements/ContentContainer';
+import type React from 'react';
+import { useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import tw from 'twin.macro';
+import ContentContainer from '@/components/elements/ContentContainer';
 import FlashMessageRender from '@/components/FlashMessageRender';
 
 export interface PageContentBlockProps {

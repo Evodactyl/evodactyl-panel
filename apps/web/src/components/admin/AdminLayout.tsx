@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import tw from 'twin.macro';
+import type React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
-import NavigationBar from '@/components/NavigationBar';
-import AdminSidebar from '@/components/admin/AdminSidebar';
+import tw from 'twin.macro';
 import AdminContentHeader from '@/components/admin/AdminContentHeader';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import NavigationBar from '@/components/NavigationBar';
 
 interface Breadcrumb {
     label: string;
@@ -61,11 +62,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ title, subtitle, breadcrumbs,
                 <AdminSidebar />
                 <ContentWrapper>
                     <ContentHeader>
-                        <AdminContentHeader
-                            title={title}
-                            subtitle={subtitle}
-                            breadcrumbs={breadcrumbs}
-                        />
+                        <AdminContentHeader title={title} subtitle={subtitle} breadcrumbs={breadcrumbs} />
                         {showFlashKey && <FlashMessageRender byKey={showFlashKey} css={tw`mb-4`} />}
                     </ContentHeader>
                     <ContentBody>{children}</ContentBody>

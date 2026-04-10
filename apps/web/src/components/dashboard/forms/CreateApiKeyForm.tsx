@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import createApiKey from '@/api/account/createApiKey';
-import { Actions, useStoreActions } from 'easy-peasy';
-import { ApplicationStore } from '@/state';
-import { httpErrorToHuman } from '@/api/http';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ApiKey } from '@/api/account/getApiKeys';
-import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
-import Input, { Textarea } from '@/components/elements/Input';
+import { type Actions, useStoreActions } from 'easy-peasy';
+import { Field, Form, Formik, type FormikHelpers } from 'formik';
+import { useState } from 'react';
 import styled from 'styled-components';
+import tw from 'twin.macro';
+import { object, string } from 'yup';
+import createApiKey from '@/api/account/createApiKey';
+import type { ApiKey } from '@/api/account/getApiKeys';
+import { httpErrorToHuman } from '@/api/http';
 import ApiKeyModal from '@/components/dashboard/ApiKeyModal';
+import Button from '@/components/elements/Button';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+import Input, { Textarea } from '@/components/elements/Input';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import type { ApplicationStore } from '@/state';
 
 interface Values {
     description: string;

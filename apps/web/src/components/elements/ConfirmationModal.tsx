@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import type React from 'react';
+import { useContext } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
-import asModal from '@/hoc/asModal';
 import ModalContext from '@/context/ModalContext';
+import asModal from '@/hoc/asModal';
 
 type Props = {
     title: string;

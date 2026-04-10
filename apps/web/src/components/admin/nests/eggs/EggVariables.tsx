@@ -1,9 +1,8 @@
-import React from 'react';
-import tw from 'twin.macro';
-import { EggVariable } from '@/api/admin/nests';
-import GreyRowBox from '@/components/elements/GreyRowBox';
+import { faBan, faEye, faEyeSlash, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faPen, faBan } from '@fortawesome/free-solid-svg-icons';
+import tw from 'twin.macro';
+import type { EggVariable } from '@/api/admin/nests';
+import GreyRowBox from '@/components/elements/GreyRowBox';
 
 interface Props {
     variables: EggVariable[];
@@ -11,11 +10,7 @@ interface Props {
 
 const EggVariables = ({ variables }: Props) => {
     if (variables.length === 0) {
-        return (
-            <p css={tw`text-center text-sm text-neutral-400`}>
-                No variables have been configured for this egg.
-            </p>
-        );
+        return <p css={tw`text-center text-sm text-neutral-400`}>No variables have been configured for this egg.</p>;
     }
 
     return (
@@ -51,9 +46,7 @@ const EggVariables = ({ variables }: Props) => {
                                 </span>
                             </div>
                         </div>
-                        {variable.description && (
-                            <p css={tw`text-xs text-neutral-400 mb-2`}>{variable.description}</p>
-                        )}
+                        {variable.description && <p css={tw`text-xs text-neutral-400 mb-2`}>{variable.description}</p>}
                         <div css={tw`grid grid-cols-1 md:grid-cols-2 gap-4`}>
                             <div>
                                 <p css={tw`text-xs text-neutral-400 uppercase`}>Default Value</p>

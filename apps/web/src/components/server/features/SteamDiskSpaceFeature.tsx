@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
+import { useStoreState } from 'easy-peasy';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
+import Modal from '@/components/elements/Modal';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
-import { useStoreState } from 'easy-peasy';
+import useFlash from '@/plugins/useFlash';
+import { ServerContext } from '@/state/server';
 
 const SteamDiskSpaceFeature = () => {
     const [visible, setVisible] = useState(false);
@@ -37,7 +37,7 @@ const SteamDiskSpaceFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:steamDiskSpace');
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <Modal

@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import ContentBox from '@/components/elements/ContentBox';
-import CreateApiKeyForm from '@/components/dashboard/forms/CreateApiKeyForm';
-import getApiKeys, { ApiKey } from '@/api/account/getApiKeys';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import deleteApiKey from '@/api/account/deleteApiKey';
-import FlashMessageRender from '@/components/FlashMessageRender';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import PageContentBlock from '@/components/elements/PageContentBlock';
+import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import { Dialog } from '@/components/elements/dialog';
-import { useFlashKey } from '@/plugins/useFlash';
+import deleteApiKey from '@/api/account/deleteApiKey';
+import getApiKeys, { type ApiKey } from '@/api/account/getApiKeys';
+import CreateApiKeyForm from '@/components/dashboard/forms/CreateApiKeyForm';
 import Code from '@/components/elements/Code';
+import ContentBox from '@/components/elements/ContentBox';
+import { Dialog } from '@/components/elements/dialog';
+import GreyRowBox from '@/components/elements/GreyRowBox';
+import PageContentBlock from '@/components/elements/PageContentBlock';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { useFlashKey } from '@/plugins/useFlash';
 
 export default () => {
     const [deleteIdentifier, setDeleteIdentifier] = useState('');
@@ -26,7 +26,7 @@ export default () => {
             .then((keys) => setKeys(keys))
             .then(() => setLoading(false))
             .catch((error) => clearAndAddHttpError(error));
-    }, []);
+    }, [clearAndAddHttpError]);
 
     const doDeletion = (identifier: string) => {
         setLoading(true);

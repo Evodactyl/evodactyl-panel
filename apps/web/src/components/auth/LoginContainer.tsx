@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { useStoreState } from 'easy-peasy';
+import { Formik, type FormikHelpers } from 'formik';
+import { useEffect, useRef, useState } from 'react';
+import { Link, type RouteComponentProps } from 'react-router-dom';
+import Reaptcha from 'reaptcha';
+import tw from 'twin.macro';
+import { object, string } from 'yup';
 import login from '@/api/auth/login';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { useStoreState } from 'easy-peasy';
-import { Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import Field from '@/components/elements/Field';
-import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Field from '@/components/elements/Field';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -25,7 +25,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
 
     useEffect(() => {
         clearFlashes();
-    }, []);
+    }, [clearFlashes]);
 
     const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes();

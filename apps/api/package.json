@@ -9,6 +9,7 @@
     "cli": "bun run src/cli/index.ts",
     "build": "echo 'no build step — bun runs TS directly'",
     "typecheck": "tsc --noEmit",
+    "lint": "biome lint ./src",
     "test": "bun test",
     "test:integration": "bun test tests/integration/",
     "test:compat": "bun run tests/compatibility/responseComparer.ts"

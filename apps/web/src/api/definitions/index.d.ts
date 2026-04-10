@@ -5,7 +5,7 @@ export type UUID = string;
 export type Identifier<P extends string = string> = `${P}_${string}`;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Model {}
+export type Model = {};
 
 interface ModelWithRelationships extends Model {
     relationships: Record<string, FractalResponseData | FractalResponseList | undefined>;

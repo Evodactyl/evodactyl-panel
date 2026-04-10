@@ -1,6 +1,6 @@
-import * as Models from '@definitions/user/models';
-import { FractalResponseData } from '@/api/http';
 import { transform } from '@definitions/helpers';
+import type * as Models from '@definitions/user/models';
+import type { FractalResponseData } from '@/api/http';
 
 export default class Transformers {
     static toSSHKey = (data: Record<any, any>): Models.SSHKey => {

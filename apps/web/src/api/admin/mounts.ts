@@ -1,4 +1,4 @@
-import http, { FractalResponseData } from '@/api/http';
+import http, { type FractalResponseData } from '@/api/http';
 
 export interface Mount {
     id: number;
@@ -26,7 +26,7 @@ export const getMounts = (): Promise<Mount[]> => {
     return new Promise((resolve, reject) => {
         http.get('/api/application/mounts')
             .then(({ data }) =>
-                resolve((data.data || []).map((d: FractalResponseData) => rawDataToMount(d.attributes)))
+                resolve((data.data || []).map((d: FractalResponseData) => rawDataToMount(d.attributes))),
             )
             .catch(reject);
     });
