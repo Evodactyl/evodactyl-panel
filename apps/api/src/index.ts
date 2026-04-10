@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import express, { type Request } from 'express';
 import session from 'express-session';
+import type { ViteDevServer } from 'vite';
 import { config } from './config/index.js';
 import { MysqlSessionStore } from './lib/sessionStore.js';
 import { csrfProtection, errorHandler, setSecurityHeaders } from './middleware/index.js';
@@ -14,6 +15,10 @@ import { startScheduler } from './scheduler/index.js';
 
 const app = express();
 const httpServer = http.createServer(app);
+
+const webRoot = path.resolve(fileURLToPath(import.meta.url), '../../../web');
+const webDistDir = path.join(webRoot, 'dist');
+const isDev = config.app.env !== 'production';
 
 app.set('trust proxy', true);
 app.use(setSecurityHeaders);
@@ -27,6 +32,35 @@ app.use(
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Dev: mount Vite's middleware before session so its hundreds of per-module
+// asset requests (/@vite/*, /@fs/*, /src/*, /node_modules/*) don't each
+// trigger a SELECT + UPDATE on the sessions table. Vite calls next() for
+// anything it doesn't own (HTML, /api/*, /auth/*), so the real request
+// pipeline below still runs normally for those.
+//
+// twin.macro resolves its tailwind config (pointed at tailwind.config.cjs via
+// the `babelMacros.twin.config` entry in apps/web/package.json) via
+// process.cwd(), so we must chdir into the web workspace before spinning up
+// Vite. Without this the macro falls back to the built-in Tailwind 2.x class
+// list and rejects custom palette entries (e.g. `bg-neutral-800`).
+let vite: ViteDevServer | undefined;
+if (isDev) {
+    process.chdir(webRoot);
+    const { createServer: createViteServer } = await import('vite');
+    vite = await createViteServer({
+        root: webRoot,
+        server: {
+            middlewareMode: true,
+            // Pipe HMR websockets through our HTTP server so everything stays
+            // on one port. Without this Vite spawns its own WS server on an
+            // undefined port and crashes.
+            hmr: { server: httpServer },
+        },
+        appType: 'custom',
+    });
+    app.use(vite.middlewares);
+}
 
 // Session — backed by the MySQL sessions table that Laravel also used so
 // existing sessions survive the cutover.
@@ -69,10 +103,6 @@ const API_PREFIXES = ['/api/', '/sanctum/', '/locales/', '/daemon/'];
 function isApiPath(pathname: string): boolean {
     return API_PREFIXES.some((p) => pathname.startsWith(p));
 }
-
-const webRoot = path.resolve(fileURLToPath(import.meta.url), '../../../web');
-const webDistDir = path.join(webRoot, 'dist');
-const isDev = config.app.env !== 'production';
 
 function escapeHtmlAttribute(value: string): string {
     return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -167,43 +197,24 @@ function injectBootstrap(html: string, bootstrap: Bootstrap): string {
     return out;
 }
 
-// In dev we run Vite in middleware mode so the whole app is served from
-// one port (3000) with full HMR, source maps, and on-the-fly compilation.
-// In prod we serve the built static assets from apps/web/dist.
-if (isDev) {
-    // twin.macro resolves tailwind.config.js via process.cwd(), so we must
-    // chdir into the web workspace before spinning up Vite. Without this the
-    // macro falls back to the built-in Tailwind 2.x class list and rejects
-    // any custom palette entries (e.g. `bg-neutral-800`, `bg-cyan-400`).
-    process.chdir(webRoot);
-
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-        root: webRoot,
-        server: {
-            middlewareMode: true,
-            // Pipe HMR websockets through our HTTP server so everything stays on
-            // one port. Without this Vite spawns its own WS server on an
-            // undefined port and crashes.
-            hmr: { server: httpServer },
-        },
-        appType: 'custom',
-    });
-
-    app.use(vite.middlewares);
-
+// In dev, Vite's asset middleware is already mounted above (before session).
+// Here we only add the HTML fallback, which needs req.session to inject the
+// CSRF token and bootstrap user into the SPA shell. In prod we serve the
+// built static assets from apps/web/dist instead.
+if (isDev && vite) {
+    const devVite = vite;
     app.use(async (req, res, next) => {
         if (req.method !== 'GET' || isApiPath(req.path)) return next();
         try {
             const template = await fs.readFile(path.join(webRoot, 'index.html'), 'utf-8');
-            const transformed = await vite.transformIndexHtml(req.originalUrl, template);
+            const transformed = await devVite.transformIndexHtml(req.originalUrl, template);
             const bootstrap = await loadBootstrap(req);
             res.status(200)
                 .setHeader('Content-Type', 'text/html; charset=utf-8')
                 .setHeader('Cache-Control', 'no-store')
                 .end(injectBootstrap(transformed, bootstrap));
         } catch (err) {
-            vite.ssrFixStacktrace(err as Error);
+            devVite.ssrFixStacktrace(err as Error);
             next(err);
         }
     });
