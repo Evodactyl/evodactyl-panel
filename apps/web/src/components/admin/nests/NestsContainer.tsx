@@ -1,7 +1,9 @@
+import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import tw from 'twin.macro';
+import { object, string } from 'yup';
 import { createNest, getNests, importEgg, type Nest } from '@/api/admin/nests';
 import AdminBox from '@/components/admin/AdminBox';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -14,6 +16,7 @@ import {
     AdminTableRow,
 } from '@/components/admin/AdminTable';
 import Button from '@/components/elements/Button';
+import Field from '@/components/elements/Field';
 import Modal from '@/components/elements/Modal';
 import Spinner from '@/components/elements/Spinner';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
@@ -26,6 +29,7 @@ const NestsContainer = () => {
     const [importFile, setImportFile] = useState<File | null>(null);
     const [importNestId, setImportNestId] = useState<number | null>(null);
     const [importing, setImporting] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     const { data: nests, error, mutate } = useSWR<Nest[]>('/api/application/nests', getNests);
 
@@ -33,6 +37,26 @@ const NestsContainer = () => {
         if (error) clearAndAddHttpError({ key: 'admin:nests', error });
         if (!error) clearFlashes('admin:nests');
     }, [error, clearFlashes, clearAndAddHttpError]);
+
+    const createSchema = object().shape({
+        name: string().min(1).max(191).required('A name is required.'),
+        description: string().max(255).optional(),
+    });
+
+    const handleCreate = (
+        values: { name: string; description: string },
+        { setSubmitting }: { setSubmitting: (v: boolean) => void },
+    ) => {
+        clearFlashes('admin:nests');
+        createNest({ name: values.name, description: values.description || undefined })
+            .then(() => {
+                setShowCreateModal(false);
+                mutate();
+                addFlash({ key: 'admin:nests', type: 'success', message: 'Nest created.' });
+            })
+            .catch((error) => clearAndAddHttpError({ key: 'admin:nests', error }))
+            .finally(() => setSubmitting(false));
+    };
 
     const handleImport = () => {
         if (!importFile || !importNestId) return;
@@ -63,21 +87,7 @@ const NestsContainer = () => {
                     New Egg
                 </Button>
             </Link>
-            <Button
-                color={'primary'}
-                size={'xsmall'}
-                onClick={() => {
-                    const name = prompt('Enter a name for the new nest:');
-                    if (!name) return;
-                    clearFlashes('admin:nests');
-                    createNest({ name })
-                        .then(() => {
-                            mutate();
-                            addFlash({ key: 'admin:nests', type: 'success', message: 'Nest created.' });
-                        })
-                        .catch((error) => clearAndAddHttpError({ key: 'admin:nests', error }));
-                }}
-            >
+            <Button color={'primary'} size={'xsmall'} onClick={() => setShowCreateModal(true)}>
                 Create Nest
             </Button>
         </div>
@@ -90,6 +100,50 @@ const NestsContainer = () => {
             showFlashKey={'admin:nests'}
             breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Nests' }]}
         >
+            <Modal visible={showCreateModal} onDismissed={() => setShowCreateModal(false)}>
+                <h2 css={tw`text-2xl mb-6`}>Create Nest</h2>
+                <Formik
+                    initialValues={{ name: '', description: '' }}
+                    validationSchema={createSchema}
+                    onSubmit={handleCreate}
+                >
+                    {({ isSubmitting }) => (
+                        <Form>
+                            <SpinnerOverlay visible={isSubmitting} />
+                            <div css={tw`mb-4`}>
+                                <Field
+                                    id={'name'}
+                                    name={'name'}
+                                    label={'Name'}
+                                    description={'A short identifier for this nest.'}
+                                />
+                            </div>
+                            <div css={tw`mb-6`}>
+                                <Field
+                                    id={'description'}
+                                    name={'description'}
+                                    label={'Description'}
+                                    description={'An optional description of this nest.'}
+                                />
+                            </div>
+                            <div css={tw`flex justify-end gap-2`}>
+                                <Button
+                                    isSecondary
+                                    type={'button'}
+                                    onClick={() => setShowCreateModal(false)}
+                                    css={tw`border-transparent`}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button type={'submit'} color={'primary'}>
+                                    Create
+                                </Button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            </Modal>
+
             <Modal
                 visible={showImportModal}
                 onDismissed={() => {

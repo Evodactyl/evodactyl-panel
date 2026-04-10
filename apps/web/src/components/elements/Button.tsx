@@ -69,7 +69,7 @@ const ButtonStyle = styled.button<Omit<Props, 'isLoading'>>`
                 `};
         `};
 
-    ${(props) => props.size === 'xsmall' && tw`px-2 py-1 text-xs`};
+    ${(props) => props.size === 'xsmall' && tw`px-3 py-1.5 text-sm`};
     ${(props) => (!props.size || props.size === 'small') && tw`px-4 py-2`};
     ${(props) => props.size === 'large' && tw`p-4 text-sm`};
     ${(props) => props.size === 'xlarge' && tw`p-4 w-full`};
