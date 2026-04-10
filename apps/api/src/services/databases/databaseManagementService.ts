@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import type { Prisma } from '@pterodactyl/db';
 import mysql from 'mysql2/promise';
 import { config } from '../../config/index.js';
 import { DisplayException } from '../../errors/index.js';
@@ -108,44 +109,37 @@ async function executeHostOperations(
     }
 }
 
-/**
- * Create a new database linked to a specific host.
- * Mirrors app/Services/Databases/DatabaseManagementService.php::create()
- */
-export async function createDatabase(
-    server: { id: number; database_limit?: number | null },
-    data: {
-        database: string;
-        database_host_id: number;
-        remote?: string;
-        max_connections?: number | null;
-    },
-    options: { validateDatabaseLimit?: boolean } = {},
-): Promise<any> {
-    const { validateDatabaseLimit = true } = options;
+type DatabaseInput = {
+    database: string;
+    database_host_id: number;
+    remote?: string;
+    max_connections?: number | null;
+};
 
+/**
+ * Create the panel-side `databases` row for a new server database. Does not
+ * touch the remote MySQL host. Accepts a transaction client so that the row
+ * can be created atomically with a parent-row lock + count when enforcing
+ * per-server limits.
+ *
+ * Returns both the created record and the *plain-text* password so the host
+ * provisioning step (run after the transaction commits) can create the MySQL
+ * user.
+ */
+export async function createDatabaseRecord(
+    client: Prisma.TransactionClient,
+    server: { id: number },
+    data: DatabaseInput,
+): Promise<{ dbRecord: any; plainPassword: string }> {
     if (!config.pterodactyl.clientFeatures.databases.enabled) {
         throw new DisplayException('The database feature is not enabled.', 400);
     }
 
-    if (validateDatabaseLimit) {
-        if (server.database_limit != null) {
-            const currentCount = await prisma.databases.count({
-                where: { server_id: server.id },
-            });
-            if (currentCount >= server.database_limit) {
-                throw new DisplayException('This server has reached its database limit.', 400);
-            }
-        }
-    }
-
-    // Validate database name format
     if (!data.database || !MATCH_NAME_REGEX.test(data.database)) {
         throw new Error('The database name must be prefixed with "s{server_id}_".');
     }
 
-    // Check for duplicate names
-    const exists = await prisma.databases.findFirst({
+    const exists = await client.databases.findFirst({
         where: {
             server_id: server.id,
             database: data.database,
@@ -157,10 +151,10 @@ export async function createDatabase(
     }
 
     const username = `u${server.id}_${randomString(10)}`;
-    const password = randomStringWithSpecialCharacters(24);
-    const encryptedPassword = encrypt(password);
+    const plainPassword = randomStringWithSpecialCharacters(24);
+    const encryptedPassword = encrypt(plainPassword);
 
-    const dbRecord = await prisma.databases.create({
+    const dbRecord = await client.databases.create({
         data: {
             server_id: server.id,
             database_host_id: data.database_host_id,
@@ -172,36 +166,54 @@ export async function createDatabase(
         },
     });
 
+    return { dbRecord, plainPassword };
+}
+
+/**
+ * Provision the actual MySQL database, user, and grants on the remote host.
+ * On failure attempts to roll back both the host state and the panel record.
+ *
+ * Run this *after* the panel-record transaction commits so that we never hold
+ * a panel DB transaction open across slow remote DDL.
+ */
+export async function provisionDatabaseOnHost(
+    dbRecord: {
+        id: number;
+        database_host_id: number;
+        database: string;
+        username: string;
+        remote: string;
+        max_connections: number | null;
+    },
+    plainPassword: string,
+): Promise<void> {
     let connection: mysql.Connection | null = null;
     try {
-        connection = await createHostConnection(data.database_host_id);
+        connection = await createHostConnection(dbRecord.database_host_id);
 
         await executeHostOperations(connection, [
-            { type: 'createDatabase', database: data.database },
+            { type: 'createDatabase', database: dbRecord.database },
             {
                 type: 'createUser',
-                username,
-                remote: data.remote ?? '%',
-                password,
-                maxConnections: data.max_connections,
+                username: dbRecord.username,
+                remote: dbRecord.remote,
+                password: plainPassword,
+                maxConnections: dbRecord.max_connections,
             },
             {
                 type: 'assignUser',
-                database: data.database,
-                username,
-                remote: data.remote ?? '%',
+                database: dbRecord.database,
+                username: dbRecord.username,
+                remote: dbRecord.remote,
             },
             { type: 'flush' },
         ]);
-
-        return dbRecord;
     } catch (error) {
-        // Attempt cleanup on failure
         try {
             if (connection) {
                 await executeHostOperations(connection, [
-                    { type: 'dropDatabase', database: data.database },
-                    { type: 'dropUser', username, remote: data.remote ?? '%' },
+                    { type: 'dropDatabase', database: dbRecord.database },
+                    { type: 'dropUser', username: dbRecord.username, remote: dbRecord.remote },
                     { type: 'flush' },
                 ]);
             }
@@ -209,7 +221,6 @@ export async function createDatabase(
             // Ignore cleanup errors
         }
 
-        // Delete the panel database record
         await prisma.databases.delete({ where: { id: dbRecord.id } }).catch(() => {});
 
         throw error;
@@ -218,6 +229,23 @@ export async function createDatabase(
             await connection.end().catch(() => {});
         }
     }
+}
+
+/**
+ * Create a new database linked to a specific host without a per-server limit
+ * check. Used by the application API where admins create databases directly.
+ * For the client API, use `deployServerDatabase`, which enforces the limit
+ * inside a transaction.
+ *
+ * Mirrors app/Services/Databases/DatabaseManagementService.php::create()
+ */
+export async function createDatabase(
+    server: { id: number },
+    data: DatabaseInput,
+): Promise<any> {
+    const { dbRecord, plainPassword } = await createDatabaseRecord(prisma, server, data);
+    await provisionDatabaseOnHost(dbRecord, plainPassword);
+    return dbRecord;
 }
 
 /**

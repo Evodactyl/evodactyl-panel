@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { DisplayException, ModelNotFoundException } from '../../../../errors/index.js';
+import { ModelNotFoundException } from '../../../../errors/index.js';
 import { decodeHashid } from '../../../../lib/hashids.js';
 import { prisma } from '../../../../prisma/client.js';
 import { fractal } from '../../../../serializers/fractal.js';
@@ -43,18 +43,9 @@ export const clientDatabaseController = {
 
         const validated = createClientDatabaseSchema.parse(req.body);
 
-        // Check database limit
-        const currentCount = await prisma.databases.count({
-            where: { server_id: server.id },
-        });
-
-        if (server.database_limit !== null && currentCount >= server.database_limit) {
-            throw new DisplayException(
-                'Cannot create additional databases on this server: limit has been reached.',
-                400,
-            );
-        }
-
+        // Limit enforcement happens inside `deployServerDatabase` under a
+        // transaction with a row lock on the server, so concurrent requests
+        // cannot race past `server.database_limit`.
         const database = await deployServerDatabase(server, validated);
 
         // Log activity

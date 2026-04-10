@@ -1,11 +1,17 @@
 import { config } from '../../config/index.js';
 import { DisplayException } from '../../errors/index.js';
 import { prisma } from '../../prisma/client.js';
-import { createDatabase, generateUniqueDatabaseName } from './databaseManagementService.js';
+import { lockRowForUpdate } from '../../prisma/locks.js';
+import { createDatabaseRecord, generateUniqueDatabaseName, provisionDatabaseOnHost } from './databaseManagementService.js';
 
 /**
  * Deploy a new database for a server, automatically selecting a database host.
  * Mirrors app/Services/Databases/DeployServerDatabaseService.php
+ *
+ * The per-server `database_limit` check + panel record insert run inside a
+ * transaction that takes a `FOR UPDATE` row lock on the server, so concurrent
+ * requests for the same server cannot both squeak past the limit. The slow
+ * remote MySQL host operations run *after* the transaction commits.
  */
 export async function deployServerDatabase(
     server: { id: number; node_id: number; database_limit?: number | null },
@@ -39,9 +45,30 @@ export async function deployServerDatabase(
             ? nodeHosts[Math.floor(Math.random() * nodeHosts.length)]
             : hosts[Math.floor(Math.random() * hosts.length)];
 
-    return createDatabase(server, {
+    const recordData = {
         database_host_id: selectedHost.id,
         database: generateUniqueDatabaseName(data.database, server.id),
         remote: data.remote,
+    };
+
+    const { dbRecord, plainPassword } = await prisma.$transaction(async (tx) => {
+        await lockRowForUpdate(tx, 'servers', server.id);
+
+        if (server.database_limit != null) {
+            const currentCount = await tx.databases.count({
+                where: { server_id: server.id },
+            });
+            if (currentCount >= server.database_limit) {
+                throw new DisplayException(
+                    'Cannot create additional databases on this server: limit has been reached.',
+                    400,
+                );
+            }
+        }
+
+        return createDatabaseRecord(tx, server, recordData);
     });
+
+    await provisionDatabaseOnHost(dbRecord, plainPassword);
+    return dbRecord;
 }

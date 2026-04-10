@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import type { Prisma } from '@pterodactyl/db';
 import { encrypt } from '../../lib/encryption.js';
 import { prisma } from '../../prisma/client.js';
 
@@ -46,6 +47,7 @@ export async function createApiKey(
     },
     keyType: number = KEY_TYPE_NONE,
     permissions: Record<string, number> = {},
+    tx?: Prisma.TransactionClient,
 ): Promise<{ apiKey: any; plainTextToken: string }> {
     const plainToken = crypto.randomBytes(KEY_LENGTH).toString('hex').substring(0, KEY_LENGTH);
     const encryptedToken = encrypt(plainToken);
@@ -68,7 +70,8 @@ export async function createApiKey(
     // Remove fields that aren't direct database columns
     delete createData.description;
 
-    const apiKey = await prisma.api_keys.create({
+    const client = tx ?? prisma;
+    const apiKey = await client.api_keys.create({
         data: createData,
     });
 

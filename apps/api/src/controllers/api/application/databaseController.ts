@@ -69,14 +69,10 @@ export const databaseController = {
 
         const validated = createServerDatabaseSchema.parse(req.body);
 
-        const database = await createDatabase(
-            server,
-            {
-                ...validated,
-                database: generateUniqueDatabaseName(validated.database, server.id),
-            },
-            { validateDatabaseLimit: false },
-        );
+        const database = await createDatabase(server, {
+            ...validated,
+            database: generateUniqueDatabaseName(validated.database, server.id),
+        });
 
         const transformer = ServerDatabaseTransformer.fromRequest(req);
         const response = await fractal(req).item(database).transformWith(transformer).toArray();

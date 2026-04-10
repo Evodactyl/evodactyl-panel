@@ -8,6 +8,7 @@ import {
 } from '../../../../errors/index.js';
 import { ACTION_SCHEDULE_UPDATE } from '../../../../permissions.js';
 import { prisma } from '../../../../prisma/client.js';
+import { lockRowForUpdate } from '../../../../prisma/locks.js';
 import { fractal } from '../../../../serializers/fractal.js';
 import { activityFromRequest } from '../../../../services/activity/activityLogService.js';
 import { TaskTransformer } from '../../../../transformers/client/taskTransformer.js';
@@ -30,57 +31,64 @@ export class ScheduleTaskController {
 
         const schedule = await this.getSchedule(req.params.schedule!, server.id);
 
-        const limit = config.pterodactyl.clientFeatures.schedules.perScheduleTaskLimit;
-        const taskCount = await prisma.tasks.count({ where: { schedule_id: schedule.id } });
-
-        if (taskCount >= limit) {
-            throw new DisplayException(
-                `Schedules may not have more than ${limit} tasks associated with them. Creating this task would put this schedule over the limit.`,
-                400,
-            );
-        }
-
         if (server.backup_limit === 0 && req.body.action === 'backup') {
             throw new HttpForbiddenException(
                 "A backup task cannot be created when the server's backup limit is set to 0.",
             );
         }
 
-        // Get the last task's sequence_id
-        const lastTask = await prisma.tasks.findFirst({
-            where: { schedule_id: schedule.id },
-            orderBy: { sequence_id: 'desc' },
-        });
+        const limit = config.pterodactyl.clientFeatures.schedules.perScheduleTaskLimit;
 
-        const nextSequenceId = (lastTask?.sequence_id ?? 0) + 1;
-        let sequenceId = parseInt(req.body.sequence_id, 10) || nextSequenceId;
+        // Lock the schedule row, then count + reshuffle + create inside one
+        // transaction. This both prevents racing past `perScheduleTaskLimit`
+        // and stops two concurrent inserts from landing on the same
+        // `sequence_id` after the reshuffle.
+        const task = await prisma.$transaction(async (tx) => {
+            await lockRowForUpdate(tx, 'schedules', schedule.id);
 
-        if (sequenceId < 1) {
-            sequenceId = 1;
-        }
+            const taskCount = await tx.tasks.count({ where: { schedule_id: schedule.id } });
 
-        // If the requested sequence_id is less than the next available, shift existing tasks
-        if (sequenceId < nextSequenceId) {
-            await prisma.tasks.updateMany({
-                where: {
-                    schedule_id: schedule.id,
-                    sequence_id: { gte: sequenceId },
-                },
-                data: { sequence_id: { increment: 1 } },
+            if (taskCount >= limit) {
+                throw new DisplayException(
+                    `Schedules may not have more than ${limit} tasks associated with them. Creating this task would put this schedule over the limit.`,
+                    400,
+                );
+            }
+
+            const lastTask = await tx.tasks.findFirst({
+                where: { schedule_id: schedule.id },
+                orderBy: { sequence_id: 'desc' },
             });
-        } else {
-            sequenceId = nextSequenceId;
-        }
 
-        const task = await prisma.tasks.create({
-            data: {
-                schedule_id: schedule.id,
-                sequence_id: sequenceId,
-                action: req.body.action,
-                payload: req.body.payload ?? '',
-                time_offset: parseInt(req.body.time_offset, 10) || 0,
-                continue_on_failure: req.body.continue_on_failure ? 1 : 0,
-            },
+            const nextSequenceId = (lastTask?.sequence_id ?? 0) + 1;
+            let sequenceId = parseInt(req.body.sequence_id, 10) || nextSequenceId;
+
+            if (sequenceId < 1) {
+                sequenceId = 1;
+            }
+
+            if (sequenceId < nextSequenceId) {
+                await tx.tasks.updateMany({
+                    where: {
+                        schedule_id: schedule.id,
+                        sequence_id: { gte: sequenceId },
+                    },
+                    data: { sequence_id: { increment: 1 } },
+                });
+            } else {
+                sequenceId = nextSequenceId;
+            }
+
+            return tx.tasks.create({
+                data: {
+                    schedule_id: schedule.id,
+                    sequence_id: sequenceId,
+                    action: req.body.action,
+                    payload: req.body.payload ?? '',
+                    time_offset: parseInt(req.body.time_offset, 10) || 0,
+                    continue_on_failure: req.body.continue_on_failure ? 1 : 0,
+                },
+            });
         });
 
         await activityFromRequest(req)

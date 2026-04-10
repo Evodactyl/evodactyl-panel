@@ -1,10 +1,13 @@
 import type { NextFunction, Request, Response } from 'express';
 import { DisplayException, NotFoundHttpException, ValidationException } from '../../../errors/index.js';
 import { prisma } from '../../../prisma/client.js';
+import { lockRowForUpdate } from '../../../prisma/locks.js';
 import { fractal } from '../../../serializers/fractal.js';
 import { activityFromRequest } from '../../../services/activity/activityLogService.js';
 import { createApiKey, KEY_TYPE_ACCOUNT } from '../../../services/api/keyCreationService.js';
 import { ApiKeyTransformer } from '../../../transformers/client/apiKeyTransformer.js';
+
+const ACCOUNT_API_KEY_LIMIT = 25;
 
 /**
  * Client API Key Controller.
@@ -54,26 +57,34 @@ export async function store(req: Request, res: Response, next: NextFunction): Pr
             ]);
         }
 
-        // Check key limit
-        const existingKeyCount = await prisma.api_keys.count({
-            where: {
-                user_id: user.id,
-                key_type: KEY_TYPE_ACCOUNT,
-            },
+        const { apiKey, plainTextToken } = await prisma.$transaction(async (tx) => {
+            // Lock the user row so concurrent requests for the same user serialize
+            // here and the count below is authoritative for the duration of the
+            // create call.
+            await lockRowForUpdate(tx, 'users', user.id);
+
+            const existingKeyCount = await tx.api_keys.count({
+                where: {
+                    user_id: user.id,
+                    key_type: KEY_TYPE_ACCOUNT,
+                },
+            });
+
+            if (existingKeyCount >= ACCOUNT_API_KEY_LIMIT) {
+                throw new DisplayException('You have reached the account limit for number of API keys.');
+            }
+
+            return createApiKey(
+                {
+                    user_id: user.id,
+                    memo: description,
+                    allowed_ips: Array.isArray(allowed_ips) ? allowed_ips : [],
+                },
+                KEY_TYPE_ACCOUNT,
+                {},
+                tx,
+            );
         });
-
-        if (existingKeyCount >= 25) {
-            throw new DisplayException('You have reached the account limit for number of API keys.');
-        }
-
-        const { apiKey, plainTextToken } = await createApiKey(
-            {
-                user_id: user.id,
-                memo: description,
-                allowed_ips: Array.isArray(allowed_ips) ? allowed_ips : [],
-            },
-            KEY_TYPE_ACCOUNT,
-        );
 
         await activityFromRequest(req).event('user:api-key.create').property('identifier', apiKey.identifier).log();
 
