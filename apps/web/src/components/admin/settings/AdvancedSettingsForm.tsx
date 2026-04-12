@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import tw from 'twin.macro';
-import { object, string } from 'yup';
+import { object, type StringSchema, string } from 'yup';
 import { getSettings, type PanelSettings, updateSettings } from '@/api/admin/settings';
 import AdminBox from '@/components/admin/AdminBox';
 import Button from '@/components/elements/Button';
@@ -68,7 +68,7 @@ const AdvancedSettingsForm = () => {
             .max(191)
             .when('recaptchaEnabled', {
                 is: 'true',
-                then: (s) => s.required('Site key is required when reCAPTCHA is enabled.'),
+                then: (s: StringSchema) => s.required('Site key is required when reCAPTCHA is enabled.'),
             }),
         recaptchaSecretKey: string().max(191),
         guzzleConnectTimeout: string()
@@ -90,14 +90,14 @@ const AdvancedSettingsForm = () => {
         allocationsEnabled: string().oneOf(['true', 'false']),
         allocationsRangeStart: portString('Starting port').when('allocationsEnabled', {
             is: 'true',
-            then: (s) => s.required('Starting port is required when automatic allocation is enabled.'),
+            then: (s: StringSchema) => s.required('Starting port is required when automatic allocation is enabled.'),
         }),
         allocationsRangeEnd: portString('Ending port').when('allocationsEnabled', {
             is: 'true',
-            then: (s) =>
+            then: (s: StringSchema) =>
                 s
                     .required('Ending port is required when automatic allocation is enabled.')
-                    .test('gt', 'Ending port must be greater than starting port.', function (value) {
+                    .test('gt', 'Ending port must be greater than starting port.', function (this: { parent: Record<string, string> }, value: string | null | undefined) {
                         const start = this.parent.allocationsRangeStart;
                         if (!start || !value) return true;
                         return Number(value) > Number(start);

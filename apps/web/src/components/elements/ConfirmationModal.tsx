@@ -6,6 +6,7 @@ import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
 
 type Props = {
+    children?: React.ReactNode;
     title: string;
     buttonText: string;
     onConfirmed: () => void;

@@ -34,13 +34,16 @@ const VariableBox = ({ variable }: Props) => {
         updateStartupVariable(uuid, variable.envVariable, value)
             .then(([response, invocation]) =>
                 mutate(
-                    (data) => ({
-                        ...data,
-                        invocation,
-                        variables: (data.variables || []).map((v) =>
-                            v.envVariable === response.envVariable ? response : v,
-                        ),
-                    }),
+                    (data) => {
+                        if (!data) return data;
+                        return {
+                            ...data,
+                            invocation,
+                            variables: (data.variables || []).map((v) =>
+                                v.envVariable === response.envVariable ? response : v,
+                            ),
+                        };
+                    },
                     false,
                 ),
             )

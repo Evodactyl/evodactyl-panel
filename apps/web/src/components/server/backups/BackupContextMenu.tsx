@@ -57,11 +57,14 @@ export default ({ backup }: Props) => {
         deleteBackup(uuid, backup.uuid)
             .then(() =>
                 mutate(
-                    (data) => ({
-                        ...data,
-                        items: data.items.filter((b) => b.uuid !== backup.uuid),
-                        backupCount: data.backupCount - 1,
-                    }),
+                    (data) => {
+                        if (!data) return data;
+                        return {
+                            ...data,
+                            items: data.items.filter((b) => b.uuid !== backup.uuid),
+                            backupCount: data.backupCount - 1,
+                        };
+                    },
                     false,
                 ),
             )
@@ -99,17 +102,20 @@ export default ({ backup }: Props) => {
         http.post(`/api/client/servers/${uuid}/backups/${backup.uuid}/lock`)
             .then(() =>
                 mutate(
-                    (data) => ({
-                        ...data,
-                        items: data.items.map((b) =>
-                            b.uuid !== backup.uuid
-                                ? b
-                                : {
-                                      ...b,
-                                      isLocked: !b.isLocked,
-                                  },
-                        ),
-                    }),
+                    (data) => {
+                        if (!data) return data;
+                        return {
+                            ...data,
+                            items: data.items.map((b) =>
+                                b.uuid !== backup.uuid
+                                    ? b
+                                    : {
+                                          ...b,
+                                          isLocked: !b.isLocked,
+                                      },
+                            ),
+                        };
+                    },
                     false,
                 ),
             )

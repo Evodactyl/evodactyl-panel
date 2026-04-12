@@ -7,6 +7,7 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 export type SpinnerSize = 'small' | 'base' | 'large';
 
 interface Props {
+    children?: React.ReactNode;
     size?: SpinnerSize;
     centered?: boolean;
     isBlue?: boolean;

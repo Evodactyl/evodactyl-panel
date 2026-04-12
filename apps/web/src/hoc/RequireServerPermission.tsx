@@ -3,6 +3,7 @@ import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
 
 export interface RequireServerPermissionProps {
+    children?: React.ReactNode;
     permissions: string | string[];
 }
 

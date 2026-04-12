@@ -7,6 +7,7 @@ import Input from '@/components/elements/Input';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 
 interface Props {
+    children?: React.ReactNode;
     isEditable: boolean;
     title: string;
     permissions: string[];

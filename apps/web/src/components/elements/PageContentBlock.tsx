@@ -6,6 +6,7 @@ import ContentContainer from '@/components/elements/ContentContainer';
 import FlashMessageRender from '@/components/FlashMessageRender';
 
 export interface PageContentBlockProps {
+    children?: React.ReactNode;
     title?: string;
     className?: string;
     showFlashKey?: string;

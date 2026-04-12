@@ -31,10 +31,12 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
         clearFlashes('files');
 
         mutate(
-            (data) =>
-                data.map((f) =>
+            (data) => {
+                if (!data) return data;
+                return data.map((f) =>
                     f.name === files[0].file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f,
-                ),
+                );
+            },
             false,
         );
 

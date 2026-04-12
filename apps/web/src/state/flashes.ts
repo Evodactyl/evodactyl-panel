@@ -7,7 +7,7 @@ export interface FlashStore {
     addFlash: Action<FlashStore, FlashMessage>;
     addError: Action<FlashStore, { message: string; key?: string }>;
     clearAndAddHttpError: Action<FlashStore, { error?: Error | any | null; key?: string }>;
-    clearFlashes: Action<FlashStore, string | undefined>;
+    clearFlashes: Action<FlashStore, string | void>;
 }
 
 export interface FlashMessage {

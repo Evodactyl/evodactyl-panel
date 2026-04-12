@@ -28,6 +28,14 @@
     "db:migrate": "bun run --filter=@evodactyl/db migrate",
     "db:studio": "bun run --filter=@evodactyl/db studio"
   },
+  "overrides": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
+  },
+  "resolutions": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.4.11",
     "turbo": "^2.3.0",

@@ -1,4 +1,4 @@
-import http, { type FractalResponseData, getPaginationSet, type PaginatedResult } from '@/api/http';
+import http, { type FractalResponseData, type FractalResponseList, getPaginationSet, type PaginatedResult } from '@/api/http';
 
 export interface AdminLocation {
     id: number;
@@ -7,6 +7,7 @@ export interface AdminLocation {
     createdAt: string;
     updatedAt: string;
     nodeCount?: number;
+    serverCount?: number;
     nodes?: AdminLocationNode[];
 }
 
@@ -29,7 +30,7 @@ export const rawDataToAdminLocation = ({ attributes }: FractalResponseData): Adm
     };
 
     if (attributes.relationships?.nodes) {
-        const nodesData = attributes.relationships.nodes;
+        const nodesData = attributes.relationships.nodes as FractalResponseList;
         if (nodesData.object === 'list' && Array.isArray(nodesData.data)) {
             location.nodes = nodesData.data.map((node: FractalResponseData) => ({
                 id: node.attributes.id,

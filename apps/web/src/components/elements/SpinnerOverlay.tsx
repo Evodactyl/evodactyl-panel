@@ -4,6 +4,7 @@ import Fade from '@/components/elements/Fade';
 import Spinner, { type SpinnerSize } from '@/components/elements/Spinner';
 
 interface Props {
+    children?: React.ReactNode;
     visible: boolean;
     fixed?: boolean;
     size?: SpinnerSize;

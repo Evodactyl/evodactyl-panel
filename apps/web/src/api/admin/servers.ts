@@ -1,6 +1,7 @@
 import http, {
     type FractalPaginatedResponse,
     type FractalResponseData,
+    type FractalResponseList,
     getPaginationSet,
     type PaginatedResult,
     type QueryBuilderParams,
@@ -128,24 +129,24 @@ function rawDataToAdminServer(data: FractalResponseData): AdminServer {
         updatedAt: attr.updated_at,
     };
 
-    if (relationships.user?.attributes) {
-        const u = relationships.user.attributes;
+    if ((relationships.user as FractalResponseData)?.attributes) {
+        const u = (relationships.user as FractalResponseData).attributes;
         server.user = { id: u.id, username: u.username, email: u.email };
     }
-    if (relationships.node?.attributes) {
-        const n = relationships.node.attributes;
+    if ((relationships.node as FractalResponseData)?.attributes) {
+        const n = (relationships.node as FractalResponseData).attributes;
         server.node = { id: n.id, name: n.name, fqdn: n.fqdn };
     }
-    if (relationships.allocations?.data?.[0]?.attributes) {
-        const a = relationships.allocations.data[0].attributes;
+    if ((relationships.allocations as FractalResponseList)?.data?.[0]?.attributes) {
+        const a = (relationships.allocations as FractalResponseList).data[0].attributes;
         server.allocation = { id: a.id, ip: a.ip, port: a.port, alias: a.alias };
     }
-    if (relationships.nest?.attributes) {
-        const n = relationships.nest.attributes;
+    if ((relationships.nest as FractalResponseData)?.attributes) {
+        const n = (relationships.nest as FractalResponseData).attributes;
         server.nest = { id: n.id, name: n.name };
     }
-    if (relationships.egg?.attributes) {
-        const e = relationships.egg.attributes;
+    if ((relationships.egg as FractalResponseData)?.attributes) {
+        const e = (relationships.egg as FractalResponseData).attributes;
         server.egg = { id: e.id, name: e.name };
     }
 
@@ -390,7 +391,7 @@ export const getNests = (): Promise<AdminNest[]> => {
             .then(({ data }) =>
                 resolve(
                     (data.data || []).map((item: FractalResponseData) => {
-                        const eggs = item.attributes.relationships?.eggs?.data || [];
+                        const eggs = (item.attributes.relationships?.eggs as FractalResponseList)?.data || [];
                         return {
                             id: item.attributes.id,
                             name: item.attributes.name,
@@ -399,7 +400,7 @@ export const getNests = (): Promise<AdminNest[]> => {
                                 name: egg.attributes.name,
                                 dockerImages: egg.attributes.docker_images || {},
                                 startup: egg.attributes.startup,
-                                variables: (egg.attributes.relationships?.variables?.data || []).map(
+                                variables: ((egg.attributes.relationships?.variables as FractalResponseList)?.data || []).map(
                                     (v: FractalResponseData) => ({
                                         name: v.attributes.name,
                                         description: v.attributes.description,

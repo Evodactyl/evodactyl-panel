@@ -58,7 +58,7 @@ const ServerBuildEdit = () => {
     // The allocation relationship includes all server allocations
     const serverAllocations: AdminAllocation[] = [];
     if (server.allocation) {
-        serverAllocations.push(server.allocation);
+        serverAllocations.push({ ...server.allocation, assigned: true });
     }
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {

@@ -8,7 +8,7 @@ export default ({ children, ...props }: Omit<RouteProps, 'render'>) => {
         <Route
             {...props}
             render={({ location }) =>
-                isAuthenticated ? children : <Redirect to={{ pathname: '/auth/login', state: { from: location } }} />
+                isAuthenticated ? (children as React.ReactNode) : <Redirect to={{ pathname: '/auth/login', state: { from: location } }} />
             }
         />
     );
