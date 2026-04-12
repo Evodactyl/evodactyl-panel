@@ -29,17 +29,22 @@ That's it. The installer preflight-checks all of these and tells you what's miss
 
 ## Install
 
-Paste this into a root shell on the host:
+Download the script, then run it:
 
 ```bash
-sudo bash <(curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh)
+curl -fsSL -o install.sh https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh
+sudo bash install.sh
 ```
 
-Or, if you'd rather pipe:
+Or pipe directly if you prefer a one-liner:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh | sudo bash
 ```
+
+The two-step form is the reliable default. The pipe form works on most hosts but can fail if
+`sudo` or your shell environment blocks `/dev/tty` access — if that happens, the script prints a
+clear error pointing you at the two-step form.
 
 The script asks for a panel URL, an admin account, and (optionally) SMTP. It then clones the
 Evodactyl source into `/srv/evodactyl`, generates `APP_KEY` + database passwords, builds the panel

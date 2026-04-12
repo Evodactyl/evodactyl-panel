@@ -19,10 +19,11 @@ crontab — the panel is one Bun process.
 
 ## Install
 
-On a fresh Linux host with Docker installed, paste this into a root shell:
+On a fresh Linux host with Docker installed, download the installer and run it:
 
 ```bash
-sudo bash <(curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh)
+curl -fsSL -o install.sh https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh
+sudo bash install.sh
 ```
 
 It prompts you for a panel URL, an admin account, and optional SMTP, then clones this repo, builds

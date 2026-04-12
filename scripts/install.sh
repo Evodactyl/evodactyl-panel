@@ -2,13 +2,18 @@
 #
 # Evodactyl Panel — interactive installer.
 #
-# Usage (either form works):
-#   sudo bash <(curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh)
+# Recommended usage: download first, then run.
+#
+#   curl -fsSL -o install.sh https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh
+#   sudo bash install.sh
+#
+# The pipe form also works on most hosts:
+#
 #   curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh | sudo bash
 #
-# The second form works because the script reopens /dev/tty for stdin before
-# prompting — without that, the bash process would inherit stdin from the pipe
-# and every `read` would see EOF.
+# It relies on reopening /dev/tty for interactive prompts, which can fail
+# under some sudo configs, SSH sessions without a controlling terminal, or
+# containers. The script detects that and prints a clear fallback.
 #
 # Environment overrides (optional):
 #   EVODACTYL_INSTALL_DIR   default /srv/evodactyl
@@ -18,10 +23,26 @@
 set -euo pipefail
 
 # Reopen stdin on the controlling TTY so `curl ... | sudo bash` still gets
-# interactive prompts. Process substitution already has a TTY on stdin, so
-# this is a no-op for `bash <(curl ...)`.
-if [ ! -t 0 ] && [ -e /dev/tty ]; then
-    exec < /dev/tty
+# interactive prompts. If /dev/tty can't be opened (sudo blocks it, no TTY
+# allocated, running under a CI runner, etc.), bail loudly with a fallback
+# instead of dying silently under `set -e`.
+if [ ! -t 0 ]; then
+    if [ -e /dev/tty ] && exec < /dev/tty 2>/dev/null; then
+        : # TTY reopened; interactive prompts will work
+    else
+        cat <<'TTY_FAIL' >&2
+✗ This script needs an interactive terminal to prompt for configuration,
+  but stdin isn't a TTY and /dev/tty isn't accessible. That's common under
+  some sudo configs, SSH sessions without TTY allocation, or containers.
+
+  Download the script and run it directly instead:
+
+      curl -fsSL -o install.sh https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh
+      sudo bash install.sh
+
+TTY_FAIL
+        exit 1
+    fi
 fi
 
 # ───── preflight ─────
