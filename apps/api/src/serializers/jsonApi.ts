@@ -57,10 +57,10 @@ export function serializeNull(): SerializedNull {
  * Matches PterodactylSerializer::mergeIncludes.
  */
 /**
- * Merge included resources into the parent resource's attributes.relationships.
- * Matches PterodactylSerializer::mergeIncludes — in PHP, relationships is merged
- * INTO the transformedData array, which becomes the `attributes` value. So the
- * final structure is: { object, attributes: { ...fields, relationships: { ... } } }
+ * Merge included resources into the parent resource.
+ * Matches PterodactylSerializer::mergeIncludes — in PHP, $transformedData is the
+ * full serialized item ({ object, attributes }), and mergeIncludes adds
+ * `relationships` as a top-level sibling of `object` and `attributes`.
  */
 export function mergeIncludes(
     transformedData: SerializedItem,
@@ -71,13 +71,10 @@ export function mergeIncludes(
     }
 
     return {
-        object: transformedData.object,
-        attributes: {
-            ...transformedData.attributes,
-            relationships: {
-                ...((transformedData.attributes.relationships as Record<string, unknown>) ?? {}),
-                ...includedData,
-            },
+        ...transformedData,
+        relationships: {
+            ...(transformedData.relationships ?? {}),
+            ...includedData,
         },
     };
 }

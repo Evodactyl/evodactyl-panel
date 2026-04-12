@@ -17,9 +17,10 @@ describe('Application API: Locations', () => {
 
     test('CRUD lifecycle', async () => {
         // Create
+        const suffix = Math.random().toString(36).slice(2, 8);
         const createRes = await post('/api/application/locations', {
             token: adminToken,
-            body: { short: 'us-east', long: 'US East Coast' },
+            body: { short: `us-${suffix}`, long: 'US East Coast' },
         });
         expect(createRes.status).toBe(201);
         expect(createRes.body.object).toBe('location');
@@ -28,12 +29,12 @@ describe('Application API: Locations', () => {
         // Read
         const readRes = await get(`/api/application/locations/${id}`, { token: adminToken });
         expect(readRes.status).toBe(200);
-        expect(readRes.body.attributes.short).toBe('us-east');
+        expect(readRes.body.attributes.short).toBe(`us-${suffix}`);
 
         // Update
         const updateRes = await patch(`/api/application/locations/${id}`, {
             token: adminToken,
-            body: { long: 'US East Coast (Updated)' },
+            body: { short: `us-${suffix}`, long: 'US East Coast (Updated)' },
         });
         expect(updateRes.status).toBe(200);
         expect(updateRes.body.attributes.long).toBe('US East Coast (Updated)');

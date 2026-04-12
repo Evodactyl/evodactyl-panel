@@ -15,7 +15,7 @@ export class ApiKeyTransformer extends BaseClientTransformer {
             description: model.memo,
             allowed_ips:
                 model.allowed_ips == null
-                    ? null
+                    ? []
                     : typeof model.allowed_ips === 'string'
                       ? JSON.parse(model.allowed_ips)
                       : model.allowed_ips,
