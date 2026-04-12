@@ -1,6 +1,6 @@
 import { type Action, action, type Computed, computed, createContextStore, type Thunk, thunk } from 'easy-peasy';
 import isEqual from 'react-fast-compare';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { compose } from 'redux';
 import getServer, { type Server } from '@/api/server/getServer';
 import databases, { type ServerDatabaseStore } from '@/state/server/databases';
 import files, { type ServerFileStore } from '@/state/server/files';
@@ -115,9 +115,6 @@ export const ServerContext = createContextStore<ServerStore>(
         }),
     },
     {
-        compose: composeWithDevTools({
-            name: 'ServerStore',
-            trace: true,
-        }),
+        compose: (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({ name: 'ServerStore', trace: true }) || compose,
     },
 );
