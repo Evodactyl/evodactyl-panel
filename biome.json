@@ -12,6 +12,7 @@
       "!**/dist",
       "!**/build",
       "!**/.next",
+      "!**/.astro",
       "!**/.turbo",
       "!**/*.min.js",
       "!apps/web/public",

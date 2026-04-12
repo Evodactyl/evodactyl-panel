@@ -19,7 +19,7 @@ function envInt(key: string, defaultValue: number): number {
 
 export const config = {
     app: {
-        name: env('APP_NAME', 'Pterodactyl'),
+        name: env('APP_NAME', 'Evodactyl'),
         env: env('APP_ENV', 'production'),
         debug: envBool('APP_DEBUG', false),
         url: env('APP_URL', 'http://localhost'),
@@ -38,7 +38,7 @@ export const config = {
         host: env('DB_HOST', '127.0.0.1'),
         port: envInt('DB_PORT', 3306),
         database: env('DB_DATABASE', 'panel'),
-        username: env('DB_USERNAME', 'pterodactyl'),
+        username: env('DB_USERNAME', 'evodactyl'),
         password: env('DB_PASSWORD', ''),
         url: env('DATABASE_URL'),
     },
@@ -53,7 +53,7 @@ export const config = {
     session: {
         driver: env('SESSION_DRIVER', 'database'),
         lifetime: envInt('SESSION_LIFETIME', 720),
-        cookie: env('SESSION_COOKIE', 'pterodactyl_session'),
+        cookie: env('SESSION_COOKIE', 'evodactyl_session'),
         secure: process.env.SESSION_SECURE_COOKIE !== undefined ? envBool('SESSION_SECURE_COOKIE') : undefined,
         sameSite: env('SESSION_SAME_SITE', 'lax') as 'lax' | 'strict' | 'none',
         httpOnly: envBool('SESSION_HTTP_ONLY', true),
@@ -75,7 +75,7 @@ export const config = {
         password: env('MAIL_PASSWORD'),
         encryption: env('MAIL_ENCRYPTION', 'tls'),
         fromAddress: env('MAIL_FROM_ADDRESS', 'no-reply@example.com'),
-        fromName: env('MAIL_FROM_NAME', 'Pterodactyl Panel'),
+        fromName: env('MAIL_FROM_NAME', 'Evodactyl Panel'),
     },
 
     http: {
@@ -87,7 +87,7 @@ export const config = {
         },
     },
 
-    pterodactyl: {
+    evodactyl: {
         loadEnvironmentOnly: envBool('APP_ENVIRONMENT_ONLY', false),
         service: {
             author: env('APP_SERVICE_AUTHOR', 'unknown@unknown.com'),
@@ -118,34 +118,31 @@ export const config = {
         },
         clientFeatures: {
             databases: {
-                enabled: envBool('PTERODACTYL_CLIENT_DATABASES_ENABLED', true),
-                allowRandom: envBool('PTERODACTYL_CLIENT_DATABASES_ALLOW_RANDOM', true),
+                enabled: envBool('EVODACTYL_CLIENT_DATABASES_ENABLED', true),
+                allowRandom: envBool('EVODACTYL_CLIENT_DATABASES_ALLOW_RANDOM', true),
             },
             schedules: {
-                perScheduleTaskLimit: envInt('PTERODACTYL_PER_SCHEDULE_TASK_LIMIT', 10),
+                perScheduleTaskLimit: envInt('EVODACTYL_PER_SCHEDULE_TASK_LIMIT', 10),
             },
             allocations: {
-                enabled: envBool('PTERODACTYL_CLIENT_ALLOCATIONS_ENABLED', false),
-                rangeStart: process.env.PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_START
-                    ? envInt('PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_START', 0)
+                enabled: envBool('EVODACTYL_CLIENT_ALLOCATIONS_ENABLED', false),
+                rangeStart: process.env.EVODACTYL_CLIENT_ALLOCATIONS_RANGE_START
+                    ? envInt('EVODACTYL_CLIENT_ALLOCATIONS_RANGE_START', 0)
                     : undefined,
-                rangeEnd: process.env.PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_END
-                    ? envInt('PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_END', 0)
+                rangeEnd: process.env.EVODACTYL_CLIENT_ALLOCATIONS_RANGE_END
+                    ? envInt('EVODACTYL_CLIENT_ALLOCATIONS_RANGE_END', 0)
                     : undefined,
             },
         },
         files: {
-            maxEditSize: envInt('PTERODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 4),
+            maxEditSize: envInt('EVODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 4),
         },
         environmentVariables: {
             P_SERVER_ALLOCATION_LIMIT: 'allocation_limit',
         } as Record<string, string>,
         email: {
-            sendInstallNotification: envBool('PTERODACTYL_SEND_INSTALL_NOTIFICATION', true),
-            sendReinstallNotification: envBool('PTERODACTYL_SEND_REINSTALL_NOTIFICATION', true),
-        },
-        telemetry: {
-            enabled: envBool('PTERODACTYL_TELEMETRY_ENABLED', true),
+            sendInstallNotification: envBool('EVODACTYL_SEND_INSTALL_NOTIFICATION', true),
+            sendReinstallNotification: envBool('EVODACTYL_SEND_REINSTALL_NOTIFICATION', true),
         },
     },
 } as const;

@@ -39,7 +39,7 @@ export class FileController {
         const fileRepo = this.getFileRepo(server);
 
         const filePath = req.query.file as string;
-        const content = await fileRepo.getContent(filePath, config.pterodactyl.files.maxEditSize);
+        const content = await fileRepo.getContent(filePath, config.evodactyl.files.maxEditSize);
 
         await activityFromRequest(req).event('server:file.read').property('file', filePath).log();
 

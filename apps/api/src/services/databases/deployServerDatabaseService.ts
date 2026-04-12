@@ -36,7 +36,7 @@ export async function deployServerDatabase(
     // Prefer hosts attached to the same node
     const nodeHosts = hosts.filter((h) => h.node_id === server.node_id);
 
-    if (nodeHosts.length === 0 && !config.pterodactyl.clientFeatures.databases.allowRandom) {
+    if (nodeHosts.length === 0 && !config.evodactyl.clientFeatures.databases.allowRandom) {
         throw new DisplayException("No suitable database host could be found for the server's node.", 500);
     }
 

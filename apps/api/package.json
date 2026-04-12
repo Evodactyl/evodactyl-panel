@@ -1,5 +1,5 @@
 {
-  "name": "@pterodactyl/api",
+  "name": "@evodactyl/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,8 +16,8 @@
     "test:compat": "bun run tests/compatibility/responseComparer.ts"
   },
   "dependencies": {
-    "@pterodactyl/db": "workspace:*",
-    "@pterodactyl/shared": "workspace:*",
+    "@evodactyl/db": "workspace:*",
+    "@evodactyl/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -34,7 +34,7 @@
     "zod": "^3.24.2"
   },
   "peerDependencies": {
-    "@pterodactyl/web": "workspace:*"
+    "@evodactyl/web": "workspace:*"
   },
   "devDependencies": {
     "vite": "^6.0.7",

@@ -20,10 +20,10 @@ ENV NODE_ENV=production
 ENV APP_ENV=production
 
 # Create non-root user (Bun image is Debian-based)
-RUN groupadd --system --gid 1001 pterodactyl && \
-    useradd --system --uid 1001 --gid pterodactyl panel
+RUN groupadd --system --gid 1001 evodactyl && \
+    useradd --system --uid 1001 --gid evodactyl panel
 
-COPY --from=build --chown=panel:pterodactyl /app /app
+COPY --from=build --chown=panel:evodactyl /app /app
 
 # The public directory with frontend assets should be mounted or copied in
 # from the main project: docker cp panel/public /app/public

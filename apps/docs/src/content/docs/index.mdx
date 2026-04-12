@@ -1,0 +1,33 @@
+---
+title: Evodactyl
+description: The modern, Bun + TypeScript rewrite of the Pterodactyl game server management panel.
+template: splash
+hero:
+    tagline: A fast, modern, open-source game server management panel — rebuilt on Bun, TypeScript, Express, and Prisma.
+    image:
+        alt: Evodactyl
+        file: ../../assets/logo.svg
+    actions:
+        - text: Install the panel
+          link: /evodactyl-panel/start/
+          icon: rocket
+          variant: primary
+        - text: View on GitHub
+          link: https://github.com/Evodactyl/evodactyl-panel
+          icon: external
+          variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Install in one paste
+
+Paste one block into a root shell on a Linux host with Docker. It asks for a panel URL, an admin
+account, and (optionally) SMTP — then clones the Evodactyl source, builds the panel image, brings
+the stack up, runs migrations, seeds default eggs, and creates your first admin user.
+
+<CardGrid>
+    <LinkCard title='Install the panel' href='/evodactyl-panel/start/' description='The paste block.' />
+    <LinkCard title='Reverse proxy + TLS' href='/evodactyl-panel/start/webserver/' description='nginx, Caddy, or Apache in front of :8080.' />
+    <LinkCard title='Install Wings on a node host' href='/evodactyl-panel/wings/installing/' description='The daemon that runs game-server containers.' />
+</CardGrid>

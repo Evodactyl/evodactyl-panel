@@ -14,7 +14,12 @@ node_modules
 # Build outputs
 apps/web/dist
 apps/api/dist
+apps/docs/dist
+apps/docs/.astro
 .turbo
+
+# Legacy Pterodactyl 1.x Laravel checkout — historical reference only, never commit.
+panel-old/
 
 # Bun
 bun.lockb

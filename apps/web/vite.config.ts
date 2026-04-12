@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
 /**
- * Vite config for the Pterodactyl Panel SPA.
+ * Vite config for the Evodactyl Panel SPA.
  *
  * Notes:
  *  - We need a real Babel pass because the codebase uses twin.macro and

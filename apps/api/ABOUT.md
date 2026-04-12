@@ -1,6 +1,6 @@
 # About
 
-This `backend/` directory is a TypeScript rewrite of the Pterodactyl Panel API, transitioning away from the original Laravel/PHP implementation. It runs on Bun + Express with Prisma against the same MySQL schema the Laravel app uses, so both stacks can point at the same database during the cutover.
+This `apps/api/` directory is the Evodactyl Panel API — a TypeScript rewrite of the original Laravel/PHP Pterodactyl Panel backend. It runs on Bun + Express with Prisma against the same MySQL schema the Laravel app uses, so both stacks can point at the same database during the cutover.
 
 ## Tests
 

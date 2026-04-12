@@ -37,7 +37,7 @@ export class ScheduleTaskController {
             );
         }
 
-        const limit = config.pterodactyl.clientFeatures.schedules.perScheduleTaskLimit;
+        const limit = config.evodactyl.clientFeatures.schedules.perScheduleTaskLimit;
 
         // Lock the schedule row, then count + reshuffle + create inside one
         // transaction. This both prevents racing past `perScheduleTaskLimit`

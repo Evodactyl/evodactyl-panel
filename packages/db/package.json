@@ -1,5 +1,5 @@
 {
-  "name": "@pterodactyl/db",
+  "name": "@evodactyl/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,11 +15,11 @@
     "migrate:resolve-baseline": "prisma migrate resolve --applied 00000000000000_baseline",
     "studio": "prisma studio",
     "db:pull": "prisma db pull",
-    "seed": "bun --filter @pterodactyl/api run cli seed",
+    "seed": "bun run --filter=@evodactyl/api cli seed",
     "lint": "biome lint ./src"
   },
   "prisma": {
-    "seed": "bun --filter @pterodactyl/api run cli seed"
+    "seed": "bun run --filter=@evodactyl/api cli seed"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0"

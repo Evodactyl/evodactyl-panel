@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Zod-validated environment schema for the Pterodactyl Panel. This is the
+ * Zod-validated environment schema for the Evodactyl Panel. This is the
  * single source of truth for which environment variables the app reads and
  * how they are parsed. Use {@link loadEnv} to read and validate them.
  *
@@ -21,7 +21,7 @@ import { z } from 'zod';
 export const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
-    APP_NAME: z.string().default('Pterodactyl'),
+    APP_NAME: z.string().default('Evodactyl'),
     APP_ENV: z.string().default('production'),
     APP_DEBUG: booleanFromString().default('false'),
     APP_URL: z.string().url().default('http://localhost'),
@@ -37,7 +37,7 @@ export const envSchema = z.object({
     DB_HOST: z.string().default('127.0.0.1'),
     DB_PORT: z.coerce.number().int().positive().default(3306),
     DB_DATABASE: z.string().default('panel'),
-    DB_USERNAME: z.string().default('pterodactyl'),
+    DB_USERNAME: z.string().default('evodactyl'),
     DB_PASSWORD: z.string().default(''),
 
     REDIS_HOST: z.string().default('127.0.0.1'),
@@ -47,7 +47,7 @@ export const envSchema = z.object({
 
     SESSION_DRIVER: z.enum(['database', 'redis', 'memory']).default('database'),
     SESSION_LIFETIME: z.coerce.number().int().positive().default(720),
-    SESSION_COOKIE: z.string().default('pterodactyl_session'),
+    SESSION_COOKIE: z.string().default('evodactyl_session'),
     SESSION_SECURE_COOKIE: booleanFromString().optional(),
     SESSION_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
     SESSION_HTTP_ONLY: booleanFromString().default('true'),
@@ -61,7 +61,7 @@ export const envSchema = z.object({
     MAIL_PASSWORD: z.string().optional(),
     MAIL_ENCRYPTION: z.string().default('tls'),
     MAIL_FROM_ADDRESS: z.string().email().default('no-reply@example.com'),
-    MAIL_FROM_NAME: z.string().default('Pterodactyl Panel'),
+    MAIL_FROM_NAME: z.string().default('Evodactyl Panel'),
 
     HASHIDS_SALT: z.string().default(''),
     HASHIDS_LENGTH: z.coerce.number().int().positive().default(8),

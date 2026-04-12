@@ -14,7 +14,7 @@ export async function toggleTwoFactor(user: any, token: string, toggleState?: bo
 
     // Verify the TOTP token
     authenticator.options = {
-        window: config.pterodactyl.auth.twoFactor.window,
+        window: config.evodactyl.auth.twoFactor.window,
     };
 
     const isValid = authenticator.verify({ token, secret });

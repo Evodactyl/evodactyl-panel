@@ -105,7 +105,7 @@ export default () => {
                 <AdminBox title={'Quick Links'}>
                     <div css={tw`flex flex-col gap-3`}>
                         <a
-                            href={'https://pterodactyl.io/panel/1.0/getting_started.html'}
+                            href={'https://evodactyl.github.io/panel/'}
                             target={'_blank'}
                             rel={'noopener noreferrer'}
                             css={tw`text-sm text-primary-400 hover:text-primary-300 no-underline`}
@@ -113,20 +113,12 @@ export default () => {
                             Documentation
                         </a>
                         <a
-                            href={'https://github.com/pterodactyl/panel'}
+                            href={'https://github.com/Evodactyl/evodactyl-panel'}
                             target={'_blank'}
                             rel={'noopener noreferrer'}
                             css={tw`text-sm text-primary-400 hover:text-primary-300 no-underline`}
                         >
                             GitHub Repository
-                        </a>
-                        <a
-                            href={'https://discord.gg/pterodactyl'}
-                            target={'_blank'}
-                            rel={'noopener noreferrer'}
-                            css={tw`text-sm text-primary-400 hover:text-primary-300 no-underline`}
-                        >
-                            Discord Community
                         </a>
                     </div>
                 </AdminBox>

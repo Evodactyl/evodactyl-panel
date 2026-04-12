@@ -16,7 +16,7 @@ export async function createNest(
     return prisma.nests.create({
         data: {
             uuid: generateUuid(),
-            author: author ?? config.pterodactyl.service.author,
+            author: author ?? config.evodactyl.service.author,
             name: data.name,
             description: data.description ?? null,
         },

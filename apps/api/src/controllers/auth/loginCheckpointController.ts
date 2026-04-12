@@ -61,7 +61,7 @@ export async function loginCheckpoint(req: Request, res: Response, next: NextFun
         const secret = decrypt(user.totp_secret!);
 
         authenticator.options = {
-            window: config.pterodactyl.auth.twoFactor.window,
+            window: config.evodactyl.auth.twoFactor.window,
         };
 
         const isValid = authenticator.verify({ token: authenticationCode, secret });

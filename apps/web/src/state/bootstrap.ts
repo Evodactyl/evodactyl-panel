@@ -3,7 +3,7 @@ import type { SiteSettings } from '@/state/settings';
 
 interface BootstrappedWindow extends Window {
     SiteConfiguration?: SiteSettings;
-    PterodactylUser?: {
+    EvodactylUser?: {
         uuid: string;
         username: string;
         email: string;
@@ -19,7 +19,7 @@ interface BootstrappedWindow extends Window {
 
 /**
  * Seeds the easy-peasy store from the bootstrap globals that the api injects
- * into the served HTML shell (`window.PterodactylUser`, `window.SiteConfiguration`).
+ * into the served HTML shell (`window.EvodactylUser`, `window.SiteConfiguration`).
  *
  * Runs exactly once, before React mounts. This used to live inside the
  * <App /> render function but that was a side-effect-in-render — harmless on
@@ -29,18 +29,18 @@ interface BootstrappedWindow extends Window {
  * the time any component reads from `state.settings.data`.
  */
 export function bootstrapStore(): void {
-    const { PterodactylUser, SiteConfiguration } = window as BootstrappedWindow;
+    const { EvodactylUser, SiteConfiguration } = window as BootstrappedWindow;
 
-    if (PterodactylUser) {
+    if (EvodactylUser) {
         store.getActions().user.setUserData({
-            uuid: PterodactylUser.uuid,
-            username: PterodactylUser.username,
-            email: PterodactylUser.email,
-            language: PterodactylUser.language,
-            rootAdmin: PterodactylUser.root_admin,
-            useTotp: PterodactylUser.use_totp,
-            createdAt: new Date(PterodactylUser.created_at),
-            updatedAt: new Date(PterodactylUser.updated_at),
+            uuid: EvodactylUser.uuid,
+            username: EvodactylUser.username,
+            email: EvodactylUser.email,
+            language: EvodactylUser.language,
+            rootAdmin: EvodactylUser.root_admin,
+            useTotp: EvodactylUser.use_totp,
+            createdAt: new Date(EvodactylUser.created_at),
+            updatedAt: new Date(EvodactylUser.updated_at),
         });
     }
 

@@ -17,7 +17,7 @@ export const updateSettingsSchema = z
         // General
         'app:name': z.string().min(1).max(191).optional(),
         'app:locale': z.string().min(2).max(10).optional(),
-        'pterodactyl:auth:2fa_required': z.enum(['0', '1', '2']).optional(),
+        'evodactyl:auth:2fa_required': z.enum(['0', '1', '2']).optional(),
 
         // Mail
         'mail:mailers:smtp:host': z.string().max(191).optional(),
@@ -34,38 +34,38 @@ export const updateSettingsSchema = z
         'recaptcha:secret_key': z.string().max(191).optional(),
 
         // Advanced — HTTP timeouts
-        'pterodactyl:guzzle:connect_timeout': numericString(1, 60).optional(),
-        'pterodactyl:guzzle:timeout': numericString(1, 60).optional(),
+        'evodactyl:guzzle:connect_timeout': numericString(1, 60).optional(),
+        'evodactyl:guzzle:timeout': numericString(1, 60).optional(),
 
         // Advanced — Automatic Allocation Creation
-        'pterodactyl:client_features:allocations:enabled': z.enum(['true', 'false']).optional(),
-        'pterodactyl:client_features:allocations:range_start': numericString(1024, 65535).optional(),
-        'pterodactyl:client_features:allocations:range_end': numericString(1024, 65535).optional(),
+        'evodactyl:client_features:allocations:enabled': z.enum(['true', 'false']).optional(),
+        'evodactyl:client_features:allocations:range_start': numericString(1024, 65535).optional(),
+        'evodactyl:client_features:allocations:range_end': numericString(1024, 65535).optional(),
     })
     .superRefine((data, ctx) => {
         // When automatic allocations are turned on, both port range fields are required
         // and the end port must be strictly greater than the start port.
-        if (data['pterodactyl:client_features:allocations:enabled'] === 'true') {
-            const start = data['pterodactyl:client_features:allocations:range_start'];
-            const end = data['pterodactyl:client_features:allocations:range_end'];
+        if (data['evodactyl:client_features:allocations:enabled'] === 'true') {
+            const start = data['evodactyl:client_features:allocations:range_start'];
+            const end = data['evodactyl:client_features:allocations:range_end'];
             if (!start) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    path: ['pterodactyl:client_features:allocations:range_start'],
+                    path: ['evodactyl:client_features:allocations:range_start'],
                     message: 'Starting port is required when automatic allocation is enabled.',
                 });
             }
             if (!end) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    path: ['pterodactyl:client_features:allocations:range_end'],
+                    path: ['evodactyl:client_features:allocations:range_end'],
                     message: 'Ending port is required when automatic allocation is enabled.',
                 });
             }
             if (start && end && Number(end) <= Number(start)) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    path: ['pterodactyl:client_features:allocations:range_end'],
+                    path: ['evodactyl:client_features:allocations:range_end'],
                     message: 'Ending port must be greater than starting port.',
                 });
             }

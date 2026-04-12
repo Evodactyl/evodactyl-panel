@@ -249,7 +249,7 @@ const NestsContainer = () => {
             </Modal>
 
             <div css={tw`bg-red-900 border border-red-700 rounded p-3 mb-4 text-sm text-red-200`}>
-                Eggs are a powerful feature of Pterodactyl Panel that allow for extreme flexibility and configuration.
+                Eggs are a powerful feature of Evodactyl Panel that allow for extreme flexibility and configuration.
                 Please note that while powerful, modifying an egg wrongly can very easily brick your servers and cause
                 more problems. Please avoid editing default eggs unless you are absolutely sure of what you are doing.
             </div>

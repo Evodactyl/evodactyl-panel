@@ -22,18 +22,25 @@ services:
     image: mariadb:11
     restart: always
     volumes:
-      - "/srv/pterodactyl/database:/var/lib/mysql"
+      - "/srv/evodactyl/database:/var/lib/mysql"
     environment:
       <<: *db-environment
       MYSQL_DATABASE: "panel"
-      MYSQL_USER: "pterodactyl"
+      MYSQL_USER: "evodactyl"
 
   cache:
     image: redis:7-alpine
     restart: always
 
   panel:
-    image: ghcr.io/pterodactyl/panel:latest
+    # Evodactyl builds its own image from the source checkout — we do not publish
+    # a pre-built image. Run `docker compose up -d --build` from inside the
+    # cloned repo. The build takes a few minutes on first run (bun install +
+    # prisma generate + vite build) and is cached on subsequent runs.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: evodactyl/panel:local
     restart: always
     ports:
       - "8080:8080"
@@ -46,14 +53,15 @@ services:
       DB_HOST: "database"
       DB_PORT: "3306"
       DB_DATABASE: "panel"
-      DB_USERNAME: "pterodactyl"
+      DB_USERNAME: "evodactyl"
       DB_PASSWORD: *db-password
-      DATABASE_URL: "mysql://pterodactyl:CHANGE_ME@database:3306/panel"
+      DATABASE_URL: "mysql://evodactyl:CHANGE_ME@database:3306/panel"
       REDIS_HOST: "cache"
       SESSION_DRIVER: "redis"
-      # APP_KEY must be generated once and preserved. Run:
-      #   docker run --rm ghcr.io/pterodactyl/panel:latest \
-      #     bun --filter @pterodactyl/api run cli environment:setup
+      # APP_KEY must be generated once and preserved. Either let the panel's
+      # environment:setup CLI generate one, or run openssl on the host:
+      #     openssl rand -base64 32
+      # and prefix with "base64:".
       APP_KEY: "base64:REPLACE_ME_WITH_A_GENERATED_KEY"
       HASHIDS_LENGTH: 8
 

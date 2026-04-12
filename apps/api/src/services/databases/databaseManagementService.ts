@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import type { Prisma } from '@pterodactyl/db';
+import type { Prisma } from '@evodactyl/db';
 import mysql from 'mysql2/promise';
 import { config } from '../../config/index.js';
 import { DisplayException } from '../../errors/index.js';
@@ -131,7 +131,7 @@ export async function createDatabaseRecord(
     server: { id: number },
     data: DatabaseInput,
 ): Promise<{ dbRecord: any; plainPassword: string }> {
-    if (!config.pterodactyl.clientFeatures.databases.enabled) {
+    if (!config.evodactyl.clientFeatures.databases.enabled) {
         throw new DisplayException('The database feature is not enabled.', 400);
     }
 

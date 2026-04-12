@@ -81,7 +81,7 @@ export class EnvironmentService {
 
         // Process variables set in the configuration file
         // Mirrors: foreach (config('pterodactyl.environment_variables', []) as $key => $object)
-        const envVars = config.pterodactyl.environmentVariables;
+        const envVars = config.evodactyl.environmentVariables;
         for (const [key, objectPath] of Object.entries(envVars)) {
             const value = this.resolveProperty(server, objectPath);
             variables[key] = value == null ? '' : String(value);

@@ -181,14 +181,14 @@ async function loadBootstrap(req: Request): Promise<Bootstrap> {
  * Inject the per-session CSRF token and the bootstrap globals the SPA
  * expects into the served HTML shell. Replaces what the Laravel Blade
  * wrapper used to emit (<meta name="csrf-token">, window.SiteConfiguration,
- * window.PterodactylUser).
+ * window.EvodactylUser).
  */
 function injectBootstrap(html: string, bootstrap: Bootstrap): string {
     const { csrfToken, siteConfiguration, user } = bootstrap;
     const csrfMeta = `<meta name="csrf-token" content="${escapeHtmlAttribute(csrfToken)}" />`;
     const bootstrapScript =
         `<script>window.SiteConfiguration = ${safeJson(siteConfiguration)};` +
-        (user ? `window.PterodactylUser = ${safeJson(user)};` : '') +
+        (user ? `window.EvodactylUser = ${safeJson(user)};` : '') +
         `</script>`;
 
     let out = html;
@@ -253,7 +253,7 @@ if (isDev && vite) {
                 res.status(503)
                     .type('text/plain')
                     .send(
-                        'SPA bundle not found. Run `bun --filter @pterodactyl/web run build` ' +
+                        'SPA bundle not found. Run `bun run --filter=@evodactyl/web build` ' +
                             'or start in dev mode (APP_ENV!=production).',
                     );
                 return;
@@ -272,9 +272,9 @@ if (isMainModule) {
     const port = config.server.port;
     await settingsCache.load();
     httpServer.listen(port, () => {
-        console.log(`[Pterodactyl] Panel running on http://localhost:${port}`);
-        console.log(`[Pterodactyl] Environment: ${config.app.env}${isDev ? ' (dev — Vite middleware + HMR)' : ''}`);
-        console.log(`[Pterodactyl] Debug: ${config.app.debug}`);
+        console.log(`[Evodactyl] Panel running on http://localhost:${port}`);
+        console.log(`[Evodactyl] Environment: ${config.app.env}${isDev ? ' (dev — Vite middleware + HMR)' : ''}`);
+        console.log(`[Evodactyl] Debug: ${config.app.debug}`);
         startScheduler();
     });
 }

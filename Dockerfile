@@ -16,7 +16,7 @@ FROM deps AS build
 WORKDIR /app
 COPY . .
 RUN bunx prisma generate --schema=packages/db/prisma/schema.prisma \
-    && bun --filter @pterodactyl/web run build
+    && bun --filter @evodactyl/web run build
 
 # Stage 3: runtime image.
 #

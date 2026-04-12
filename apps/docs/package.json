@@ -1,0 +1,25 @@
+{
+    "name": "@evodactyl/docs",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro build",
+        "preview": "astro preview",
+        "typecheck": "astro check",
+        "lint": "biome lint ./src"
+    },
+    "dependencies": {
+        "@astrojs/starlight": "^0.30.6",
+        "@evodactyl/shared": "workspace:*",
+        "astro": "^5.1.5",
+        "sharp": "^0.33.5",
+        "starlight-links-validator": "^0.14.0"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.4",
+        "typescript": "~5.7.0"
+    }
+}

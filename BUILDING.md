@@ -1,8 +1,9 @@
 # Local Development
 
-Pterodactyl Panel is a Bun-based Turborepo monorepo. The frontend (`apps/web`)
-is a React SPA and the backend (`apps/api`) is an Express 5 server running on
-Bun with Prisma against MySQL.
+Evodactyl Panel is a Bun-based Turborepo monorepo. The frontend (`apps/web`)
+is a React SPA, the backend (`apps/api`) is an Express 5 server running on
+Bun with Prisma against MySQL, and the docs site (`apps/docs`) is an Astro +
+Starlight static site.
 
 ## Prerequisites
 
@@ -26,8 +27,8 @@ at the repo root.
 bun run dev
 
 # Or target a specific workspace
-bun --filter @pterodactyl/web run dev
-bun --filter @pterodactyl/api run dev
+bun run --filter=@evodactyl/web dev
+bun run --filter=@evodactyl/api dev
 ```
 
 `turbo` orchestrates the two processes. The web dev server lives on `:5173`
@@ -50,23 +51,23 @@ Schema lives in `packages/db/prisma/schema.prisma`. Migrations live under
 
 ```bash
 # Generate the Prisma client after pulling or editing the schema
-bun --filter @pterodactyl/db run generate
+bun run --filter=@evodactyl/db generate
 
 # Apply pending migrations
-bun --filter @pterodactyl/db run migrate
+bun run --filter=@evodactyl/db migrate
 
 # Create a new migration while iterating locally
-bun --filter @pterodactyl/db run migrate:dev
+bun run --filter=@evodactyl/db migrate:dev
 
 # Seed default nests and eggs
-bun --filter @pterodactyl/db run seed
+bun run --filter=@evodactyl/db seed
 ```
 
 For a fresh environment (existing database created by the old Laravel app),
 mark the baseline as applied so Prisma does not try to re-create tables:
 
 ```bash
-bun --filter @pterodactyl/db run migrate:resolve-baseline
+bun run --filter=@evodactyl/db migrate:resolve-baseline
 ```
 
 ## CLI (admin tasks)
@@ -75,13 +76,28 @@ The api workspace ships a small CLI for admin tasks that used to live in
 `artisan`:
 
 ```bash
-bun --filter @pterodactyl/api run cli user:make
-bun --filter @pterodactyl/api run cli user:delete --user=someone@example.com
-bun --filter @pterodactyl/api run cli environment:setup
-bun --filter @pterodactyl/api run cli seed
+bun run --filter=@evodactyl/api cli user:make
+bun run --filter=@evodactyl/api cli user:delete --user=someone@example.com
+bun run --filter=@evodactyl/api cli environment:setup
+bun run --filter=@evodactyl/api cli seed
 ```
 
 ## Running Wings
 
-Wings is unchanged by the Panel migration. Build and run a local Wings as
-usual; the Panel signs JWTs with the same claim structure Wings expects.
+Wings is unchanged by the Evodactyl rewrite and remains a separate daemon
+project. Build and run a local Wings as usual; the Panel signs JWTs with the
+same claim structure Wings expects.
+
+## Running the Docs
+
+```bash
+bun run --filter=@evodactyl/docs dev
+```
+
+The docs site runs on `:4321` by default. Production builds:
+
+```bash
+bun run --filter=@evodactyl/docs build
+```
+
+Published site: <https://evodactyl.github.io/panel/>.

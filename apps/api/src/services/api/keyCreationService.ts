@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import type { Prisma } from '@pterodactyl/db';
+import type { Prisma } from '@evodactyl/db';
 import { encrypt } from '../../lib/encryption.js';
 import { prisma } from '../../prisma/client.js';
 

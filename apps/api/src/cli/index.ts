@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+import { dbCheckCommand } from './commands/dbCheck.js';
 import { environmentSetupCommand } from './commands/environmentSetup.js';
+import { importEggsCommand } from './commands/importEggs.js';
 import { seedCommand } from './commands/seed.js';
 import { deleteUserCommand } from './commands/userDelete.js';
 import { makeUserCommand } from './commands/userMake.js';
@@ -30,6 +32,16 @@ const COMMANDS: Command[] = [
         name: 'seed',
         description: 'Seed default nests and imported eggs.',
         run: seedCommand,
+    },
+    {
+        name: 'db:check',
+        description: 'Pre-flight connectivity check (MySQL, migrations, Redis, SMTP).',
+        run: dbCheckCommand,
+    },
+    {
+        name: 'import:eggs',
+        description: 'Import egg JSON files from a directory. Use --recursive to walk subdirs.',
+        run: importEggsCommand,
     },
 ];
 

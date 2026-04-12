@@ -66,7 +66,7 @@ export async function exportEgg(eggId: number): Promise<string> {
     }));
 
     const struct = {
-        _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO',
+        _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY EVODACTYL PANEL',
         meta: {
             version: EXPORT_VERSION,
             update_url: (egg as any).update_url ?? null,

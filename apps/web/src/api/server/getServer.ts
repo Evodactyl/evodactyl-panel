@@ -14,7 +14,7 @@ export interface Allocation {
 
 export interface Server {
     /**
-     * This value is determined by the presence of the `PTERODACTYL_USE_SERVER_IDENTIFIERS` environment
+     * This value is determined by the presence of the `EVODACTYL_USE_SERVER_IDENTIFIERS` environment
      * variable which changes what the API can respond with. It will eventually be removed and referenced
      * as the "identifier" key, but this allows users to slowly opt-in to these new URLs and trial it
      * as they wish.

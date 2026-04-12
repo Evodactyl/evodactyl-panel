@@ -37,8 +37,8 @@ export function getAppLocale(): string {
 }
 
 export function getTwoFactorRequirement(): 0 | 1 | 2 {
-    const raw = cache.get('pterodactyl:auth:2fa_required');
-    const value = coerceInt(raw, config.pterodactyl.auth.twoFactorRequired);
+    const raw = cache.get('evodactyl:auth:2fa_required');
+    const value = coerceInt(raw, config.evodactyl.auth.twoFactorRequired);
     if (value === 1) return 1;
     if (value === 2) return 2;
     return 0;
@@ -114,10 +114,10 @@ export interface ResolvedGuzzleTimeouts {
 
 export function getGuzzleTimeouts(): ResolvedGuzzleTimeouts {
     return {
-        timeout: coerceInt(cache.get('pterodactyl:guzzle:timeout'), config.pterodactyl.guzzle.timeout),
+        timeout: coerceInt(cache.get('evodactyl:guzzle:timeout'), config.evodactyl.guzzle.timeout),
         connectTimeout: coerceInt(
-            cache.get('pterodactyl:guzzle:connect_timeout'),
-            config.pterodactyl.guzzle.connectTimeout,
+            cache.get('evodactyl:guzzle:connect_timeout'),
+            config.evodactyl.guzzle.connectTimeout,
         ),
     };
 }
@@ -131,14 +131,14 @@ export interface ResolvedAllocationRange {
 export function getAllocationRange(): ResolvedAllocationRange {
     return {
         enabled: coerceBoolean(
-            cache.get('pterodactyl:client_features:allocations:enabled'),
-            config.pterodactyl.clientFeatures.allocations.enabled,
+            cache.get('evodactyl:client_features:allocations:enabled'),
+            config.evodactyl.clientFeatures.allocations.enabled,
         ),
         rangeStart:
-            coerceOptionalInt(cache.get('pterodactyl:client_features:allocations:range_start')) ??
-            config.pterodactyl.clientFeatures.allocations.rangeStart,
+            coerceOptionalInt(cache.get('evodactyl:client_features:allocations:range_start')) ??
+            config.evodactyl.clientFeatures.allocations.rangeStart,
         rangeEnd:
-            coerceOptionalInt(cache.get('pterodactyl:client_features:allocations:range_end')) ??
-            config.pterodactyl.clientFeatures.allocations.rangeEnd,
+            coerceOptionalInt(cache.get('evodactyl:client_features:allocations:range_end')) ??
+            config.evodactyl.clientFeatures.allocations.rangeEnd,
     };
 }

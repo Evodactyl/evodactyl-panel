@@ -1,4 +1,4 @@
-import { PrismaClient } from '@pterodactyl/db';
+import { PrismaClient } from '@evodactyl/db';
 
 const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined;

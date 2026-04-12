@@ -1,7 +1,7 @@
 {
-  "name": "pterodactyl-panel",
+  "name": "evodactyl-panel",
   "private": true,
-  "packageManager": "bun@1.2.0",
+  "packageManager": "bun@1.3.0",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -11,17 +11,22 @@
     "bun": ">=1.2.0"
   },
   "scripts": {
-    "dev": "turbo run dev --filter=@pterodactyl/api",
-    "preview": "turbo run preview --filter=@pterodactyl/api",
+    "dev": "turbo run dev --filter=@evodactyl/api",
+    "preview": "turbo run preview --filter=@evodactyl/api",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "biome format --write .",
     "check": "biome check --write .",
     "typecheck": "turbo run typecheck",
-    "db:generate": "bun --filter @pterodactyl/db run generate",
-    "db:migrate": "bun --filter @pterodactyl/db run migrate",
-    "db:studio": "bun --filter @pterodactyl/db run studio"
+    "docs": "bun run --filter=@evodactyl/docs dev",
+    "docs:dev": "bun run --filter=@evodactyl/docs dev",
+    "docs:build": "bun run --filter=@evodactyl/docs build",
+    "docs:preview": "bun run --filter=@evodactyl/docs preview",
+    "docs:typecheck": "bun run --filter=@evodactyl/docs typecheck",
+    "db:generate": "bun run --filter=@evodactyl/db generate",
+    "db:migrate": "bun run --filter=@evodactyl/db migrate",
+    "db:studio": "bun run --filter=@evodactyl/db studio"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.11",

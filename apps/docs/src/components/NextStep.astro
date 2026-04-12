@@ -1,0 +1,55 @@
+---
+interface Props {
+    label: string;
+    href: string;
+    description?: string;
+}
+
+const { label, href, description } = Astro.props as Props;
+---
+
+<a class='next-step' href={href}>
+    <div class='next-step-body'>
+        <div class='next-step-label'>Next →</div>
+        <div class='next-step-title'>{label}</div>
+        {description && <div class='next-step-description'>{description}</div>}
+    </div>
+</a>
+
+<style>
+    .next-step {
+        display: block;
+        margin: 2rem 0 0;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid var(--sl-color-accent);
+        border-radius: 0.5rem;
+        background: var(--sl-color-accent-low);
+        color: inherit;
+        text-decoration: none;
+        transition:
+            background 0.15s,
+            transform 0.15s;
+    }
+    .next-step:hover {
+        background: var(--sl-color-accent);
+        color: var(--sl-color-white);
+        transform: translateX(2px);
+    }
+    .next-step-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.75;
+    }
+    .next-step-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+    .next-step-description {
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        opacity: 0.85;
+    }
+</style>

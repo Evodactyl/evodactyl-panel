@@ -1,4 +1,4 @@
-import type { Prisma } from '@pterodactyl/db';
+import type { Prisma } from '@evodactyl/db';
 
 type LockableTable = 'users' | 'servers' | 'schedules';
 

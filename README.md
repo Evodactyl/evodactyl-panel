@@ -1,72 +1,48 @@
-[![Logo Image](https://cdn.pterodactyl.io/logos/new/pterodactyl_logo.png)](https://pterodactyl.io)
+<p align="center">
+  <img src="https://avatars.githubusercontent.com/u/274653358?s=200&v=4" width="160" alt="Evodactyl" />
+</p>
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pterodactyl/panel/ci.yaml?label=Tests&style=for-the-badge&branch=1.0-develop)
-![Discord](https://img.shields.io/discord/122900397965705216?label=Discord&logo=Discord&logoColor=white&style=for-the-badge)
-![GitHub Releases](https://img.shields.io/github/downloads/pterodactyl/panel/latest/total?style=for-the-badge)
-![GitHub contributors](https://img.shields.io/github/contributors/pterodactyl/panel?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Evodactyl/evodactyl-panel/build.yaml?label=Tests&style=for-the-badge&branch=main)
+![GitHub Releases](https://img.shields.io/github/downloads/Evodactyl/evodactyl-panel/latest/total?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/Evodactyl/evodactyl-panel?style=for-the-badge)
 
-# Pterodactyl Panel
+# Evodactyl Panel
 
-Pterodactyl® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security
-in mind, Pterodactyl runs all game servers in isolated Docker containers while exposing a beautiful and intuitive
-UI to end users.
+Evodactyl is an open-source game server management panel, rebuilt from the ground up on **Bun**, **TypeScript**,
+**Express 5**, **Prisma**, and **React**. It is the evolution of the original PHP/Laravel [Pterodactyl Panel],
+carrying its model of isolated-container game servers into a fully modern stack while staying wire-compatible
+with the existing **Wings** daemon.
 
-Stop settling for less. Make game servers a first class citizen on your platform.
+Like Pterodactyl, Evodactyl runs every game server in its own Docker container and exposes a fast, polished UI
+to end users and administrators. Unlike Pterodactyl, there is no PHP, no Composer, no queue worker, and no
+crontab — the panel is one Bun process.
 
-![Image](https://cdn.pterodactyl.io/site-assets/pterodactyl_v1_demo.gif)
+## Install
+
+On a fresh Linux host with Docker installed, paste this into a root shell:
+
+```bash
+sudo bash <(curl -fsSL https://raw.githubusercontent.com/Evodactyl/evodactyl-panel/main/scripts/install.sh)
+```
+
+It prompts you for a panel URL, an admin account, and optional SMTP, then clones this repo, builds
+the panel image from source, brings up a MariaDB + Redis + panel stack, runs migrations, seeds
+default eggs, and creates your first admin user. See the
+[install docs](https://evodactyl.github.io/evodactyl-panel/start/) for the script's prerequisites
+and what it creates.
 
 ## Documentation
 
-* [Panel Documentation](https://pterodactyl.io/panel/1.0/getting_started.html)
-* [Wings Documentation](https://pterodactyl.io/wings/1.0/installing.html)
-* [Community Guides](https://pterodactyl.io/community/about.html)
-* Or, get additional help [via Discord](https://discord.gg/pterodactyl)
+Full documentation lives at **<https://evodactyl.github.io/evodactyl-panel/>** and is built from
+[`apps/docs/`](apps/docs/) in this repository. Run it locally with `bun run docs:dev`.
 
-## Sponsors
-
-I would like to extend my sincere thanks to the following sponsors for helping fund Pterodactyl's development.
-[Interested in becoming a sponsor?](https://github.com/sponsors/pterodactyl)
-
-| Company                                                                           | About                                                                                                                                                                                                                                           |
-|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**Aussie Server Hosts**](https://aussieserverhosts.com/)                         | No frills Australian Owned and operated High Performance Server hosting for some of the most demanding games serving Australia and New Zealand.                                                                                                 |
-| [**BisectHosting**](https://www.bisecthosting.com/)                               | BisectHosting provides Minecraft, Valheim and other server hosting services with the highest reliability and lightning fast support since 2012.                                                                                                 |
-| [**MineStrator**](https://minestrator.com/)                                       | Looking for the most highend French hosting company for your minecraft server? More than 24,000 members on our discord trust us. Give us a try!                                                                                                 |
-| [**HostEZ**](https://hostez.io)                                                   | US & EU Rust & Minecraft Hosting. DDoS Protected bare metal, VPS and colocation with low latency, high uptime and maximum availability. EZ!                                                                                                     |
-| [**Blueprint**](https://blueprint.zip/?utm_source=pterodactyl&utm_medium=sponsor) | Create and install Pterodactyl addons and themes with the growing Blueprint framework - the package-manager for Pterodactyl. Use multiple modifications at once without worrying about conflicts and make use of the large extension ecosystem. |
-| [**indifferent broccoli**](https://indifferentbroccoli.com/)                      | indifferent broccoli is a game server hosting and rental company. With us, you get top-notch computer power for your gaming sessions. We destroy lag, latency, and complexity--letting you focus on the fun stuff.                              |
-
-### Supported Games
-
-Pterodactyl supports a wide variety of games by utilizing Docker containers to isolate each instance. This gives
-you the power to run game servers without bloating machines with a host of additional dependencies.
-
-Some of our core supported games include:
-
-* Minecraft — including Paper, Sponge, Bungeecord, Waterfall, and more
-* Rust
-* Terraria
-* Teamspeak
-* Mumble
-* Team Fortress 2
-* Counter Strike: Global Offensive
-* Garry's Mod
-* ARK: Survival Evolved
-
-In addition to our standard nest of supported games, our community is constantly pushing the limits of this software
-and there are plenty more games available provided by the community. Some of these games include:
-
-* Factorio
-* San Andreas: MP
-* Pocketmine MP
-* Squad
-* Xonotic
-* Starmade
-* Discord ATLBot, and most other Node.js/Python discord bots
-* [and many more...](https://pterodactyleggs.com)
+For local development see [`BUILDING.md`](BUILDING.md).
 
 ## License
 
-Pterodactyl® Copyright © 2015 - 2022 Dane Everitt and contributors.
+Evodactyl is released under the [MIT License](./LICENSE.md).
 
-Code released under the [MIT License](./LICENSE.md).
+Copyright © 2015–2022 Dane Everitt and contributors — original Pterodactyl Panel.
+Copyright © 2026 Evodactyl contributors — Evodactyl rewrite and continued development.
+
+[Pterodactyl Panel]: https://github.com/pterodactyl/panel

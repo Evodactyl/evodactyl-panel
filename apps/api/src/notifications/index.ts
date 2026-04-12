@@ -140,7 +140,7 @@ export async function sendRemovedFromServerEmail(email: string, serverName: stri
  * Send server installed notification.
  */
 export async function sendServerInstalledEmail(email: string, serverName: string): Promise<void> {
-    if (!config.pterodactyl.email.sendInstallNotification) return;
+    if (!config.evodactyl.email.sendInstallNotification) return;
     const appName = getAppName();
     await sendEmail({
         to: email,

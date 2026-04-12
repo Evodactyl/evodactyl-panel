@@ -15,7 +15,7 @@ export async function setupTwoFactor(user: any): Promise<{
     image_url_data: string;
     secret: string;
 }> {
-    const bytes = config.pterodactyl.auth.twoFactor.bytes || 16;
+    const bytes = config.evodactyl.auth.twoFactor.bytes || 16;
 
     // Generate a random base32 secret
     let secret = '';

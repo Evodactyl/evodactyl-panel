@@ -67,9 +67,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ title, subtitle, breadcrumbs,
                     </ContentHeader>
                     <ContentBody>{children}</ContentBody>
                     <Footer>
-                        Copyright &copy; 2015 - {new Date().getFullYear()}{' '}
-                        <a href={'https://pterodactyl.io/'} target={'_blank'} rel={'noopener noreferrer'}>
-                            Pterodactyl Software
+                        Copyright &copy; {new Date().getFullYear()}{' '}
+                        <a
+                            href={'https://evodactyl.github.io/panel/'}
+                            target={'_blank'}
+                            rel={'noopener noreferrer'}
+                        >
+                            Evodactyl
                         </a>
                         .
                     </Footer>

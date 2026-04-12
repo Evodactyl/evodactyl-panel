@@ -39,7 +39,7 @@ export async function createEgg(data: {
     return prisma.eggs.create({
         data: {
             uuid: generateUuid(),
-            author: config.pterodactyl.service.author,
+            author: config.evodactyl.service.author,
             nest_id: data.nest_id,
             name: data.name,
             description: data.description ?? null,

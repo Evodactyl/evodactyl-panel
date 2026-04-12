@@ -3,7 +3,7 @@ import http from '@/api/http';
 export interface PanelSettings {
     'app:name'?: string;
     'app:locale'?: string;
-    'pterodactyl:auth:2fa_required'?: string;
+    'evodactyl:auth:2fa_required'?: string;
     'mail:mailers:smtp:host'?: string;
     'mail:mailers:smtp:port'?: string;
     'mail:mailers:smtp:encryption'?: string;
@@ -14,11 +14,11 @@ export interface PanelSettings {
     'recaptcha:enabled'?: string;
     'recaptcha:website_key'?: string;
     'recaptcha:secret_key'?: string;
-    'pterodactyl:guzzle:connect_timeout'?: string;
-    'pterodactyl:guzzle:timeout'?: string;
-    'pterodactyl:client_features:allocations:enabled'?: string;
-    'pterodactyl:client_features:allocations:range_start'?: string;
-    'pterodactyl:client_features:allocations:range_end'?: string;
+    'evodactyl:guzzle:connect_timeout'?: string;
+    'evodactyl:guzzle:timeout'?: string;
+    'evodactyl:client_features:allocations:enabled'?: string;
+    'evodactyl:client_features:allocations:range_start'?: string;
+    'evodactyl:client_features:allocations:range_end'?: string;
     [key: string]: string | undefined;
 }
 

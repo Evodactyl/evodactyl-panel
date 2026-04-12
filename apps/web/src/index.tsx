@@ -5,7 +5,7 @@ import { bootstrapStore } from '@/state/bootstrap';
 // Enable language support.
 import './i18n';
 
-// Seed the easy-peasy store from window.PterodactylUser / window.SiteConfiguration
+// Seed the easy-peasy store from window.EvodactylUser / window.SiteConfiguration
 // before the first render, so no component ever sees `settings.data === undefined`.
 bootstrapStore();
 

@@ -5,10 +5,10 @@
   "globalEnv": ["NODE_ENV", "APP_ENV", "APP_DEBUG", "APP_KEY", "DATABASE_URL"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "@pterodactyl/db#generate"],
+      "dependsOn": ["^build", "@evodactyl/db#generate"],
       "outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**"]
     },
-    "@pterodactyl/db#generate": {
+    "@evodactyl/db#generate": {
       "cache": true,
       "inputs": ["prisma/schema.prisma"],
       "outputs": ["src/generated/**", "node_modules/.prisma/**"]
@@ -16,22 +16,22 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@pterodactyl/db#generate"]
+      "dependsOn": ["@evodactyl/db#generate"]
     },
     "preview": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build", "@pterodactyl/web#build", "@pterodactyl/db#generate"]
+      "dependsOn": ["^build", "@evodactyl/web#build", "@evodactyl/db#generate"]
     },
     "test": {
-      "dependsOn": ["^build", "@pterodactyl/db#generate"],
+      "dependsOn": ["^build", "@evodactyl/db#generate"],
       "outputs": ["coverage/**"]
     },
     "lint": {
       "outputs": []
     },
     "typecheck": {
-      "dependsOn": ["@pterodactyl/db#generate"],
+      "dependsOn": ["@evodactyl/db#generate"],
       "outputs": []
     }
   }

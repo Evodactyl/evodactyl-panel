@@ -45,14 +45,14 @@ const AdvancedSettingsForm = () => {
                     recaptchaEnabled: ((settings['recaptcha:enabled'] as 'true' | 'false') || 'false'),
                     recaptchaWebsiteKey: settings['recaptcha:website_key'] || '',
                     recaptchaSecretKey: '',
-                    guzzleConnectTimeout: settings['pterodactyl:guzzle:connect_timeout'] || '5',
-                    guzzleTimeout: settings['pterodactyl:guzzle:timeout'] || '15',
+                    guzzleConnectTimeout: settings['evodactyl:guzzle:connect_timeout'] || '5',
+                    guzzleTimeout: settings['evodactyl:guzzle:timeout'] || '15',
                     allocationsEnabled:
-                        ((settings['pterodactyl:client_features:allocations:enabled'] as 'true' | 'false') ||
+                        ((settings['evodactyl:client_features:allocations:enabled'] as 'true' | 'false') ||
                             'false'),
                     allocationsRangeStart:
-                        settings['pterodactyl:client_features:allocations:range_start'] || '',
-                    allocationsRangeEnd: settings['pterodactyl:client_features:allocations:range_end'] || '',
+                        settings['evodactyl:client_features:allocations:range_start'] || '',
+                    allocationsRangeEnd: settings['evodactyl:client_features:allocations:range_end'] || '',
                 });
                 setLoading(false);
             })
@@ -110,16 +110,16 @@ const AdvancedSettingsForm = () => {
         const payload: PanelSettings = {
             'recaptcha:enabled': values.recaptchaEnabled,
             'recaptcha:website_key': values.recaptchaWebsiteKey,
-            'pterodactyl:guzzle:connect_timeout': values.guzzleConnectTimeout,
-            'pterodactyl:guzzle:timeout': values.guzzleTimeout,
-            'pterodactyl:client_features:allocations:enabled': values.allocationsEnabled,
+            'evodactyl:guzzle:connect_timeout': values.guzzleConnectTimeout,
+            'evodactyl:guzzle:timeout': values.guzzleTimeout,
+            'evodactyl:client_features:allocations:enabled': values.allocationsEnabled,
         };
         if (values.recaptchaSecretKey) {
             payload['recaptcha:secret_key'] = values.recaptchaSecretKey;
         }
         if (values.allocationsEnabled === 'true') {
-            payload['pterodactyl:client_features:allocations:range_start'] = values.allocationsRangeStart;
-            payload['pterodactyl:client_features:allocations:range_end'] = values.allocationsRangeEnd;
+            payload['evodactyl:client_features:allocations:range_start'] = values.allocationsRangeStart;
+            payload['evodactyl:client_features:allocations:range_end'] = values.allocationsRangeEnd;
         }
 
         updateSettings(payload)

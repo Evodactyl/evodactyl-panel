@@ -47,8 +47,8 @@ const GeneralSettingsForm = () => {
         getSettings()
             .then((settings) => {
                 setInitialValues({
-                    companyName: settings['app:name'] || 'Pterodactyl',
-                    twoFactorRequirement: ((settings['pterodactyl:auth:2fa_required'] as '0' | '1' | '2') || '0'),
+                    companyName: settings['app:name'] || "Evodactyl",
+                    twoFactorRequirement: ((settings['evodactyl:auth:2fa_required'] as '0' | '1' | '2') || '0'),
                     defaultLanguage: settings['app:locale'] || 'en',
                 });
                 setLoading(false);
@@ -70,7 +70,7 @@ const GeneralSettingsForm = () => {
         const payload: PanelSettings = {
             'app:name': values.companyName,
             'app:locale': values.defaultLanguage,
-            'pterodactyl:auth:2fa_required': values.twoFactorRequirement,
+            'evodactyl:auth:2fa_required': values.twoFactorRequirement,
         };
 
         updateSettings(payload)
