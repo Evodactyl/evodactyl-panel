@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-import { config } from '../config/index.js';
 
 /**
  * Laravel-compatible AES-256-CBC encryption/decryption.
@@ -11,7 +10,7 @@ import { config } from '../config/index.js';
  */
 
 function getKey(): Buffer {
-    const appKey = config.app.key;
+    const appKey = process.env.APP_KEY ?? '';
     if (!appKey) {
         throw new Error('APP_KEY is not set. Cannot perform encryption/decryption.');
     }

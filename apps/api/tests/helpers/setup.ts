@@ -100,7 +100,7 @@ export async function createTestUser(
             password: await hashPassword('password'),
             language: 'en',
             root_admin: overrides.root_admin ? 1 : 0,
-            use_totp: 0,
+            use_totp: false,
         },
     });
 
