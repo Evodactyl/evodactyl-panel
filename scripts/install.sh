@@ -374,7 +374,7 @@ echo "  ✓ source at $INSTALL_DIR ($(git -C "$INSTALL_DIR" rev-parse --short HE
 echo
 echo "▶ Installing application dependencies"
 cd "$INSTALL_DIR"
-bun install --production
+bun install
 echo "  ✓ dependencies installed"
 
 # ───── build frontend ─────
@@ -383,6 +383,9 @@ echo "▶ Building frontend"
 bunx prisma generate --schema=packages/db/prisma/schema.prisma
 bun run --filter=@evodactyl/web build
 echo "  ✓ frontend built"
+
+# Prune dev dependencies now that the build is done.
+bun install --production
 
 # ───── write .env ─────
 echo
@@ -532,8 +535,9 @@ cat <<DONE
    To update later:
      cd ${INSTALL_DIR}
      sudo git pull
-     sudo -u evodactyl bun install --production
+     sudo -u evodactyl bun install
      sudo -u evodactyl bun run --filter=@evodactyl/web build
+     sudo -u evodactyl bun install --production
      sudo -u evodactyl bun run --filter=@evodactyl/db migrate
      sudo systemctl restart evodactyl
 
